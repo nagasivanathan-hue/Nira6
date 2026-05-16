@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Globe, AlertCircle, Loader2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { login, clearError } from '@/store/authSlice';
+import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -24,6 +25,20 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(login({ email, password }));
+  };
+
+  const handleGoogleLogin = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error('Error logging in with Google:', error.message);
+    }
   };
 
   return (
@@ -83,7 +98,11 @@ export default function LoginPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <button className="flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all">
+          <button 
+            type="button"
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all"
+          >
             <Globe className="w-4 h-4" /> Google
           </button>
           <button className="flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all">
