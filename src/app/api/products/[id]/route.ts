@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     }
     return NextResponse.json(product);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

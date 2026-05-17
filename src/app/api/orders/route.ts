@@ -28,7 +28,8 @@ export async function POST(req: Request) {
       const createdOrder = await order.save();
       return NextResponse.json(createdOrder, { status: 201 });
     }
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

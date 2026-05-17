@@ -27,7 +27,8 @@ export async function POST(req: Request) {
 
     await dbUser.save();
     return NextResponse.json(dbUser.wishlist);
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error;
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

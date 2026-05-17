@@ -15,7 +15,7 @@ export async function verifyAuth(req: Request) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
     const user = await User.findById(decoded.id).select('-password');
     return user;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

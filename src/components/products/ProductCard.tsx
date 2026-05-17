@@ -14,7 +14,14 @@ export default function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
   const isInWishlist = wishlistItems.some(item => item.id === product.id);
-  const gradeInfo = CONDITION_GRADES[product.grade];
+  const gradeKeyMap: Record<string, keyof typeof CONDITION_GRADES> = {
+    'Like New': 'A+',
+    'Excellent': 'A',
+    'Good': 'B',
+    'Fair': 'C'
+  };
+  const mappedGrade = gradeKeyMap[product.grade] || 'A';
+  const gradeInfo = CONDITION_GRADES[mappedGrade];
 
   return (
     <motion.div
@@ -22,8 +29,15 @@ export default function ProductCard({ product }: { product: Product }) {
       className="group bg-white rounded-2xl border border-nira-gray-dark hover:border-nira-yellow/50 hover:shadow-xl hover:shadow-nira-yellow/5 transition-all overflow-hidden"
     >
       {/* Image */}
-      <Link href={`/buy/${product.id}`} className="relative block aspect-square bg-nira-gray overflow-hidden">
-        <Image src={product.image} alt={product.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+      <Link href={`/buy/${product.id}`} className="relative block aspect-square bg-gradient-to-b from-[#FAFBFD] to-[#F1F3F6] border-b border-nira-gray-dark overflow-hidden">
+        <div className="absolute inset-0 p-4 flex items-center justify-center">
+          <Image 
+            src={product.image} 
+            alt={product.name} 
+            fill 
+            className="object-contain p-2.5 group-hover:scale-[1.07] transition-transform duration-500 ease-out" 
+          />
+        </div>
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <span className="px-2.5 py-1 text-[11px] font-bold rounded-lg text-white" style={{ backgroundColor: gradeInfo.color }}>

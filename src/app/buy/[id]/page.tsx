@@ -43,7 +43,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }
 
   const similar = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
-  const gradeInfo = CONDITION_GRADES[product.grade as keyof typeof CONDITION_GRADES] || CONDITION_GRADES['A'];
+  const gradeKeyMap: Record<string, keyof typeof CONDITION_GRADES> = {
+    'Like New': 'A+',
+    'Excellent': 'A',
+    'Good': 'B',
+    'Fair': 'C'
+  };
+  const mappedGrade = gradeKeyMap[product.grade] || 'A';
+  const gradeInfo = CONDITION_GRADES[mappedGrade];
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,9 +69,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Image Gallery */}
           <div>
-            <div className="relative aspect-square bg-nira-gray rounded-2xl overflow-hidden mb-4 shadow-sm border border-nira-gray-dark">
-              <Image src={product.image} alt={product.name} fill className="object-cover" />
-              <span className="absolute top-4 left-4 px-3 py-1.5 text-sm font-bold rounded-lg text-white shadow-lg" style={{ backgroundColor: gradeInfo.color }}>
+            <div className="relative aspect-square bg-gradient-to-br from-[#FAFCFF] via-[#F4F6FB] to-[#EBEDF2] rounded-3xl overflow-hidden mb-4 shadow-md border border-nira-gray-dark flex items-center justify-center">
+              <div className="absolute inset-0 p-8 flex items-center justify-center">
+                <Image 
+                  src={product.image} 
+                  alt={product.name} 
+                  fill 
+                  className="object-contain p-6 drop-shadow-xl hover:scale-105 transition-transform duration-700 ease-out" 
+                  priority
+                />
+              </div>
+              <span className="absolute top-5 left-5 px-3 py-1.5 text-sm font-bold rounded-xl text-white shadow-lg backdrop-blur-sm border border-white/10" style={{ backgroundColor: gradeInfo.color }}>
                 Grade {product.grade} — {gradeInfo.label}
               </span>
             </div>

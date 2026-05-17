@@ -9,7 +9,8 @@ export async function GET() {
       database: 'connected',
       timestamp: new Date().toISOString()
     });
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error;
     return NextResponse.json({
       status: 'error',
       database: 'disconnected',

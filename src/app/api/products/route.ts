@@ -13,7 +13,15 @@ export async function GET(req: Request) {
     const maxPrice = searchParams.get('maxPrice');
     const sort = searchParams.get('sort');
 
-    let query: any = {};
+    const query: {
+      category?: string;
+      brand?: string;
+      grade?: string;
+      price?: {
+        $gte?: number;
+        $lte?: number;
+      };
+    } = {};
 
     if (category) query.category = category;
     if (brand) query.brand = brand;
@@ -32,7 +40,8 @@ export async function GET(req: Request) {
 
     const products = await productQuery;
     return NextResponse.json(products);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

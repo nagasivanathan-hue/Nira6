@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Heart, Package, Wallet, Settings, LogOut, Star, Camera, TrendingUp, ShoppingBag, Loader2 } from 'lucide-react';
+import { Heart, Package, Wallet, Settings, LogOut, Star, Camera, TrendingUp, ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet, FileUp, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logout } from '@/store/authSlice';
@@ -17,6 +17,7 @@ const tabs = [
   { id: 'orders', label: 'Orders', icon: Package },
   { id: 'wallet', label: 'Wallet', icon: Wallet },
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
+  { id: 'bulk-import', label: 'Bulk Import', icon: Upload },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
@@ -27,6 +28,42 @@ const statusColors: Record<string, string> = {
   cancelled: '#EF4444'
 };
 
+interface ProductImport {
+  rowNumber: number;
+  name: string;
+  brand: string;
+  price: number;
+  category: string;
+  image: string;
+  grade: string;
+  conditionScore?: number;
+  featured: boolean;
+  trending: boolean;
+  specs: Record<string, string>;
+  stock: number;
+  description?: string;
+  seller?: string;
+  warranty?: string;
+  errors: string[];
+}
+
+interface SheetJSUtils {
+  sheet_to_json: (sheet: unknown) => Record<string, unknown>[];
+  aoa_to_sheet: (aoa: (string | number | boolean)[][]) => unknown;
+  book_new: () => unknown;
+  book_append_sheet: (wb: unknown, ws: unknown, name: string) => void;
+}
+
+interface SheetJSLibrary {
+  utils: SheetJSUtils;
+  read: (data: unknown, options: { type: string }) => { SheetNames: string[]; Sheets: Record<string, unknown> };
+  writeFile: (wb: unknown, filename: string) => void;
+}
+
+interface GlobalWithXLSX {
+  XLSX?: SheetJSLibrary;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -35,6 +72,223 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [parsing, setParsing] = useState(false);
+  const [parsedProducts, setParsedProducts] = useState<ProductImport[]>([]);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [successData, setSuccessData] = useState<{ total: number; imported: number; message: string } | null>(null);
+
+  // Load SheetJS dynamically from CDN
+  const loadSheetJS = (): Promise<SheetJSLibrary> => {
+    return new Promise((resolve, reject) => {
+      const globalWindow = window as unknown as GlobalWithXLSX;
+      if (globalWindow.XLSX) {
+        resolve(globalWindow.XLSX);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      script.async = true;
+      script.onload = () => {
+        if (globalWindow.XLSX) {
+          resolve(globalWindow.XLSX);
+        } else {
+          reject(new Error('SheetJS library failed to initialize on window object.'));
+        }
+      };
+      script.onerror = (err) => reject(err);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Download pre-formatted Excel template
+  const downloadTemplate = async () => {
+    try {
+      const XLSX = await loadSheetJS();
+      const headers = [
+        ['name', 'brand', 'price', 'category', 'image', 'grade', 'conditionScore', 'featured', 'trending', 'stock', 'description', 'seller', 'warranty', 'specs_key1', 'specs_val1', 'specs_key2', 'specs_val2']
+      ];
+      const sampleData = [
+        ['NIRA6 Studio Headphones Pro', 'Audio-Technica', 12500, 'Audio', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', 'Excellent', 92, 'TRUE', 'FALSE', 5, 'Professional studio grade monitoring headphones with active noise cancellation.', 'NIRA6 Certified', '6 Months NIRA6 Warranty', 'Driver Size', '45mm', 'Impedance', '38 Ohms']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet([...headers, ...sampleData]) as Record<string, unknown>;
+      const wb = XLSX.utils.book_new() as Record<string, unknown>;
+      XLSX.utils.book_append_sheet(wb, ws, 'Products Template');
+      XLSX.writeFile(wb, 'NIRA6_Bulk_Product_Template.xlsx');
+    } catch {
+      alert('Failed to load SheetJS library. Please check your internet connection.');
+    }
+  };
+
+  // Parse Excel file client-side
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadError(null);
+    setSuccessData(null);
+    setParsing(true);
+
+    try {
+      const XLSX = await loadSheetJS();
+      const reader = new FileReader();
+
+      reader.onload = (evt) => {
+        try {
+          const bstr = evt.target?.result as string;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const rawData = XLSX.utils.sheet_to_json(ws);
+
+          if (rawData.length === 0) {
+            setUploadError('The uploaded file contains no data rows.');
+            setParsing(false);
+            return;
+          }
+
+          const validGrades = ['Like New', 'Excellent', 'Good', 'Fair'];
+          const parsed = rawData.map((rawRow, index) => {
+            const row = rawRow as Record<string, unknown> & {
+              name?: string;
+              brand?: string;
+              price?: number;
+              category?: string;
+              image?: string;
+              grade?: string;
+              conditionScore?: number;
+              featured?: string | boolean;
+              trending?: string | boolean;
+              stock?: number;
+              description?: string;
+              seller?: string;
+              warranty?: string;
+            };
+            const errors: string[] = [];
+
+            const name = String(row.name || '').trim();
+            if (!name) errors.push('Product name is required.');
+
+            const brand = String(row.brand || '').trim();
+            if (!brand) errors.push('Brand is required.');
+
+            const price = Number(row.price);
+            if (isNaN(price) || price <= 0) errors.push('Price must be a positive number.');
+
+            const category = String(row.category || '').trim();
+            if (!category) errors.push('Category is required.');
+
+            const image = String(row.image || '').trim();
+            if (!image) errors.push('Image URL is required.');
+
+            let grade = String(row.grade || '').trim();
+            const matchedGrade = validGrades.find(g => g.toLowerCase() === grade.toLowerCase());
+            if (matchedGrade) {
+              grade = matchedGrade;
+            } else {
+              errors.push(`Grade must be 'Like New', 'Excellent', 'Good', or 'Fair' (got: "${grade}").`);
+            }
+
+            const conditionScore = row.conditionScore !== undefined ? Number(row.conditionScore) : undefined;
+            if (conditionScore !== undefined && (isNaN(conditionScore) || conditionScore < 0 || conditionScore > 100)) {
+              errors.push('Condition Score must be a number between 0 and 100.');
+            }
+
+            const specs: Record<string, string> = {};
+            for (let i = 1; i <= 5; i++) {
+              const k = row[`specs_key${i}`];
+              const v = row[`specs_val${i}`];
+              if (k && v) {
+                specs[String(k).trim()] = String(v).trim();
+              }
+            }
+
+            return {
+              rowNumber: index + 2,
+              name,
+              brand,
+              price,
+              category,
+              image,
+              grade,
+              conditionScore,
+              featured: String(row.featured || '').toLowerCase() === 'true',
+              trending: String(row.trending || '').toLowerCase() === 'true',
+              specs,
+              stock: row.stock !== undefined && !isNaN(Number(row.stock)) ? Number(row.stock) : 1,
+              description: row.description ? String(row.description).trim() : undefined,
+              seller: row.seller ? String(row.seller).trim() : 'NIRA6 Certified',
+              warranty: row.warranty ? String(row.warranty).trim() : '6 Months NIRA6 Warranty',
+              errors
+            };
+          });
+
+          setParsedProducts(parsed);
+          setParsing(false);
+        } catch {
+          setUploadError('Failed to parse Excel file content. Make sure it is a valid .xlsx or .csv file.');
+          setParsing(false);
+        }
+      };
+
+      reader.onerror = () => {
+        setUploadError('Error reading the file.');
+        setParsing(false);
+      };
+
+      reader.readAsBinaryString(file);
+    } catch {
+      setUploadError('Could not load the Excel parser library. Please check your network connection.');
+      setParsing(false);
+    }
+  };
+
+  // Perform bulk API upload
+  const handleImportConfirm = async () => {
+    const validProducts = parsedProducts.filter(p => p.errors.length === 0);
+    if (validProducts.length === 0) {
+      alert('There are no valid products to import. Please fix any validation errors and re-upload.');
+      return;
+    }
+
+    setImporting(true);
+    setUploadProgress(20);
+
+    try {
+      setUploadProgress(50);
+      const response = await api.post('/products/bulk', validProducts.map((p) => ({
+        name: p.name,
+        brand: p.brand,
+        price: p.price,
+        category: p.category,
+        image: p.image,
+        grade: p.grade,
+        conditionScore: p.conditionScore,
+        featured: p.featured,
+        trending: p.trending,
+        specs: p.specs,
+        stock: p.stock,
+        description: p.description,
+        seller: p.seller,
+        warranty: p.warranty
+      })));
+
+      setUploadProgress(100);
+      setSuccessData({
+        total: parsedProducts.length,
+        imported: validProducts.length,
+        message: (response.data as { message?: string }).message || 'Import successful!'
+      });
+      setParsedProducts([]);
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      const msg = error.response?.data?.message || 'Failed to import products to server.';
+      setUploadError(msg);
+    } finally {
+      setImporting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -257,6 +511,229 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <button className="px-6 py-3 bg-nira-yellow text-nira-dark font-semibold rounded-xl hover:bg-nira-yellow-dark transition-colors">Save Changes</button>
+                  </div>
+                )}
+
+                {/* Bulk Import Tab */}
+                {activeTab === 'bulk-import' && (
+                  <div className="space-y-6">
+                    {/* Header */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div>
+                        <h3 className="font-heading font-bold text-xl mb-1 flex items-center gap-2 text-nira-dark">
+                          <FileSpreadsheet className="w-6 h-6 text-nira-yellow" /> Excel/CSV Bulk Product Import
+                        </h3>
+                        <p className="text-nira-text-secondary text-sm">
+                          Instantly upload your product list. Drag & drop your Excel sheet, preview live rows, check validation issues, and commit them directly.
+                        </p>
+                      </div>
+                      <button
+                        onClick={downloadTemplate}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-nira-gray hover:bg-nira-gray-dark text-nira-dark font-semibold text-sm rounded-xl transition-all flex-shrink-0"
+                      >
+                        <Download className="w-4 h-4 text-nira-text" /> Download Excel Template
+                      </button>
+                    </div>
+
+                    {/* Alert / Errors */}
+                    {uploadError && (
+                      <div className="bg-nira-error/5 border border-nira-error/20 text-nira-error rounded-2xl p-4 flex gap-3 items-start animate-scale-in">
+                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-semibold text-sm">Upload Issue Detected</p>
+                          <p className="text-xs mt-0.5 opacity-90">{uploadError}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Success State */}
+                    {successData && (
+                      <div className="bg-nira-success/5 border border-nira-success/20 text-nira-success rounded-2xl p-6 flex flex-col items-center text-center gap-4 animate-scale-in">
+                        <div className="w-12 h-12 bg-nira-success/10 rounded-full flex items-center justify-center">
+                          <CheckCircle2 className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h4 className="font-heading font-bold text-lg text-nira-dark">Bulk Upload Complete!</h4>
+                          <p className="text-sm text-nira-text-secondary mt-1">
+                            Successfully imported <span className="font-bold text-nira-success">{successData.imported}</span> of <span className="font-bold">{successData.total}</span> products into the NIRA6 platform.
+                          </p>
+                        </div>
+                        <Link
+                          href="/buy"
+                          className="px-6 py-2 bg-nira-yellow text-nira-dark font-bold rounded-xl text-sm hover:bg-nira-yellow-dark transition-colors"
+                        >
+                          View in Shop
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* Upload Drop Zone / Progress */}
+                    {importing ? (
+                      <div className="bg-white rounded-2xl p-12 border border-nira-gray-dark flex flex-col items-center justify-center text-center shadow-sm">
+                        <Loader2 className="w-10 h-10 text-nira-yellow animate-spin mb-4" />
+                        <h4 className="font-heading font-bold text-lg mb-1">Importing Products...</h4>
+                        <p className="text-nira-text-secondary text-sm mb-4">Please wait while we insert your catalog into MongoDB.</p>
+                        <div className="w-full max-w-xs bg-nira-gray rounded-full h-2 overflow-hidden">
+                          <div className="bg-nira-yellow h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                        </div>
+                      </div>
+                    ) : parsedProducts.length === 0 ? (
+                      <div className="bg-white rounded-2xl p-10 border border-nira-gray-dark shadow-sm flex flex-col items-center justify-center text-center group transition-all hover:border-nira-yellow duration-300">
+                        <div className="w-16 h-16 bg-nira-gray rounded-2xl flex items-center justify-center text-nira-text-secondary mb-4 group-hover:bg-nira-yellow/10 group-hover:text-nira-yellow transition-all duration-300">
+                          {parsing ? (
+                            <Loader2 className="w-8 h-8 animate-spin text-nira-yellow" />
+                          ) : (
+                            <FileUp className="w-8 h-8" />
+                          )}
+                        </div>
+                        <h4 className="font-heading font-semibold text-lg mb-1">
+                          {parsing ? 'Parsing Excel Data...' : 'Upload your Excel or CSV sheet'}
+                        </h4>
+                        <p className="text-nira-text-secondary text-sm max-w-sm mb-6">
+                          Select or drag your product worksheet here. Supports `.xlsx`, `.xls`, or `.csv` files.
+                        </p>
+                        <label className="px-6 py-2.5 bg-nira-dark text-white font-semibold rounded-xl text-sm cursor-pointer hover:bg-nira-dark/80 transition-colors shadow-sm">
+                          {parsing ? 'Parsing...' : 'Select File'}
+                          <input
+                            type="file"
+                            accept=".xlsx, .xls, .csv"
+                            onChange={handleFileChange}
+                            disabled={parsing}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Summary Block */}
+                        <div className="bg-white rounded-2xl p-4 border border-nira-gray-dark flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                          <div className="flex gap-4 items-center">
+                            <div className="w-10 h-10 bg-nira-yellow/10 rounded-xl flex items-center justify-center text-nira-yellow">
+                              <FileSpreadsheet className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-sm text-nira-dark">Parsed Product Catalog</p>
+                              <p className="text-xs text-nira-text-secondary">
+                                Found {parsedProducts.length} rows. Valid: {parsedProducts.filter(p => p.errors.length === 0).length} • Invalid: {parsedProducts.filter(p => p.errors.length > 0).length}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3 w-full sm:w-auto">
+                            <button
+                              onClick={() => setParsedProducts([])}
+                              className="w-1/2 sm:w-auto px-4 py-2 border border-nira-gray-dark hover:bg-nira-gray text-nira-dark font-semibold text-sm rounded-xl transition-all"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleImportConfirm}
+                              disabled={parsedProducts.filter(p => p.errors.length === 0).length === 0}
+                              className="w-1/2 sm:w-auto px-6 py-2 bg-nira-yellow text-nira-dark font-bold text-sm rounded-xl hover:bg-nira-yellow-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                            >
+                              <Upload className="w-4 h-4" /> Confirm & Import ({parsedProducts.filter(p => p.errors.length === 0).length})
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Preview Table */}
+                        <div className="bg-white rounded-2xl border border-nira-gray-dark shadow-sm overflow-hidden animate-slide-up">
+                          <div className="p-4 border-b border-nira-gray-dark bg-nira-gray/50">
+                            <h4 className="font-heading font-semibold text-sm">Products Preview Grid</h4>
+                          </div>
+                          <div className="overflow-x-auto max-h-[400px]">
+                            <table className="w-full text-left border-collapse text-xs">
+                              <thead>
+                                <tr className="border-b border-nira-gray-dark bg-nira-gray/30 text-nira-text-secondary font-medium">
+                                  <th className="p-3 w-16 text-center">Row</th>
+                                  <th className="p-3 min-w-[150px]">Product Name</th>
+                                  <th className="p-3">Brand</th>
+                                  <th className="p-3">Category</th>
+                                  <th className="p-3">Price</th>
+                                  <th className="p-3">Grade</th>
+                                  <th className="p-3">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {parsedProducts.map((p, idx) => (
+                                  <tr key={idx} className="border-b border-nira-gray-dark last:border-0 hover:bg-nira-gray/20">
+                                    <td className="p-3 font-semibold text-center text-nira-text-secondary">{p.rowNumber}</td>
+                                    <td className="p-3">
+                                      <div className="font-medium text-nira-dark truncate max-w-xs">{p.name || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</div>
+                                      {p.description && <p className="text-[10px] text-nira-text-secondary truncate max-w-xs">{p.description}</p>}
+                                    </td>
+                                    <td className="p-3 text-nira-dark">{p.brand || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</td>
+                                    <td className="p-3 text-nira-dark">{p.category || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</td>
+                                    <td className="p-3 font-semibold text-nira-dark">{isNaN(p.price) ? <span className="text-nira-error font-medium italic">&lt;Invalid&gt;</span> : `₹${p.price.toLocaleString('en-IN')}`}</td>
+                                    <td className="p-3">
+                                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                        p.grade === 'Like New' ? 'bg-emerald-100 text-emerald-800' :
+                                        p.grade === 'Excellent' ? 'bg-blue-100 text-blue-800' :
+                                        p.grade === 'Good' ? 'bg-amber-100 text-amber-800' :
+                                        p.grade === 'Fair' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'
+                                      }`}>{p.grade || 'Unknown'}</span>
+                                    </td>
+                                    <td className="p-3">
+                                      {p.errors.length === 0 ? (
+                                        <span className="text-nira-success font-semibold flex items-center gap-1">
+                                          <CheckCircle2 className="w-3.5 h-3.5" /> Ready
+                                        </span>
+                                      ) : (
+                                        <div className="text-nira-error font-semibold flex flex-col gap-0.5">
+                                          {p.errors.map((e: string, eIdx: number) => (
+                                            <span key={eIdx} className="flex items-center gap-1 text-[10px] bg-red-50 text-red-700 px-1.5 py-0.5 rounded border border-red-100">
+                                              <AlertCircle className="w-3 h-3 flex-shrink-0" /> {e}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Columns Help Guide */}
+                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark shadow-sm">
+                      <h4 className="font-heading font-bold text-sm mb-3">📋 Excel Spreadsheet Columns Format Guide</h4>
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <div className="p-3 bg-nira-gray rounded-xl">
+                          <p className="font-bold text-nira-dark mb-1">Required Core Fields</p>
+                          <ul className="list-disc list-inside space-y-1 text-nira-text-secondary">
+                            <li><code className="text-nira-dark font-bold font-mono">name</code>: Title of product</li>
+                            <li><code className="text-nira-dark font-bold font-mono">brand</code>: Brand/Manufacturer</li>
+                            <li><code className="text-nira-dark font-bold font-mono">category</code>: Product Category</li>
+                            <li><code className="text-nira-dark font-bold font-mono">price</code>: Cost (in INR, e.g. 15000)</li>
+                            <li><code className="text-nira-dark font-bold font-mono">image</code>: Absolute URL of image</li>
+                            <li><code className="text-nira-dark font-bold font-mono">grade</code>: &apos;Like New&apos;, &apos;Excellent&apos;, &apos;Good&apos;, &apos;Fair&apos;</li>
+                          </ul>
+                        </div>
+                        <div className="p-3 bg-nira-gray rounded-xl">
+                          <p className="font-bold text-nira-dark mb-1">Optional Details</p>
+                          <ul className="list-disc list-inside space-y-1 text-nira-text-secondary">
+                            <li><code className="text-nira-dark font-bold font-mono">conditionScore</code>: 0 to 100 number</li>
+                            <li><code className="text-nira-dark font-bold font-mono">stock</code>: Quantity (default 1)</li>
+                            <li><code className="text-nira-dark font-bold font-mono">description</code>: Text summary</li>
+                            <li><code className="text-nira-dark font-bold font-mono">seller</code>: e.g. &apos;NIRA6 Certified&apos;</li>
+                            <li><code className="text-nira-dark font-bold font-mono">warranty</code>: warranty term</li>
+                            <li><code className="text-nira-dark font-bold font-mono">featured</code> / <code className="text-nira-dark font-bold font-mono">trending</code>: &apos;TRUE&apos; or &apos;FALSE&apos;</li>
+                          </ul>
+                        </div>
+                        <div className="p-3 bg-nira-gray rounded-xl sm:col-span-2 lg:col-span-1">
+                          <p className="font-bold text-nira-dark mb-1">Specs Properties Map</p>
+                          <p className="text-nira-text-secondary leading-relaxed">
+                            You can map up to 5 custom spec key-value pairs using numbered columns:<br/>
+                            <code className="text-nira-dark font-bold font-mono bg-white px-1 py-0.5 rounded border">specs_key1</code>, <code className="text-nira-dark font-bold font-mono bg-white px-1 py-0.5 rounded border">specs_val1</code> etc.
+                          </p>
+                          <p className="text-nira-text-secondary mt-2">
+                            e.g. <code className="font-bold">specs_key1</code> = &quot;Driver Size&quot;, <code className="font-bold">specs_val1</code> = &quot;45mm&quot;
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </>

@@ -7,7 +7,8 @@ export async function GET() {
     await dbConnect();
     const products = await Product.find({ trending: true }).limit(8);
     return NextResponse.json(products);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

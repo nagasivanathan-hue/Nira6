@@ -17,7 +17,8 @@ export async function GET(req: Request) {
       .populate('items.product');
       
     return NextResponse.json(orders);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message }, { status: 500 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

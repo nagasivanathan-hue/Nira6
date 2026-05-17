@@ -17,7 +17,8 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
     return NextResponse.json(fullUser.wishlist);
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error;
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
