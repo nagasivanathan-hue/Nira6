@@ -13,6 +13,7 @@ export async function GET(req: Request) {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const sort = searchParams.get('sort');
+    const keyword = searchParams.get('keyword');
 
     const query: {
       category?: string;
@@ -22,6 +23,11 @@ export async function GET(req: Request) {
         $gte?: number;
         $lte?: number;
       };
+      $or?: Array<{
+        name?: { $regex: string; $options: string };
+        brand?: { $regex: string; $options: string };
+        description?: { $regex: string; $options: string };
+      }>;
     } = {};
 
     if (category) query.category = category;
@@ -31,6 +37,13 @@ export async function GET(req: Request) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+    if (keyword) {
+      query.$or = [
+        { name: { $regex: keyword, $options: 'i' } },
+        { brand: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } }
+      ];
     }
 
     let productQuery = Product.find(query);
