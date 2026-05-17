@@ -5,6 +5,7 @@ import ReduxProvider from "@/store/ReduxProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import StoreInitializer from "@/components/layout/StoreInitializer";
+import LiveChatWidget from "@/components/support/LiveChatWidget";
 
 export const metadata: Metadata = {
   title: "NIRA6 — Everything for a Creator in One Place",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <Navbar />
             <main className="min-h-screen">{children}</main>
             <Footer />
+            <LiveChatWidget />
           </StoreInitializer>
         </ReduxProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />

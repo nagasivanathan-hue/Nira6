@@ -6,8 +6,17 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { selectCartCount } from '@/store/cartSlice';
 import { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery } from '@/store/uiSlice';
 import { NAV_LINKS } from '@/lib/constants';
-import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart, Bell, MessageSquare, Mail, Smartphone, AlertCircle, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+interface NiraNotification {
+  id: string;
+  type: 'push' | 'sms' | 'email';
+  title: string;
+  content: string;
+  timestamp: string;
+  read: boolean;
+}
 
 export default function Navbar() {
   const router = useRouter();
@@ -18,6 +27,62 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastY, setLastY] = useState(0);
+
+  // Simulated notifications terminal log
+  const [notifications, setNotifications] = useState<NiraNotification[]>([
+    {
+      id: 'n1',
+      type: 'push',
+      title: '🌟 Welcome to NIRA6 Platform!',
+      content: 'Complete your profile setup to receive full creator features + a free ₹500 starting wallet bonus.',
+      timestamp: 'Just now',
+      read: false
+    },
+    {
+      id: 'n2',
+      type: 'sms',
+      title: 'SMS Alert: OTP Login',
+      content: 'NIRA6 SECURE CODE: Use code 7894 to complete your verified creator account sign-in. Do not share this OTP.',
+      timestamp: '1 min ago',
+      read: false
+    },
+    {
+      id: 'n3',
+      type: 'email',
+      title: 'Invoice Confirmation: NIRA6 Hub',
+      content: '<h3>Thanks for choosing NIRA6!</h3><p>Your seller transaction is confirmed and pre-owned camera gear has been auto-submitted to expert verification checks!</p>',
+      timestamp: '5 min ago',
+      read: true
+    }
+  ]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [activeNotifTab, setActiveNotifTab] = useState<'all' | 'push' | 'sms' | 'email'>('all');
+  const [toastAlert, setToastAlert] = useState<NiraNotification | null>(null);
+
+  useEffect(() => {
+    const handleNotification = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { type, title, content } = customEvent.detail;
+      const newNotif: NiraNotification = {
+        id: Math.random().toString(36).substring(7),
+        type,
+        title,
+        content,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        read: false
+      };
+      setNotifications(prev => [newNotif, ...prev]);
+      
+      // Trigger a slide-in push/toast alert in top right
+      setToastAlert(newNotif);
+      setTimeout(() => {
+        setToastAlert(null);
+      }, 6000);
+    };
+
+    window.addEventListener('nira_notification', handleNotification);
+    return () => window.removeEventListener('nira_notification', handleNotification);
+  }, []);
 
   useEffect(() => {
     const handle = () => {
@@ -95,6 +160,97 @@ export default function Navbar() {
                   </span>
                 )}
               </Link>
+
+              {/* Simulated Notification Bell & Log Terminal */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setNotifOpen(!notifOpen);
+                    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+                  }}
+                  className={`p-2 hover:bg-nira-gray rounded-lg transition-colors relative ${notifOpen ? 'text-nira-yellow bg-nira-dark' : 'text-nira-dark'}`}
+                  aria-label="Notifications Center"
+                >
+                  <Bell className="w-5 h-5" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {notifOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 15 }}
+                      className="absolute right-0 mt-3 w-[340px] sm:w-[420px] bg-white border border-nira-gray-dark rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[500px]"
+                    >
+                      <div className="p-4 bg-nira-dark text-white flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <AlertCircle className="w-4 h-4 text-nira-yellow animate-bounce" />
+                          <h4 className="font-heading font-bold text-xs tracking-wider uppercase">Transactional Alerts Terminal</h4>
+                        </div>
+                        <span className="text-[10px] bg-nira-yellow text-nira-dark font-black px-2 py-0.5 rounded-full uppercase scale-90">Simulated</span>
+                      </div>
+
+                      {/* Tab Selectors */}
+                      <div className="flex bg-nira-gray border-b border-nira-gray-dark p-1">
+                        {(['all', 'push', 'sms', 'email'] as const).map(tab => (
+                          <button
+                            key={tab}
+                            onClick={() => setActiveNotifTab(tab)}
+                            className={`flex-1 py-1.5 text-[10px] font-bold uppercase rounded-lg transition-all cursor-pointer ${activeNotifTab === tab ? 'bg-white text-nira-dark shadow-sm' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+                          >
+                            {tab}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Notifs scroll list */}
+                      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[250px] max-h-[380px]">
+                        {notifications.filter(n => activeNotifTab === 'all' || n.type === activeNotifTab).length === 0 ? (
+                          <div className="py-10 text-center text-nira-text-secondary text-xs font-semibold">
+                            No logs captured yet. Try applying a checkout coupon or placing a COD order!
+                          </div>
+                        ) : (
+                          notifications
+                            .filter(n => activeNotifTab === 'all' || n.type === activeNotifTab)
+                            .map(n => (
+                              <div key={n.id} className="p-3 border border-nira-gray-dark rounded-xl hover:bg-nira-gray/10 transition-colors">
+                                <div className="flex items-start gap-2.5">
+                                  {n.type === 'push' && <Smartphone className="w-4 h-4 text-purple-500 mt-0.5" />}
+                                  {n.type === 'sms' && <MessageSquare className="w-4 h-4 text-nira-success mt-0.5" />}
+                                  {n.type === 'email' && <Mail className="w-4 h-4 text-blue-500 mt-0.5" />}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-xs font-bold text-nira-dark truncate">{n.title}</p>
+                                      <span className="text-[9px] text-nira-text-secondary font-medium">{n.timestamp}</span>
+                                    </div>
+
+                                    {n.type === 'email' ? (
+                                      <div className="mt-1.5 p-2 bg-nira-gray rounded-lg border border-nira-gray-dark text-[10px] text-nira-dark overflow-x-auto shadow-inner max-h-[140px] overflow-y-auto">
+                                        <div className="border-b border-nira-gray-dark pb-1 mb-1 font-bold text-nira-text-secondary text-[8px] uppercase tracking-wider">From: services@nira6.in (Simulated Receipt)</div>
+                                        <div className="prose prose-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: n.content }} />
+                                      </div>
+                                    ) : n.type === 'sms' ? (
+                                      <div className="mt-1.5 p-2 bg-nira-dark text-white rounded-xl text-[10px] font-mono leading-relaxed relative overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle at top right, #222, #000)' }}>
+                                        <div className="border-b border-white/10 pb-1 mb-1 font-bold text-[8px] text-nira-yellow uppercase tracking-widest">NIRA6 SECURE GATEWAY (SMS)</div>
+                                        {n.content}
+                                      </div>
+                                    ) : (
+                                      <p className="text-xs text-nira-text-secondary leading-relaxed mt-0.5">{n.content}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               {isAuthenticated ? (
                 <Link
                   href="/dashboard"
@@ -203,6 +359,34 @@ export default function Navbar() {
                 )}
               </div>
             </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Global simulated slide-in toast alert */}
+      <AnimatePresence>
+        {toastAlert && (
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            className="fixed top-24 right-6 z-[99] max-w-sm bg-nira-dark border border-nira-yellow/20 rounded-2xl shadow-2xl p-4 flex gap-3 text-white cursor-pointer"
+            onClick={() => {
+              setNotifOpen(true);
+              setToastAlert(null);
+            }}
+            style={{ boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}
+          >
+            {toastAlert.type === 'push' && <Smartphone className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0 animate-pulse" />}
+            {toastAlert.type === 'sms' && <MessageSquare className="w-5 h-5 text-nira-success mt-0.5 flex-shrink-0 animate-bounce" />}
+            {toastAlert.type === 'email' && <Mail className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />}
+            <div>
+              <h5 className="font-heading font-bold text-xs tracking-wider text-nira-yellow uppercase flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5" /> Simulated Alert Triggered
+              </h5>
+              <p className="text-[11px] font-bold mt-1 text-white leading-tight">{toastAlert.title}</p>
+              <p className="text-[10px] mt-0.5 text-nira-text-secondary line-clamp-1">Click to view log details</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

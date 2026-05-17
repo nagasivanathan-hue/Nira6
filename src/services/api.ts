@@ -49,6 +49,8 @@ export const productApi = {
   getFeaturedProducts: () => api.get('/products/featured'),
   getTrendingProducts: () => api.get('/products/trending'),
   getProductById: (id: string) => api.get(`/products/${id}`),
+  getProductReviews: (id: string) => api.get(`/products/${id}/reviews`),
+  addProductReview: (id: string, review: Record<string, unknown>) => api.post(`/products/${id}/reviews`, review),
 };
 
 export const authApi = {
@@ -61,11 +63,19 @@ export const orderApi = {
   createOrder: (orderData: Record<string, unknown>) => api.post('/orders', orderData),
   getMyOrders: () => api.get('/orders/myorders'),
   getOrderById: (id: string) => api.get(`/orders/${id}`),
+  returnOrder: (id: string, reason: string) => api.post(`/orders/${id}/return`, { reason }),
 };
 
 export const userApi = {
   getWishlist: () => api.get('/users/wishlist'),
   toggleWishlist: (productId: string) => api.post('/users/wishlist/toggle', { productId }),
+  getWallet: () => api.get('/users/wallet'),
+  addWalletMoney: (amount: number) => api.post('/users/wallet', { amount }),
+};
+
+export const supportApi = {
+  getTickets: () => api.get('/support/tickets'),
+  createTicket: (ticketData: Record<string, unknown>) => api.post('/support/tickets', ticketData),
 };
 
 export default api;

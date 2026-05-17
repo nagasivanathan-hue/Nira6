@@ -6,9 +6,11 @@ import { verifyAuth } from '@/lib/auth/auth';
 
 export async function POST(req: Request) {
   try {
-    const user = await verifyAuth(req);
-    if (!user) {
-      return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+    let user = null;
+    try {
+      user = await verifyAuth(req);
+    } catch {
+      // allow guest verification to proceed
     }
 
     await dbConnect();
@@ -19,8 +21,19 @@ export async function POST(req: Request) {
       orderItems,
       shippingAddress,
       paymentMethod,
-      totalAmount
+      totalAmount,
+      taxAmount,
+      platformFee,
+      discountAmount,
+      couponApplied,
+      isGuestCheckout,
+      guestEmail,
+      guestPhone
     } = await req.json();
+
+    if (!user && !isGuestCheckout) {
+      return NextResponse.json({ message: 'Authorization required' }, { status: 401 });
+    }
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
@@ -30,11 +43,17 @@ export async function POST(req: Request) {
 
     if (razorpay_signature === expectedSign) {
       const order = new Order({
-        user: user._id,
+        user: user ? user._id : undefined,
         items: orderItems,
         shippingAddress,
         paymentMethod,
         totalAmount,
+        taxAmount: taxAmount || 0,
+        platformFee: platformFee || 0,
+        discountAmount: discountAmount || 0,
+        couponApplied: couponApplied || '',
+        guestEmail: isGuestCheckout ? guestEmail : undefined,
+        guestPhone: isGuestCheckout ? guestPhone : undefined,
         paymentStatus: 'completed',
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id

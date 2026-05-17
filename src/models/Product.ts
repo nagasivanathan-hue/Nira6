@@ -19,7 +19,14 @@ const productSchema = new mongoose.Schema({
   stock: { type: Number, default: 1 },
   description: { type: String },
   seller: { type: String, default: 'NIRA6 Certified' },
-  warranty: { type: String, default: '6 Months NIRA6 Warranty' }
+  warranty: { type: String, default: '6 Months NIRA6 Warranty' },
+  reviews: [{
+    userName: { type: String, required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    comment: { type: String, required: true },
+    title: { type: String },
+    date: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);

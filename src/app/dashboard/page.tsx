@@ -1,8 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Heart, Package, Wallet, Settings, LogOut, Star, Camera, TrendingUp, ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet, FileUp, Download } from 'lucide-react';
+import { 
+  Heart, Package, Wallet, Settings, LogOut, Camera, TrendingUp, 
+  ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet, 
+  FileUp, Download, Printer, ShieldCheck, ChevronRight, CornerDownLeft, 
+  MessageSquare, Sparkles, Plus, Check, Eye
+} from 'lucide-react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logout } from '@/store/authSlice';
@@ -12,10 +16,22 @@ import { Order } from '@/types';
 import api from '@/services/api';
 import ProductCard from '@/components/products/ProductCard';
 
+interface ExtendedOrder extends Order {
+  taxAmount?: number;
+  platformFee?: number;
+  discountAmount?: number;
+  couponApplied?: string;
+  returned?: boolean;
+  returnReason?: string;
+  returnRequestedAt?: string;
+}
+
 const tabs = [
   { id: 'overview', label: 'Overview', icon: TrendingUp },
-  { id: 'orders', label: 'Orders', icon: Package },
-  { id: 'wallet', label: 'Wallet', icon: Wallet },
+  { id: 'orders', label: 'Orders & Receipts', icon: Package },
+  { id: 'wallet', label: 'Loyalty Wallet', icon: Wallet },
+  { id: 'sell', label: 'Become a Seller', icon: Camera },
+  { id: 'support-tickets', label: 'CRM & Diagnostics', icon: AlertCircle },
   { id: 'wishlist', label: 'Wishlist', icon: Heart },
   { id: 'bulk-import', label: 'Bulk Import', icon: Upload },
   { id: 'settings', label: 'Settings', icon: Settings },
@@ -64,20 +80,71 @@ interface GlobalWithXLSX {
   XLSX?: SheetJSLibrary;
 }
 
+// CRM ticket interface
+interface SupportTicket {
+  _id: string;
+  category: string;
+  subject: string;
+  description: string;
+  status: 'open' | 'in-progress' | 'resolved';
+  createdAt: string;
+  conversations: {
+    sender: 'user' | 'agent';
+    message: string;
+    timestamp: string;
+  }[];
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user: userInfo, isAuthenticated } = useAppSelector((state) => state.auth);
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
+  
   const [activeTab, setActiveTab] = useState('overview');
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<ExtendedOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [parsing, setParsing] = useState(false);
   const [parsedProducts, setParsedProducts] = useState<ProductImport[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [successData, setSuccessData] = useState<{ total: number; imported: number; message: string } | null>(null);
+
+  // New features state
+  const [selectedOrder, setSelectedOrder] = useState<ExtendedOrder | null>(null);
+  const [returnReasonInput, setReturnReasonInput] = useState('');
+  const [returningOrderId, setReturningOrderId] = useState<string | null>(null);
+
+  // Wallet simulator state
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletHistory, setWalletHistory] = useState<{ type: string; amount: number; description: string; date: string }[]>([]);
+  const [topUpAmount, setTopUpAmount] = useState('');
+  const [depositing, setDepositing] = useState(false);
+
+  // CRM tickets state
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [ticketSubject, setTicketSubject] = useState('');
+  const [ticketCategory, setTicketCategory] = useState('Buy');
+  const [ticketDesc, setTicketDesc] = useState('');
+  const [creatingTicket, setCreatingTicket] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+
+  // Multi-seller listing submission state
+  const [sellForm, setSellForm] = useState({
+    name: '',
+    brand: '',
+    category: 'Cameras',
+    price: '',
+    originalPrice: '',
+    grade: 'Like New',
+    description: '',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500',
+    specKey1: 'Standard Resolution',
+    specVal1: '24.2 Megapixels',
+    specKey2: 'Optical Zoom',
+    specVal2: '3x Kit Zoom'
+  });
+  const [submittingGear, setSubmittingGear] = useState(false);
 
   // Load SheetJS dynamically from CDN
   const loadSheetJS = (): Promise<SheetJSLibrary> => {
@@ -100,6 +167,41 @@ export default function DashboardPage() {
       script.onerror = (err) => reject(err);
       document.body.appendChild(script);
     });
+  };
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const ordersRes = await api.get('/orders/myorders');
+        setOrders(ordersRes.data);
+
+        dispatch(fetchWishlist());
+
+        // Fetch wallet balance
+        const walletRes = await api.get('/users/wallet');
+        setWalletBalance(walletRes.data.walletBalance || 0);
+        setWalletHistory(walletRes.data.walletTransactions || []);
+
+        // Fetch support tickets
+        const ticketsRes = await api.get('/support/tickets');
+        setTickets(ticketsRes.data || []);
+      } catch (_err) {
+        console.error("Failed to fetch dashboard data", _err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/dashboard');
+    } else {
+      fetchDashboardData();
+    }
+  }, [isAuthenticated, router, dispatch]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push('/');
   };
 
   // Download pre-formatted Excel template
@@ -204,59 +306,56 @@ export default function DashboardPage() {
               }
             }
 
+            const featured = String(row.featured).toLowerCase() === 'true';
+            const trending = String(row.trending).toLowerCase() === 'true';
+            const stock = Number(row.stock || 1);
+
             return {
               rowNumber: index + 2,
               name,
               brand,
-              price,
+              price: isNaN(price) ? 0 : price,
               category,
               image,
               grade,
               conditionScore,
-              featured: String(row.featured || '').toLowerCase() === 'true',
-              trending: String(row.trending || '').toLowerCase() === 'true',
+              featured,
+              trending,
               specs,
-              stock: row.stock !== undefined && !isNaN(Number(row.stock)) ? Number(row.stock) : 1,
-              description: row.description ? String(row.description).trim() : undefined,
-              seller: row.seller ? String(row.seller).trim() : 'NIRA6 Certified',
-              warranty: row.warranty ? String(row.warranty).trim() : '6 Months NIRA6 Warranty',
+              stock: isNaN(stock) ? 1 : stock,
+              description: row.description,
+              seller: row.seller,
+              warranty: row.warranty,
               errors
             };
           });
 
           setParsedProducts(parsed);
-          setParsing(false);
         } catch {
-          setUploadError('Failed to parse Excel file content. Make sure it is a valid .xlsx or .csv file.');
+          setUploadError('Error processing file layout. Ensure it is a valid spreadsheet.');
+        } finally {
           setParsing(false);
         }
       };
 
-      reader.onerror = () => {
-        setUploadError('Error reading the file.');
-        setParsing(false);
-      };
-
       reader.readAsBinaryString(file);
     } catch {
-      setUploadError('Could not load the Excel parser library. Please check your network connection.');
+      setUploadError('Failed to initialize workbook tools.');
       setParsing(false);
     }
   };
 
-  // Perform bulk API upload
-  const handleImportConfirm = async () => {
-    const validProducts = parsedProducts.filter(p => p.errors.length === 0);
+  // Submit bulk imports to backend
+  const handleBulkImportSubmit = async () => {
+    const validProducts = parsedProducts.filter((p) => p.errors.length === 0);
     if (validProducts.length === 0) {
       alert('There are no valid products to import. Please fix any validation errors and re-upload.');
       return;
     }
 
     setImporting(true);
-    setUploadProgress(20);
 
     try {
-      setUploadProgress(50);
       const response = await api.post('/products/bulk', validProducts.map((p) => ({
         name: p.name,
         brand: p.brand,
@@ -274,13 +373,21 @@ export default function DashboardPage() {
         warranty: p.warranty
       })));
 
-      setUploadProgress(100);
       setSuccessData({
         total: parsedProducts.length,
         imported: validProducts.length,
         message: (response.data as { message?: string }).message || 'Import successful!'
       });
       setParsedProducts([]);
+      
+      // Notify
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '📦 Bulk Import Succeeded!',
+          content: `${validProducts.length} new high-end creator gear items were appended to catalogue.`
+        }
+      }));
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const msg = error.response?.data?.message || 'Failed to import products to server.';
@@ -290,30 +397,174 @@ export default function DashboardPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const { data } = await api.get('/orders/myorders');
-        setOrders(data);
-        dispatch(fetchWishlist());
-      } catch (err) {
-        console.error("Failed to fetch dashboard data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (!isAuthenticated) {
-      router.push('/auth/login?redirect=/dashboard');
-    } else {
-      fetchDashboardData();
+  // Wallet top-up handler
+  const handleWalletTopUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const amountNum = Number(topUpAmount);
+    if (!topUpAmount || isNaN(amountNum) || amountNum <= 0) {
+      alert('Please enter a valid positive number');
+      return;
     }
-  }, [isAuthenticated, router, dispatch]);
 
+    setDepositing(true);
+    try {
+      const res = await api.post('/users/wallet', { amount: amountNum });
+      setWalletBalance(res.data.walletBalance);
+      setWalletHistory(res.data.walletTransactions || []);
+      setTopUpAmount('');
+      
+      // Trigger Notification
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '💰 Wallet Credited!',
+          content: `Deposited ₹${amountNum.toLocaleString('en-IN')} via secure simulated UPI routing.`
+        }
+      }));
+    } catch {
+      alert('Failed to simulate deposit. Please try again.');
+    } finally {
+      setDepositing(false);
+    }
+  };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    router.push('/');
+  // Support ticket CRM creation handler
+  const handleCreateTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ticketSubject || !ticketDesc) {
+      alert('Please enter subject and description');
+      return;
+    }
+
+    setCreatingTicket(true);
+    try {
+      const res = await api.post('/support/tickets', {
+        category: ticketCategory,
+        subject: ticketSubject,
+        description: ticketDesc
+      });
+      setTickets([res.data, ...tickets]);
+      setTicketSubject('');
+      setTicketDesc('');
+      
+      // Dispatch alert
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '🎫 Support Ticket Registered!',
+          content: `Diagnostics ticket CRM-${res.data._id.slice(-6).toUpperCase()} logged. Auto-AI is scanning.`
+        }
+      }));
+    } catch {
+      alert('Failed to log ticket. Try again.');
+    } finally {
+      setCreatingTicket(false);
+    }
+  };
+
+  // Submit new product from Seller Hub
+  const handlePublishGear = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sellForm.name || !sellForm.brand || !sellForm.price) {
+      alert('Please provide Name, Brand and Price.');
+      return;
+    }
+
+    setSubmittingGear(true);
+    try {
+      const specsMap: Record<string, string> = {};
+      if (sellForm.specKey1 && sellForm.specVal1) specsMap[sellForm.specKey1] = sellForm.specVal1;
+      if (sellForm.specKey2 && sellForm.specVal2) specsMap[sellForm.specKey2] = sellForm.specVal2;
+
+      await api.post('/products', {
+        name: sellForm.name,
+        brand: sellForm.brand,
+        category: sellForm.category,
+        price: Number(sellForm.price),
+        originalPrice: sellForm.originalPrice ? Number(sellForm.originalPrice) : undefined,
+        grade: sellForm.grade,
+        description: sellForm.description,
+        image: sellForm.image,
+        specs: specsMap
+      });
+
+      // Clear Form
+      setSellForm({
+        name: '',
+        brand: '',
+        category: 'Cameras',
+        price: '',
+        originalPrice: '',
+        grade: 'Like New',
+        description: '',
+        image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500',
+        specKey1: 'Standard Resolution',
+        specVal1: '24.2 Megapixels',
+        specKey2: 'Optical Zoom',
+        specVal2: '3x Kit Zoom'
+      });
+
+      // Notify catalog addition
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '🚀 Listing Published!',
+          content: 'Your camera gear was successfully submitted & published to public recommerce catalogs.'
+        }
+      }));
+      alert('Gear listing published successfully to NIRA6 marketplace!');
+    } catch {
+      alert('Failed to publish gear listing.');
+    } finally {
+      setSubmittingGear(false);
+    }
+  };
+
+  // Handle Order cancellation & returns with instant refunds
+  const handleInitiateReturn = async (oId: string) => {
+    if (!returnReasonInput) {
+      alert('Please enter a brief explanation reason for your return diagnostics.');
+      return;
+    }
+
+    try {
+      const res = await api.post(`/orders/${oId}/return`, { reason: returnReasonInput });
+      
+      // Update order status in frontend array
+      setOrders(prev => prev.map(o => o._id === oId ? { ...o, returned: true, returnReason: returnReasonInput } : o));
+      
+      // Refresh wallet balances
+      const walletRes = await api.get('/users/wallet');
+      setWalletBalance(walletRes.data.walletBalance || 0);
+      setWalletHistory(walletRes.data.walletTransactions || []);
+
+      setSelectedOrder(null);
+      setReturningOrderId(null);
+      setReturnReasonInput('');
+
+      // Dispatch alert
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '↩️ Return Accepted - Refunded!',
+          content: `Order returned. Refund amount was instantly credited to your Loyalty Wallet balance.`
+        }
+      }));
+      
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('nira_notification', {
+          detail: {
+            type: 'sms',
+            title: 'Refund Credit Alert',
+            content: `NIRA6 REFUND: ₹${res.data.refundAmount.toLocaleString('en-IN')} credited back to your NIRA Loyalty Wallet for returned order #${oId.slice(-8).toUpperCase()}. New balance: ₹${res.data.walletBalance.toLocaleString('en-IN')}`
+          }
+        }));
+      }, 1000);
+
+      alert(`Return accepted. Refund of ₹${res.data.refundAmount} successfully credited back to your Loyalty Wallet balance.`);
+    } catch {
+      alert('Return processing failed. Eligible diagnostics might have expired.');
+    }
   };
 
   if (!userInfo) return null;
@@ -321,91 +572,130 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-nira-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* User Header */}
-        <div className="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 mb-6 shadow-sm border border-nira-gray-dark">
-          <div className="w-20 h-20 bg-nira-dark rounded-2xl flex items-center justify-center text-white font-heading font-bold text-2xl uppercase">
+        
+        {/* User Header Profile Card */}
+        <div className="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 mb-6 shadow-sm border border-nira-gray-dark relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-nira-yellow/10 rounded-full blur-2xl -mr-10 -mt-10" />
+          <div className="w-20 h-20 bg-nira-dark rounded-2xl flex items-center justify-center text-white font-heading font-bold text-2xl uppercase border-2 border-nira-yellow relative">
             {userInfo.name?.slice(0, 2)}
+            <span className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white" />
           </div>
-          <div className="text-center sm:text-left">
-            <h1 className="font-heading font-bold text-2xl">{userInfo.name}</h1>
-            <p className="text-nira-text-secondary text-sm">{userInfo.email} • Member since Dec 2024</p>
-            <div className="flex items-center justify-center sm:justify-start gap-4 mt-2">
-              <span className="flex items-center gap-1 text-sm"><ShoppingBag className="w-4 h-4 text-nira-yellow" /> {orders.length} Orders</span>
-              <span className="flex items-center gap-1 text-sm"><Star className="w-4 h-4 text-nira-yellow" /> Gold Member</span>
+          <div className="text-center sm:text-left flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <h1 className="font-heading font-bold text-2xl text-nira-dark">{userInfo.name}</h1>
+              <span className="px-2.5 py-0.5 bg-nira-yellow text-nira-dark text-[9px] font-black tracking-widest uppercase rounded-full w-fit mx-auto sm:mx-0">Creator Verified</span>
+            </div>
+            <p className="text-nira-text-secondary text-sm">{userInfo.email} • Active Member • Diagnostics Core</p>
+            <div className="flex items-center justify-center sm:justify-start gap-4 mt-2.5">
+              <span className="flex items-center gap-1 text-xs text-nira-text-secondary"><ShoppingBag className="w-3.5 h-3.5 text-nira-yellow" /> <span className="font-bold text-nira-dark">{orders.length}</span> Orders</span>
+              <span className="flex items-center gap-1 text-xs text-nira-text-secondary"><Wallet className="w-3.5 h-3.5 text-nira-yellow" /> Balance: <span className="font-bold text-nira-dark">₹{walletBalance.toLocaleString('en-IN')}</span></span>
             </div>
           </div>
         </div>
 
         <div className="flex gap-6 flex-col lg:flex-row">
-          {/* Sidebar */}
-          <aside className="lg:w-56 flex-shrink-0">
+          {/* Dashboard Navigation Sidepanel */}
+          <aside className="lg:w-60 flex-shrink-0">
             <nav className="bg-white rounded-2xl p-3 flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide shadow-sm border border-nira-gray-dark">
               {tabs.map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${activeTab === tab.id ? 'bg-nira-yellow text-nira-dark' : 'text-nira-text-secondary hover:bg-nira-gray'}`}>
+                <button 
+                  key={tab.id} 
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setSelectedTicket(null);
+                  }} 
+                  className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${activeTab === tab.id ? 'bg-nira-yellow text-nira-dark' : 'text-nira-text-secondary hover:bg-nira-gray'}`}
+                >
                   <tab.icon className="w-4 h-4" /> {tab.label}
                 </button>
               ))}
-              <button onClick={handleLogout} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-nira-error hover:bg-nira-error/5 whitespace-nowrap">
-                <LogOut className="w-4 h-4" /> Logout
+              <hr className="my-2 border-nira-gray-dark hidden lg:block" />
+              <button onClick={handleLogout} className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-red-500 hover:bg-red-50 whitespace-nowrap cursor-pointer">
+                <LogOut className="w-4 h-4" /> Logout Account
               </button>
             </nav>
           </aside>
 
-          {/* Content */}
-          <div className="flex-1">
+          {/* Main Work Content Panels */}
+          <div className="flex-1 min-w-0">
             {loading ? (
-              <div className="bg-white rounded-2xl p-12 flex flex-col items-center justify-center border border-nira-gray-dark">
+              <div className="bg-white rounded-2xl p-12 flex flex-col items-center justify-center border border-nira-gray-dark shadow-sm">
                 <Loader2 className="w-8 h-8 text-nira-yellow animate-spin mb-4" />
-                <p className="text-nira-text-secondary">Loading your dashboard...</p>
+                <p className="text-nira-text-secondary text-sm">Synchronizing diagnostics registry...</p>
               </div>
             ) : (
               <>
-                {/* Overview */}
+                {/* 1. Overview Tab */}
                 {activeTab === 'overview' && (
                   <div className="space-y-6">
-                    {/* Stats */}
+                    {/* Stats Metrics Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
-                        { label: 'Total Orders', value: orders.length.toString(), icon: Package, color: '#3B82F6' },
-                        { label: 'Wallet Balance', value: '₹0', icon: Wallet, color: '#10B981' },
-                        { label: 'Wishlist Items', value: wishlistItems.length.toString(), icon: Heart, color: '#EF4444' },
-                        { label: 'Items Sold', value: '0', icon: Camera, color: '#A855F7' },
+                        { label: 'Purchased Gear', value: orders.length.toString(), icon: Package, color: '#FFB800' },
+                        { label: 'Wallet Balance', value: `₹${walletBalance.toLocaleString('en-IN')}`, icon: Wallet, color: '#10B981' },
+                        { label: 'Wishlist items', value: wishlistItems.length.toString(), icon: Heart, color: '#EF4444' },
+                        { label: 'Logged Tickets', value: tickets.length.toString(), icon: AlertCircle, color: '#3B82F6' },
                       ].map((stat) => (
-                        <div key={stat.label} className="bg-white rounded-2xl p-5 shadow-sm border border-nira-gray-dark">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: stat.color + '15', color: stat.color }}>
-                            <stat.icon className="w-5 h-5" />
+                        <div key={stat.label} className="bg-white rounded-2xl p-5 shadow-sm border border-nira-gray-dark hover:shadow-md transition-all">
+                          <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: stat.color + '15', color: stat.color }}>
+                            <stat.icon className="w-4 h-4" />
                           </div>
-                          <p className="font-heading font-bold text-2xl">{stat.value}</p>
-                          <p className="text-sm text-nira-text-secondary">{stat.label}</p>
+                          <p className="font-heading font-black text-xl text-nira-dark">{stat.value}</p>
+                          <p className="text-[10px] text-nira-text-secondary font-bold uppercase tracking-wider mt-0.5">{stat.label}</p>
                         </div>
                       ))}
                     </div>
-                    {/* Recent Orders */}
+
+                    {/* Quick Notifications Center Alert Indicator banner */}
+                    <div className="bg-nira-dark text-white rounded-2xl p-5 border border-nira-yellow/20 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-nira-yellow/5 rounded-full blur-xl" />
+                      <div className="w-10 h-10 bg-nira-yellow/10 border border-nira-yellow/20 rounded-xl flex items-center justify-center text-nira-yellow shrink-0">
+                        <Sparkles className="w-5 h-5 animate-spin" style={{ animationDuration: '6s' }} />
+                      </div>
+                      <div className="text-center sm:text-left flex-1">
+                        <h4 className="font-heading font-bold text-sm text-nira-yellow">Real-time Transaction alerts logging is active!</h4>
+                        <p className="text-[11px] text-nira-text-secondary mt-0.5 leading-relaxed">Place an order or trigger returns to capture live SMS simulation layouts inside the Navbar bell drawer.</p>
+                      </div>
+                      <button onClick={() => setActiveTab('wallet')} className="px-4 py-2 bg-white text-nira-dark font-bold text-xs rounded-xl hover:bg-nira-yellow transition-all shrink-0 cursor-pointer">Simulate Wallet UPI</button>
+                    </div>
+
+                    {/* Recent Orders block */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-heading font-semibold text-lg">Recent Orders</h3>
-                        <button onClick={() => setActiveTab('orders')} className="text-sm text-nira-yellow font-semibold">View All</button>
+                        <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider">Recent Transactional Orders</h3>
+                        <button onClick={() => setActiveTab('orders')} className="text-xs text-nira-yellow font-black uppercase tracking-wider cursor-pointer">View All</button>
                       </div>
                       <div className="space-y-3">
                         {orders.length > 0 ? (
                           orders.slice(0, 3).map((order) => (
-                            <div key={order._id} className="flex items-center justify-between p-3 bg-nira-gray rounded-xl">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center"><Package className="w-5 h-5 text-nira-text-secondary" /></div>
-                                <div>
-                                  <p className="font-medium text-sm truncate max-w-[150px] sm:max-w-xs">{order.items[0]?.product?.name || 'Package'}</p>
-                                  <p className="text-xs text-nira-text-secondary">{order._id.slice(-8).toUpperCase()} • {new Date(order.createdAt).toLocaleDateString()}</p>
+                            <div key={order._id} className="flex items-center justify-between p-3.5 bg-nira-gray/50 hover:bg-nira-gray/80 rounded-xl border border-nira-gray-dark transition-all">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 bg-white rounded-lg border border-nira-gray-dark flex items-center justify-center shrink-0"><Package className="w-5 h-5 text-nira-yellow" /></div>
+                                <div className="min-w-0">
+                                  <p className="font-bold text-xs text-nira-dark truncate max-w-[140px] sm:max-w-xs">{order.items[0]?.product?.name || 'Diagnostic Equipment Package'}</p>
+                                  <p className="text-[10px] text-nira-text-secondary mt-0.5">#{order._id.slice(-8).toUpperCase()} • {new Date(order.createdAt).toLocaleDateString()}</p>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <p className="font-semibold text-sm">{formatPrice(order.totalAmount)}</p>
-                                <span className="text-xs font-medium uppercase" style={{ color: statusColors[order.orderStatus] }}>{order.orderStatus}</span>
+                              <div className="flex items-center gap-3 shrink-0">
+                                <div className="text-right">
+                                  <p className="font-black text-xs text-nira-dark">{formatPrice(order.totalAmount)}</p>
+                                  <span className="text-[9px] font-black uppercase" style={{ color: statusColors[order.orderStatus] }}>
+                                    {order.returned ? 'Returned & Refunded' : order.orderStatus}
+                                  </span>
+                                </div>
+                                <button 
+                                  onClick={() => setSelectedOrder(order)}
+                                  className="p-1.5 hover:bg-nira-yellow hover:text-nira-dark bg-nira-dark text-white rounded-lg transition-colors cursor-pointer"
+                                  title="View Receipt & Tracking"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
                               </div>
                             </div>
                           ))
                         ) : (
-                          <div className="text-center py-6">
-                            <p className="text-nira-text-secondary text-sm">No orders yet.</p>
+                          <div className="text-center py-8">
+                            <p className="text-nira-text-secondary text-xs">No purchased orders discovered in diagnostics registry.</p>
                           </div>
                         )}
                       </div>
@@ -413,326 +703,558 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                {/* Orders Tab */}
+                {/* 2. Orders Tab */}
                 {activeTab === 'orders' && (
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-                    <h3 className="font-heading font-semibold text-lg mb-4">All Orders</h3>
+                    <div className="flex items-center justify-between mb-4 border-b border-nira-gray-dark pb-3">
+                      <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider">All Orders &amp; Receipts</h3>
+                      <span className="text-[10px] bg-nira-gray px-2 py-0.5 rounded-full font-bold text-nira-text-secondary">{orders.length} Total</span>
+                    </div>
                     <div className="space-y-3">
                       {orders.length > 0 ? (
                         orders.map((order) => (
-                          <div key={order._id} className="flex items-center justify-between p-4 border border-nira-gray-dark rounded-xl hover:border-nira-yellow transition-colors bg-white">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-nira-gray rounded-xl flex items-center justify-center flex-shrink-0">
-                                {order.items[0]?.product?.image ? (
-                                  <Image src={order.items[0].product.image} alt="product" width={32} height={32} className="object-contain" />
-                                ) : (
-                                  <Package className="w-6 h-6" />
-                                )}
-                              </div>
-                              <div>
-                                <p className="font-medium truncate max-w-[200px] sm:max-w-md">{order.items[0]?.product?.name || 'Product'}</p>
-                                <p className="text-sm text-nira-text-secondary">{order._id.toUpperCase()} • Ordered on {new Date(order.createdAt).toLocaleDateString()}</p>
+                          <div key={order._id} className="p-4 bg-nira-gray/40 hover:bg-nira-gray/70 border border-nira-gray-dark rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                            <div className="flex items-start gap-3 min-w-0">
+                              <div className="w-10 h-10 bg-white rounded-xl border border-nira-gray-dark flex items-center justify-center shrink-0 mt-0.5"><Package className="w-5 h-5 text-nira-yellow" /></div>
+                              <div className="min-w-0">
+                                <p className="font-bold text-xs text-nira-dark truncate max-w-[200px] sm:max-w-sm">{order.items[0]?.product?.name || 'Visual Pack'}</p>
+                                <p className="text-[10px] text-nira-text-secondary mt-0.5">Reference ID: <span className="font-mono">{order._id}</span></p>
+                                <div className="flex gap-3 text-[9px] text-nira-text-secondary mt-1 font-semibold">
+                                  <span>Date: {new Date(order.createdAt).toLocaleString()}</span>
+                                  <span>•</span>
+                                  <span className="text-nira-dark">Payable: {formatPrice(order.totalAmount)}</span>
+                                </div>
                               </div>
                             </div>
-                            <div className="text-right flex-shrink-0 ml-4">
-                              <p className="font-heading font-bold">{formatPrice(order.totalAmount)}</p>
-                              <span className="text-xs font-bold uppercase px-2 py-0.5 rounded-lg" style={{ backgroundColor: statusColors[order.orderStatus] + '15', color: statusColors[order.orderStatus] }}>{order.orderStatus}</span>
+                            <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                              <div className="text-right">
+                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                  order.returned ? 'bg-red-100 text-red-800' :
+                                  order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-800' :
+                                  'bg-amber-100 text-amber-800'
+                                }`}>
+                                  {order.returned ? 'Refunded' : order.orderStatus}
+                                </span>
+                              </div>
+                              <button 
+                                onClick={() => setSelectedOrder(order)}
+                                className="px-3.5 py-1.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs rounded-xl flex items-center gap-1 transition-all cursor-pointer"
+                              >
+                                Inspect &amp; Track <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
                         ))
                       ) : (
                         <div className="text-center py-12">
-                          <Package className="w-12 h-12 text-nira-gray-dark mx-auto mb-3" />
-                          <p className="text-nira-text-secondary">You haven&apos;t placed any orders yet.</p>
-                          <Link href="/buy" className="text-nira-yellow font-semibold mt-2 inline-block">Start Shopping</Link>
+                          <p className="text-nira-text-secondary text-xs">No orders recorded yet. Try checking out our marketplace!</p>
                         </div>
                       )}
                     </div>
                   </div>
                 )}
 
-                {/* Wallet Tab */}
+                {/* 3. Loyalty Wallet Tab */}
                 {activeTab === 'wallet' && (
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-nira-dark to-nira-dark/80 rounded-2xl p-6 text-white shadow-lg">
-                      <p className="text-white/60 text-sm mb-1">Available Balance</p>
-                      <p className="font-heading font-black text-4xl mb-4">₹0</p>
-                      <div className="flex gap-3">
-                        <button disabled className="px-4 py-2 bg-nira-yellow text-nira-dark font-semibold text-sm rounded-lg opacity-50">Withdraw</button>
-                        <button disabled className="px-4 py-2 bg-white/10 text-white font-semibold text-sm rounded-lg opacity-50">Add Money</button>
+                    <div className="grid sm:grid-cols-3 gap-6">
+                      
+                      {/* Balance visual card */}
+                      <div className="bg-nira-dark text-white rounded-2xl p-6 border border-nira-yellow/20 relative overflow-hidden flex flex-col justify-between sm:col-span-1 shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-nira-yellow/5 rounded-full blur-xl" />
+                        <div>
+                          <p className="text-[10px] text-nira-yellow font-black uppercase tracking-widest">Available Cash Balance</p>
+                          <p className="font-heading font-black text-3xl mt-1.5">₹{walletBalance.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div className="mt-8 pt-4 border-t border-white/10">
+                          <p className="text-[9px] text-nira-text-secondary uppercase font-bold">Estimated Loyalty Score</p>
+                          <p className="text-xs font-bold text-white mt-0.5">✨ {Math.round(walletBalance * 0.1)} Points</p>
+                        </div>
+                      </div>
+
+                      {/* Deposit Simulator Box */}
+                      <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark sm:col-span-2 shadow-sm">
+                        <h4 className="font-heading font-bold text-sm text-nira-dark uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                          <Wallet className="w-4 h-4 text-nira-yellow" /> UPI Credit Simulator
+                        </h4>
+                        <p className="text-xs text-nira-text-secondary leading-relaxed mb-4">Simulate an instant UPI loading process to test partial checkout pay features or COD waivers.</p>
+                        <form onSubmit={handleWalletTopUp} className="flex gap-2">
+                          <input
+                            type="number"
+                            placeholder="Deposit amount (e.g. 5000)"
+                            value={topUpAmount}
+                            onChange={(e) => setTopUpAmount(e.target.value)}
+                            className="flex-1 px-4 py-3 bg-nira-gray rounded-xl text-xs border border-transparent focus:border-nira-yellow focus:bg-white focus:outline-none"
+                            disabled={depositing}
+                          />
+                          <button
+                            type="submit"
+                            disabled={depositing}
+                            className="px-5 py-3 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            {depositing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Plus className="w-4 h-4" /> Load Credit</>}
+                          </button>
+                        </form>
                       </div>
                     </div>
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-                      <h3 className="font-heading font-semibold text-lg mb-4">Transactions</h3>
-                      <div className="text-center py-12">
-                        <p className="text-nira-text-secondary text-sm">No transactions yet.</p>
+
+                    {/* History transaction listing */}
+                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark shadow-sm">
+                      <h4 className="font-heading font-bold text-sm text-nira-dark uppercase tracking-wider mb-4 border-b border-nira-gray-dark pb-3">Wallet transaction statements</h4>
+                      <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                        {walletHistory.length > 0 ? (
+                          walletHistory.map((w, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-3.5 bg-nira-gray/30 rounded-xl border border-nira-gray-dark/50">
+                              <div>
+                                <p className="text-xs font-bold text-nira-dark">{w.description}</p>
+                                <p className="text-[9px] text-nira-text-secondary mt-0.5">{new Date(w.date).toLocaleString()}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className={`font-black text-xs ${w.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}`}>
+                                  {w.type === 'credit' ? '+' : '-'} ₹{w.amount.toLocaleString('en-IN')}
+                                </p>
+                                <span className="text-[8px] uppercase bg-white border border-nira-gray-dark px-1.5 py-0.5 rounded font-black text-emerald-600 tracking-wider">Success</span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8">
+                            <p className="text-nira-text-secondary text-xs">No transactions recorded yet in statement history.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Wishlist */}
-                {activeTab === 'wishlist' && (
+                {/* 4. Sell Gear Tab (Creator seller submission) */}
+                {activeTab === 'sell' && (
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="font-heading font-semibold text-lg">Your Wishlist</h3>
-                      <p className="text-sm text-nira-text-secondary">{wishlistItems.length} items saved</p>
+                    <div className="mb-6 border-b border-nira-gray-dark pb-4">
+                      <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider flex items-center gap-1.5">
+                        <Camera className="w-5 h-5 text-nira-yellow animate-bounce" /> Creator Sell Gear Hub
+                      </h3>
+                      <p className="text-xs text-nira-text-secondary leading-relaxed mt-1">Submit high-end cinematography gear details. Our backend will index it immediately and display it inside global buying markets!</p>
                     </div>
 
+                    <div className="mb-6 bg-gradient-to-r from-nira-dark to-black p-5 rounded-2xl border border-nira-yellow/20 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <h4 className="text-xs font-black uppercase text-nira-yellow tracking-wider flex items-center gap-1.5">
+                          <Sparkles className="w-4 h-4 text-nira-yellow animate-pulse" /> Enterprise Partner Central Hub
+                        </h4>
+                        <p className="text-[10px] text-white/60 leading-relaxed mt-1">
+                          Looking to list freelance services (video editing, reels cuts, photo grading), manage bulk inventories, track UPI payouts, or configure Madurai studio location KYC?
+                        </p>
+                      </div>
+                      <Link 
+                        href="/seller" 
+                        className="px-4 py-2 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow shrink-0 text-center cursor-pointer"
+                      >
+                        Enter Partner Central
+                      </Link>
+                    </div>
+
+                    <form onSubmit={handlePublishGear} className="space-y-4">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Product Gear Title</label>
+                          <input
+                            type="text"
+                            placeholder="Sony Alpha A7 IV Mirrorless"
+                            value={sellForm.name}
+                            onChange={(e) => setSellForm({ ...sellForm, name: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Brand Manufacturer</label>
+                          <input
+                            type="text"
+                            placeholder="Sony"
+                            value={sellForm.brand}
+                            onChange={(e) => setSellForm({ ...sellForm, brand: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Market Category</label>
+                          <select
+                            value={sellForm.category}
+                            onChange={(e) => setSellForm({ ...sellForm, category: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
+                          >
+                            <option>Cameras</option>
+                            <option>Lenses</option>
+                            <option>Audio</option>
+                            <option>Lighting</option>
+                            <option>Accessories</option>
+                          </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Physical Diagnostics Grade</label>
+                          <select
+                            value={sellForm.grade}
+                            onChange={(e) => setSellForm({ ...sellForm, grade: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
+                          >
+                            <option>Like New</option>
+                            <option>Excellent</option>
+                            <option>Good</option>
+                            <option>Fair</option>
+                          </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Asking Price (₹ INR)</label>
+                          <input
+                            type="number"
+                            placeholder="135000"
+                            value={sellForm.price}
+                            onChange={(e) => setSellForm({ ...sellForm, price: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Original Purchase Price (₹ INR)</label>
+                          <input
+                            type="number"
+                            placeholder="165000"
+                            value={sellForm.originalPrice}
+                            onChange={(e) => setSellForm({ ...sellForm, originalPrice: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Diagnostic Features & Specifications (Specs)</label>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          <div className="flex gap-2">
+                            <input type="text" placeholder="Resolution" value={sellForm.specKey1} onChange={(e) => setSellForm({...sellForm, specKey1: e.target.value})} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="24.2 MP" value={sellForm.specVal1} onChange={(e) => setSellForm({...sellForm, specVal1: e.target.value})} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                          </div>
+                          <div className="flex gap-2">
+                            <input type="text" placeholder="Optical Zoom" value={sellForm.specKey2} onChange={(e) => setSellForm({...sellForm, specKey2: e.target.value})} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="3x Kit Zoom" value={sellForm.specVal2} onChange={(e) => setSellForm({...sellForm, specVal2: e.target.value})} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Equipment Description & Condition History</label>
+                        <textarea
+                          placeholder="List any scratches, repair history, usage duration, or package items..."
+                          value={sellForm.description}
+                          onChange={(e) => setSellForm({ ...sellForm, description: e.target.value })}
+                          className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                          rows={3}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={submittingGear}
+                        className="w-full py-4 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {submittingGear ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Publish Listing to Catalogue</>}
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {/* 5. CRM Support & Diagnostics Tab */}
+                {activeTab === 'support-tickets' && (
+                  <div className="grid lg:grid-cols-3 gap-6">
+                    
+                    {/* Left Panel: Log new ticket form */}
+                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark lg:col-span-1 shadow-sm">
+                      <h4 className="font-heading font-bold text-sm text-nira-dark uppercase tracking-wider mb-4 border-b border-nira-gray-dark pb-3">Log support ticket</h4>
+                      <form onSubmit={handleCreateTicket} className="space-y-4">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Problem Category</label>
+                          <select
+                            value={ticketCategory}
+                            onChange={(e) => setTicketCategory(e.target.value)}
+                            className="px-3.5 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none cursor-pointer"
+                          >
+                            <option>Buy</option>
+                            <option>Sell</option>
+                            <option>Rent</option>
+                            <option>Payments</option>
+                            <option>Technical</option>
+                          </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Brief Subject</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Razorpay payment got stuck"
+                            value={ticketSubject}
+                            onChange={(e) => setTicketSubject(e.target.value)}
+                            className="px-3.5 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Description Details</label>
+                          <textarea
+                            placeholder="Provide diagnostic error codes, order references, or equipment faults..."
+                            value={ticketDesc}
+                            onChange={(e) => setTicketDesc(e.target.value)}
+                            className="px-3.5 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            rows={4}
+                            required
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={creatingTicket}
+                          className="w-full py-3.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          {creatingTicket ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Plus className="w-4 h-4" /> Submit ticket</>}
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Right Panel: Tickets list / conversations thread */}
+                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark lg:col-span-2 shadow-sm flex flex-col min-h-[400px]">
+                      {selectedTicket ? (
+                        <div className="flex-1 flex flex-col min-h-[380px]">
+                          <div className="flex items-center justify-between border-b border-nira-gray-dark pb-3 mb-4">
+                            <div>
+                              <button onClick={() => setSelectedTicket(null)} className="text-xs font-bold text-nira-yellow hover:underline flex items-center gap-1 cursor-pointer">
+                                <CornerDownLeft className="w-3.5 h-3.5" /> Back to List
+                              </button>
+                              <h4 className="font-heading font-black text-sm text-nira-dark mt-1 truncate max-w-md">{selectedTicket.subject}</h4>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                              selectedTicket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800 animate-pulse'
+                            }`}>
+                              {selectedTicket.status}
+                            </span>
+                          </div>
+
+                          {/* Message dialogue bubble loops */}
+                          <div className="flex-1 overflow-y-auto space-y-3 mb-4 p-3 bg-nira-gray/30 rounded-2xl border border-nira-gray-dark shadow-inner max-h-[260px]">
+                            <div className="bg-white p-3 rounded-xl border border-nira-gray-dark max-w-[85%]">
+                              <p className="text-[10px] font-black text-nira-dark mb-1">Original Description</p>
+                              <p className="text-xs text-nira-text-secondary leading-relaxed">{selectedTicket.description}</p>
+                              <span className="text-[8px] text-nira-text-secondary mt-1 block">{new Date(selectedTicket.createdAt).toLocaleString()}</span>
+                            </div>
+
+                            {selectedTicket.conversations?.map((msg, index) => (
+                              <div 
+                                key={index} 
+                                className={`p-3 rounded-xl border max-w-[85%] ${
+                                  msg.sender === 'agent' 
+                                    ? 'bg-nira-dark text-white border-transparent ml-auto' 
+                                    : 'bg-white text-nira-dark border-nira-gray-dark'
+                                }`}
+                              >
+                                <p className="text-[9px] font-black uppercase tracking-wider text-nira-yellow mb-0.5">{msg.sender === 'agent' ? 'NIRA6 Diagnostics bot' : 'Creator'}</p>
+                                <p className="text-xs leading-relaxed">{msg.message}</p>
+                                <span className="text-[8px] text-nira-text-secondary/80 mt-1 block">{new Date(msg.timestamp).toLocaleString()}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 flex flex-col">
+                          <h4 className="font-heading font-bold text-sm text-nira-dark uppercase tracking-wider mb-4 border-b border-nira-gray-dark pb-3">Active Diagnostics Tickets</h4>
+                          <div className="space-y-3 flex-1 overflow-y-auto max-h-[360px]">
+                            {tickets.length > 0 ? (
+                              tickets.map((t) => (
+                                <div 
+                                  key={t._id} 
+                                  onClick={() => setSelectedTicket(t)}
+                                  className="p-4 bg-nira-gray/30 hover:bg-nira-gray/70 border border-nira-gray-dark rounded-xl flex items-center justify-between gap-4 cursor-pointer transition-all"
+                                >
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="px-2 py-0.5 bg-nira-dark text-nira-yellow text-[8px] font-black uppercase rounded">CRM-{t._id.slice(-6).toUpperCase()}</span>
+                                      <span className="text-[10px] text-nira-text-secondary font-bold uppercase">{t.category}</span>
+                                    </div>
+                                    <p className="font-bold text-xs text-nira-dark truncate max-w-xs sm:max-w-md mt-1">{t.subject}</p>
+                                    <span className="text-[9px] text-nira-text-secondary block mt-0.5">{new Date(t.createdAt).toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                                      t.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                                    }`}>
+                                      {t.status}
+                                    </span>
+                                    <ChevronRight className="w-4 h-4 text-nira-text-secondary" />
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-center py-12 flex-1 flex flex-col items-center justify-center">
+                                <MessageSquare className="w-10 h-10 text-nira-text-secondary/40 mb-2" />
+                                <p className="text-nira-text-secondary text-xs">No active CRM diagnostics logged. Perfect gear health!</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. Wishlist Tab */}
+                {activeTab === 'wishlist' && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
+                    <h3 className="font-heading font-semibold text-lg mb-6">My Wishlist</h3>
                     {wishlistItems.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {wishlistItems.map((product) => (
-                          <ProductCard key={product._id} product={product} />
+                          <ProductCard key={product.id} product={product} />
                         ))}
                       </div>
                     ) : (
-                      <div className="py-12 text-center">
-                        <Heart className="w-12 h-12 text-nira-gray-dark mx-auto mb-3" />
-                        <h3 className="font-heading font-semibold text-lg mb-2">Wishlist is empty</h3>
-                        <p className="text-nira-text-secondary text-sm">Items you save will appear here. Start exploring gear!</p>
-                        <Link href="/buy" className="mt-4 inline-block px-6 py-2 bg-nira-yellow text-nira-dark font-semibold rounded-xl">Browse Store</Link>
+                      <div className="text-center py-12">
+                        <p className="text-nira-text-secondary text-sm mb-4">Your wishlist is empty.</p>
+                        <Link href="/buy" className="px-6 py-3 bg-nira-yellow text-nira-dark font-semibold rounded-xl inline-block cursor-pointer">Explore Gear</Link>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Settings */}
-                {activeTab === 'settings' && (
-                  <div className="bg-white rounded-2xl p-6 space-y-4 shadow-sm border border-nira-gray-dark">
-                    <h3 className="font-heading font-semibold text-lg mb-2">Account Settings</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-1 block">Full Name</label>
-                        <input type="text" defaultValue={userInfo.name} className="w-full px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow" />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-1 block">Email</label>
-                        <input type="email" disabled defaultValue={userInfo.email} className="w-full px-4 py-3 bg-nira-gray rounded-xl text-sm opacity-60" />
-                      </div>
-                    </div>
-                    <button className="px-6 py-3 bg-nira-yellow text-nira-dark font-semibold rounded-xl hover:bg-nira-yellow-dark transition-colors">Save Changes</button>
-                  </div>
-                )}
-
-                {/* Bulk Import Tab */}
+                {/* 7. Bulk Import Excel Tab */}
                 {activeTab === 'bulk-import' && (
                   <div className="space-y-6">
-                    {/* Header */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div>
-                        <h3 className="font-heading font-bold text-xl mb-1 flex items-center gap-2 text-nira-dark">
-                          <FileSpreadsheet className="w-6 h-6 text-nira-yellow" /> Excel/CSV Bulk Product Import
-                        </h3>
-                        <p className="text-nira-text-secondary text-sm">
-                          Instantly upload your product list. Drag & drop your Excel sheet, preview live rows, check validation issues, and commit them directly.
-                        </p>
+                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark shadow-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-nira-gray-dark pb-4 mb-4">
+                        <div>
+                          <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider flex items-center gap-1.5"><FileSpreadsheet className="w-5 h-5 text-nira-yellow" /> Excel Bulk Catalogue Import</h3>
+                          <p className="text-xs text-nira-text-secondary mt-1">Download the preformatted template spreadsheet, fill in your product variables, and drop it below to bulk-index catalogs.</p>
+                        </div>
+                        <button onClick={downloadTemplate} className="px-4 py-2.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 transition-all shrink-0 cursor-pointer">
+                          <Download className="w-4 h-4" /> Download Template
+                        </button>
                       </div>
-                      <button
-                        onClick={downloadTemplate}
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-nira-gray hover:bg-nira-gray-dark text-nira-dark font-semibold text-sm rounded-xl transition-all flex-shrink-0"
-                      >
-                        <Download className="w-4 h-4 text-nira-text" /> Download Excel Template
-                      </button>
+
+                      {/* Dropzone wrapper */}
+                      <label className="border-2 border-dashed border-nira-gray-dark hover:border-nira-yellow rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-nira-gray/10 hover:bg-nira-gray/20">
+                        <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileChange} className="hidden" />
+                        <FileUp className="w-8 h-8 text-nira-text-secondary/70 mb-3" />
+                        <p className="text-xs font-bold text-nira-dark mb-1">Click or drag Excel workbook spreadsheet here</p>
+                        <p className="text-[10px] text-nira-text-secondary">Compatible with Microsoft Excel .xlsx, .xls, or standard CSV files</p>
+                      </label>
                     </div>
 
-                    {/* Alert / Errors */}
+                    {/* Bulk parse listing logs grid */}
+                    {parsing && (
+                      <div className="bg-white rounded-2xl p-8 text-center border border-nira-gray-dark shadow-sm">
+                        <Loader2 className="w-6 h-6 animate-spin text-nira-yellow mx-auto mb-2" />
+                        <p className="text-xs text-nira-text-secondary">Synthesizing worksheets and checking integrity constraints...</p>
+                      </div>
+                    )}
+
                     {uploadError && (
-                      <div className="bg-nira-error/5 border border-nira-error/20 text-nira-error rounded-2xl p-4 flex gap-3 items-start animate-scale-in">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <div className="bg-red-50 text-red-800 p-4 rounded-2xl border border-red-200 flex items-start gap-2.5 shadow-sm text-xs">
+                        <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-semibold text-sm">Upload Issue Detected</p>
-                          <p className="text-xs mt-0.5 opacity-90">{uploadError}</p>
+                          <p className="font-bold">Parsing Integrity Error discovered</p>
+                          <p className="mt-0.5 text-red-700">{uploadError}</p>
                         </div>
                       </div>
                     )}
 
-                    {/* Success State */}
                     {successData && (
-                      <div className="bg-nira-success/5 border border-nira-success/20 text-nira-success rounded-2xl p-6 flex flex-col items-center text-center gap-4 animate-scale-in">
-                        <div className="w-12 h-12 bg-nira-success/10 rounded-full flex items-center justify-center">
-                          <CheckCircle2 className="w-6 h-6" />
-                        </div>
+                      <div className="bg-emerald-50 text-emerald-800 p-4 rounded-2xl border border-emerald-200 flex items-start gap-2.5 shadow-sm text-xs">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                         <div>
-                          <h4 className="font-heading font-bold text-lg text-nira-dark">Bulk Upload Complete!</h4>
-                          <p className="text-sm text-nira-text-secondary mt-1">
-                            Successfully imported <span className="font-bold text-nira-success">{successData.imported}</span> of <span className="font-bold">{successData.total}</span> products into the NIRA6 platform.
-                          </p>
+                          <p className="font-bold">Spreadsheet imported successfully!</p>
+                          <p className="mt-0.5 text-emerald-700">Out of {successData.total} items, {successData.imported} passed validation and were successfully loaded in database stores.</p>
                         </div>
-                        <Link
-                          href="/buy"
-                          className="px-6 py-2 bg-nira-yellow text-nira-dark font-bold rounded-xl text-sm hover:bg-nira-yellow-dark transition-colors"
-                        >
-                          View in Shop
-                        </Link>
                       </div>
                     )}
 
-                    {/* Upload Drop Zone / Progress */}
-                    {importing ? (
-                      <div className="bg-white rounded-2xl p-12 border border-nira-gray-dark flex flex-col items-center justify-center text-center shadow-sm">
-                        <Loader2 className="w-10 h-10 text-nira-yellow animate-spin mb-4" />
-                        <h4 className="font-heading font-bold text-lg mb-1">Importing Products...</h4>
-                        <p className="text-nira-text-secondary text-sm mb-4">Please wait while we insert your catalog into MongoDB.</p>
-                        <div className="w-full max-w-xs bg-nira-gray rounded-full h-2 overflow-hidden">
-                          <div className="bg-nira-yellow h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
-                        </div>
-                      </div>
-                    ) : parsedProducts.length === 0 ? (
-                      <div className="bg-white rounded-2xl p-10 border border-nira-gray-dark shadow-sm flex flex-col items-center justify-center text-center group transition-all hover:border-nira-yellow duration-300">
-                        <div className="w-16 h-16 bg-nira-gray rounded-2xl flex items-center justify-center text-nira-text-secondary mb-4 group-hover:bg-nira-yellow/10 group-hover:text-nira-yellow transition-all duration-300">
-                          {parsing ? (
-                            <Loader2 className="w-8 h-8 animate-spin text-nira-yellow" />
-                          ) : (
-                            <FileUp className="w-8 h-8" />
-                          )}
-                        </div>
-                        <h4 className="font-heading font-semibold text-lg mb-1">
-                          {parsing ? 'Parsing Excel Data...' : 'Upload your Excel or CSV sheet'}
-                        </h4>
-                        <p className="text-nira-text-secondary text-sm max-w-sm mb-6">
-                          Select or drag your product worksheet here. Supports `.xlsx`, `.xls`, or `.csv` files.
-                        </p>
-                        <label className="px-6 py-2.5 bg-nira-dark text-white font-semibold rounded-xl text-sm cursor-pointer hover:bg-nira-dark/80 transition-colors shadow-sm">
-                          {parsing ? 'Parsing...' : 'Select File'}
-                          <input
-                            type="file"
-                            accept=".xlsx, .xls, .csv"
-                            onChange={handleFileChange}
-                            disabled={parsing}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {/* Summary Block */}
-                        <div className="bg-white rounded-2xl p-4 border border-nira-gray-dark flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-                          <div className="flex gap-4 items-center">
-                            <div className="w-10 h-10 bg-nira-yellow/10 rounded-xl flex items-center justify-center text-nira-yellow">
-                              <FileSpreadsheet className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <p className="font-semibold text-sm text-nira-dark">Parsed Product Catalog</p>
-                              <p className="text-xs text-nira-text-secondary">
-                                Found {parsedProducts.length} rows. Valid: {parsedProducts.filter(p => p.errors.length === 0).length} • Invalid: {parsedProducts.filter(p => p.errors.length > 0).length}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-3 w-full sm:w-auto">
-                            <button
-                              onClick={() => setParsedProducts([])}
-                              className="w-1/2 sm:w-auto px-4 py-2 border border-nira-gray-dark hover:bg-nira-gray text-nira-dark font-semibold text-sm rounded-xl transition-all"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handleImportConfirm}
-                              disabled={parsedProducts.filter(p => p.errors.length === 0).length === 0}
-                              className="w-1/2 sm:w-auto px-6 py-2 bg-nira-yellow text-nira-dark font-bold text-sm rounded-xl hover:bg-nira-yellow-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-                            >
-                              <Upload className="w-4 h-4" /> Confirm & Import ({parsedProducts.filter(p => p.errors.length === 0).length})
-                            </button>
-                          </div>
+                    {parsedProducts.length > 0 && (
+                      <div className="bg-white rounded-2xl border border-nira-gray-dark overflow-hidden shadow-sm">
+                        <div className="p-4 bg-nira-gray border-b border-nira-gray-dark flex items-center justify-between">
+                          <h4 className="text-xs font-bold text-nira-dark uppercase tracking-wider">Integrity Audit Logs ({parsedProducts.length} items parsed)</h4>
+                          <button
+                            onClick={handleBulkImportSubmit}
+                            disabled={importing}
+                            className="px-4 py-2 bg-nira-yellow text-nira-dark font-bold text-xs uppercase rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : `Publish ${parsedProducts.filter(p => p.errors.length === 0).length} valid items`}
+                          </button>
                         </div>
 
-                        {/* Preview Table */}
-                        <div className="bg-white rounded-2xl border border-nira-gray-dark shadow-sm overflow-hidden animate-slide-up">
-                          <div className="p-4 border-b border-nira-gray-dark bg-nira-gray/50">
-                            <h4 className="font-heading font-semibold text-sm">Products Preview Grid</h4>
-                          </div>
-                          <div className="overflow-x-auto max-h-[400px]">
-                            <table className="w-full text-left border-collapse text-xs">
-                              <thead>
-                                <tr className="border-b border-nira-gray-dark bg-nira-gray/30 text-nira-text-secondary font-medium">
-                                  <th className="p-3 w-16 text-center">Row</th>
-                                  <th className="p-3 min-w-[150px]">Product Name</th>
-                                  <th className="p-3">Brand</th>
-                                  <th className="p-3">Category</th>
-                                  <th className="p-3">Price</th>
-                                  <th className="p-3">Grade</th>
-                                  <th className="p-3">Status</th>
+                        <div className="overflow-x-auto max-h-[300px]">
+                          <table className="w-full text-left text-xs border-collapse">
+                            <thead>
+                              <tr className="bg-nira-gray/50 text-nira-text-secondary font-bold border-b border-nira-gray-dark">
+                                <th className="p-3 text-center w-12">Row</th>
+                                <th className="p-3">Title</th>
+                                <th className="p-3">Brand</th>
+                                <th className="p-3">Category</th>
+                                <th className="p-3">Price</th>
+                                <th className="p-3">Grade</th>
+                                <th className="p-3">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {parsedProducts.map((p, idx) => (
+                                <tr key={idx} className="border-b border-nira-gray-dark last:border-0 hover:bg-nira-gray/20">
+                                  <td className="p-3 font-semibold text-center text-nira-text-secondary">{p.rowNumber}</td>
+                                  <td className="p-3">
+                                    <div className="font-medium text-nira-dark truncate max-w-xs">{p.name || <span className="text-red-500/60 italic">&lt;Missing&gt;</span>}</div>
+                                  </td>
+                                  <td className="p-3 text-nira-dark">{p.brand || <span className="text-red-500/60 italic">&lt;Missing&gt;</span>}</td>
+                                  <td className="p-3 text-nira-dark">{p.category || <span className="text-red-500/60 italic">&lt;Missing&gt;</span>}</td>
+                                  <td className="p-3 font-semibold text-nira-dark">{isNaN(p.price) ? <span className="text-red-500 font-medium italic">&lt;Invalid&gt;</span> : `₹${p.price.toLocaleString('en-IN')}`}</td>
+                                  <td className="p-3">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                      p.grade === 'Like New' ? 'bg-emerald-100 text-emerald-800' :
+                                      p.grade === 'Excellent' ? 'bg-blue-100 text-blue-800' :
+                                      p.grade === 'Good' ? 'bg-amber-100 text-amber-800' :
+                                      p.grade === 'Fair' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'
+                                    }`}>{p.grade || 'Unknown'}</span>
+                                  </td>
+                                  <td className="p-3">
+                                    {p.errors.length === 0 ? (
+                                      <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                                        <CheckCircle2 className="w-3.5 h-3.5" /> Ready
+                                      </span>
+                                    ) : (
+                                      <div className="text-red-500 font-semibold flex flex-col gap-0.5">
+                                        {p.errors.map((e: string, eIdx: number) => (
+                                          <span key={eIdx} className="flex items-center gap-1 text-[10px] bg-red-50 text-red-700 px-1.5 py-0.5 rounded border border-red-100">
+                                            <AlertCircle className="w-3 h-3 flex-shrink-0" /> {e}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {parsedProducts.map((p, idx) => (
-                                  <tr key={idx} className="border-b border-nira-gray-dark last:border-0 hover:bg-nira-gray/20">
-                                    <td className="p-3 font-semibold text-center text-nira-text-secondary">{p.rowNumber}</td>
-                                    <td className="p-3">
-                                      <div className="font-medium text-nira-dark truncate max-w-xs">{p.name || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</div>
-                                      {p.description && <p className="text-[10px] text-nira-text-secondary truncate max-w-xs">{p.description}</p>}
-                                    </td>
-                                    <td className="p-3 text-nira-dark">{p.brand || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</td>
-                                    <td className="p-3 text-nira-dark">{p.category || <span className="text-nira-error/60 italic">&lt;Missing&gt;</span>}</td>
-                                    <td className="p-3 font-semibold text-nira-dark">{isNaN(p.price) ? <span className="text-nira-error font-medium italic">&lt;Invalid&gt;</span> : `₹${p.price.toLocaleString('en-IN')}`}</td>
-                                    <td className="p-3">
-                                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                        p.grade === 'Like New' ? 'bg-emerald-100 text-emerald-800' :
-                                        p.grade === 'Excellent' ? 'bg-blue-100 text-blue-800' :
-                                        p.grade === 'Good' ? 'bg-amber-100 text-amber-800' :
-                                        p.grade === 'Fair' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'
-                                      }`}>{p.grade || 'Unknown'}</span>
-                                    </td>
-                                    <td className="p-3">
-                                      {p.errors.length === 0 ? (
-                                        <span className="text-nira-success font-semibold flex items-center gap-1">
-                                          <CheckCircle2 className="w-3.5 h-3.5" /> Ready
-                                        </span>
-                                      ) : (
-                                        <div className="text-nira-error font-semibold flex flex-col gap-0.5">
-                                          {p.errors.map((e: string, eIdx: number) => (
-                                            <span key={eIdx} className="flex items-center gap-1 text-[10px] bg-red-50 text-red-700 px-1.5 py-0.5 rounded border border-red-100">
-                                              <AlertCircle className="w-3 h-3 flex-shrink-0" /> {e}
-                                            </span>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     )}
+                  </div>
+                )}
 
-                    {/* Columns Help Guide */}
-                    <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark shadow-sm">
-                      <h4 className="font-heading font-bold text-sm mb-3">📋 Excel Spreadsheet Columns Format Guide</h4>
-                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-                        <div className="p-3 bg-nira-gray rounded-xl">
-                          <p className="font-bold text-nira-dark mb-1">Required Core Fields</p>
-                          <ul className="list-disc list-inside space-y-1 text-nira-text-secondary">
-                            <li><code className="text-nira-dark font-bold font-mono">name</code>: Title of product</li>
-                            <li><code className="text-nira-dark font-bold font-mono">brand</code>: Brand/Manufacturer</li>
-                            <li><code className="text-nira-dark font-bold font-mono">category</code>: Product Category</li>
-                            <li><code className="text-nira-dark font-bold font-mono">price</code>: Cost (in INR, e.g. 15000)</li>
-                            <li><code className="text-nira-dark font-bold font-mono">image</code>: Absolute URL of image</li>
-                            <li><code className="text-nira-dark font-bold font-mono">grade</code>: &apos;Like New&apos;, &apos;Excellent&apos;, &apos;Good&apos;, &apos;Fair&apos;</li>
-                          </ul>
-                        </div>
-                        <div className="p-3 bg-nira-gray rounded-xl">
-                          <p className="font-bold text-nira-dark mb-1">Optional Details</p>
-                          <ul className="list-disc list-inside space-y-1 text-nira-text-secondary">
-                            <li><code className="text-nira-dark font-bold font-mono">conditionScore</code>: 0 to 100 number</li>
-                            <li><code className="text-nira-dark font-bold font-mono">stock</code>: Quantity (default 1)</li>
-                            <li><code className="text-nira-dark font-bold font-mono">description</code>: Text summary</li>
-                            <li><code className="text-nira-dark font-bold font-mono">seller</code>: e.g. &apos;NIRA6 Certified&apos;</li>
-                            <li><code className="text-nira-dark font-bold font-mono">warranty</code>: warranty term</li>
-                            <li><code className="text-nira-dark font-bold font-mono">featured</code> / <code className="text-nira-dark font-bold font-mono">trending</code>: &apos;TRUE&apos; or &apos;FALSE&apos;</li>
-                          </ul>
-                        </div>
-                        <div className="p-3 bg-nira-gray rounded-xl sm:col-span-2 lg:col-span-1">
-                          <p className="font-bold text-nira-dark mb-1">Specs Properties Map</p>
-                          <p className="text-nira-text-secondary leading-relaxed">
-                            You can map up to 5 custom spec key-value pairs using numbered columns:<br/>
-                            <code className="text-nira-dark font-bold font-mono bg-white px-1 py-0.5 rounded border">specs_key1</code>, <code className="text-nira-dark font-bold font-mono bg-white px-1 py-0.5 rounded border">specs_val1</code> etc.
-                          </p>
-                          <p className="text-nira-text-secondary mt-2">
-                            e.g. <code className="font-bold">specs_key1</code> = &quot;Driver Size&quot;, <code className="font-bold">specs_val1</code> = &quot;45mm&quot;
-                          </p>
-                        </div>
+                {/* 8. Settings Tab */}
+                {activeTab === 'settings' && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
+                    <h3 className="font-heading font-semibold text-lg mb-6">Account Settings</h3>
+                    <div className="space-y-4 max-w-md">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-nira-text-secondary">Full Name</label>
+                        <input type="text" defaultValue={userInfo.name} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" />
                       </div>
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-nira-text-secondary">Email Address</label>
+                        <input type="email" defaultValue={userInfo.email} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" disabled />
+                      </div>
+                      <button className="px-6 py-3 bg-nira-yellow text-nira-dark font-semibold rounded-xl hover:bg-nira-yellow-dark transition-colors cursor-pointer">Save Changes</button>
                     </div>
                   </div>
                 )}
@@ -741,7 +1263,160 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Glassmorphic Order Details & Interactive Delivery Timeline Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-nira-gray-dark">
+            <button 
+              onClick={() => {
+                setSelectedOrder(null);
+                setReturningOrderId(null);
+                setReturnReasonInput('');
+              }}
+              className="absolute top-4 right-4 p-2 bg-nira-gray rounded-full hover:bg-nira-gray-dark transition-colors cursor-pointer text-nira-dark"
+            >
+              Close Window
+            </button>
+
+            {/* Interactive Timeline Progress */}
+            <div className="mb-6">
+              <h4 className="font-heading font-bold text-xs uppercase tracking-widest text-nira-text-secondary mb-4">Diagnostics Tracking Timeline</h4>
+              
+              {selectedOrder.returned ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800">
+                  <CornerDownLeft className="w-5 h-5 text-red-600 animate-pulse shrink-0" />
+                  <div>
+                    <p className="font-bold text-xs">Returned &amp; Fully Refunded</p>
+                    <p className="text-[10px] text-red-700 mt-0.5">Return Reason: &quot;{selectedOrder.returnReason || 'Diagnostics Fault'}&quot;</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center relative py-4">
+                  <div className="absolute left-0 right-0 h-1 bg-nira-gray-dark z-0" />
+                  
+                  {/* Status Progress lines */}
+                  {['processing', 'inspected', 'shipped', 'delivered'].map((step, idx) => {
+                    const statusOrder = ['processing', 'inspected', 'shipped', 'delivered'];
+                    const currentIdx = statusOrder.indexOf(selectedOrder.orderStatus);
+                    const isActive = idx <= currentIdx;
+                    
+                    return (
+                      <div key={step} className="flex flex-col items-center z-10 relative">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black uppercase ${
+                          isActive ? 'bg-nira-yellow text-nira-dark border-2 border-nira-dark' : 'bg-white text-nira-text-secondary border-2 border-nira-gray-dark'
+                        }`}>
+                          {isActive ? '✓' : idx + 1}
+                        </div>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-nira-dark mt-1.5">{step}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Itemized Printer Friendly Tax invoice segment */}
+            <div id="tax-invoice-view" className="p-5 border border-nira-gray-dark rounded-2xl bg-nira-gray/10">
+              <div className="flex justify-between items-start mb-4 border-b border-nira-gray-dark pb-3">
+                <div>
+                  <h3 className="font-heading font-black text-sm uppercase tracking-wider text-nira-dark">NIRA6 SECURE DIAGNOSTICS</h3>
+                  <p className="text-[9px] text-nira-text-secondary">Diagnostics Reg No: 33AAFCN8972C1ZX</p>
+                </div>
+                <div className="text-right">
+                  <h3 className="text-xs font-bold text-nira-dark">TAX INVOICE</h3>
+                  <p className="text-[9px] text-nira-text-secondary">Ref: #{selectedOrder._id.slice(-8).toUpperCase()}</p>
+                </div>
+              </div>
+
+              {/* Items loops */}
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-nira-gray-dark text-nira-text-secondary font-bold">
+                    <th className="py-2">Item specifications</th>
+                    <th className="py-2 text-center w-12">Qty</th>
+                    <th className="py-2 text-right w-24">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedOrder.items.map((it, idx) => (
+                    <tr key={idx} className="border-b border-nira-gray-dark/50 last:border-0 text-nira-dark">
+                      <td className="py-2.5 truncate max-w-[240px]">{it.product.name}</td>
+                      <td className="py-2.5 text-center">{it.quantity}</td>
+                      <td className="py-2.5 text-right font-medium">{formatPrice(it.price * it.quantity)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* CGST, SGST tax break breakdowns */}
+              <div className="border-t border-nira-gray-dark mt-4 pt-3 space-y-1.5 text-xs text-nira-text-secondary">
+                <div className="flex justify-between"><span>Items Subtotal</span><span className="font-semibold text-nira-dark">{formatPrice(selectedOrder.totalAmount - (selectedOrder.taxAmount || 0) - (selectedOrder.platformFee || 199) + (selectedOrder.discountAmount || 0))}</span></div>
+                {selectedOrder.discountAmount ? (
+                  <div className="flex justify-between text-red-500"><span>Applied Discount ({selectedOrder.couponApplied || 'Coupon'})</span><span className="font-bold">- {formatPrice(selectedOrder.discountAmount)}</span></div>
+                ) : null}
+                <div className="flex justify-between"><span>CGST (9%)</span><span className="font-semibold text-nira-dark">{formatPrice(Math.round((selectedOrder.taxAmount || 0) / 2))}</span></div>
+                <div className="flex justify-between"><span>SGST (9%)</span><span className="font-semibold text-nira-dark">{formatPrice(Math.round((selectedOrder.taxAmount || 0) / 2))}</span></div>
+                <div className="flex justify-between"><span>Platform diagnostics fee</span><span className="font-semibold text-nira-dark">{formatPrice(selectedOrder.platformFee || 0)}</span></div>
+                <div className="h-px bg-nira-gray-dark my-1" />
+                <div className="flex justify-between font-bold text-nira-dark text-sm">
+                  <span>Grand total Paid</span><span>{formatPrice(selectedOrder.totalAmount)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Controls buttons */}
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <button 
+                onClick={() => window.print()}
+                className="flex-1 py-3 bg-nira-gray hover:bg-nira-gray-dark text-nira-dark font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Printer className="w-4 h-4" /> Print Tax Receipt
+              </button>
+
+              {/* Instant Wallet return handler triggers */}
+              {!selectedOrder.returned && selectedOrder.orderStatus !== 'cancelled' && (
+                returningOrderId === selectedOrder._id ? (
+                  <div className="flex-1 flex flex-col gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
+                    <input
+                      type="text"
+                      placeholder="Reason for return diagnostics..."
+                      value={returnReasonInput}
+                      onChange={(e) => setReturnReasonInput(e.target.value)}
+                      className="px-3 py-2 bg-white rounded-xl text-xs focus:outline-none border border-red-200"
+                    />
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleInitiateReturn(selectedOrder._id)}
+                        className="flex-1 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded-lg cursor-pointer"
+                      >
+                        Confirm Return &amp; Refund
+                      </button>
+                      <button 
+                        onClick={() => setReturningOrderId(null)}
+                        className="px-3 py-1.5 bg-white text-nira-dark border border-nira-gray-dark font-bold text-[10px] uppercase rounded-lg cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setReturningOrderId(selectedOrder._id)}
+                    className="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <CornerDownLeft className="w-4 h-4" /> Return Item &amp; Refund
+                  </button>
+                )
+              )}
+            </div>
+
+            <div className="mt-4 flex items-center justify-center gap-1 text-[10px] text-nira-text-secondary">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Standard 30-Point physical diagnostics verified statement.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

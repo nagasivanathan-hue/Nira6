@@ -9,6 +9,13 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   walletBalance: { type: Number, default: 0 },
+  walletTransactions: [{
+    type: { type: String, enum: ['credit', 'debit'] },
+    amount: { type: Number, required: true },
+    description: { type: String, required: true },
+    date: { type: Date, default: Date.now },
+    status: { type: String, default: 'completed' }
+  }],
   address: {
     street: String,
     city: String,

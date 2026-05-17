@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import Product from '@/models/Product';
+import { verifyAuth } from '@/lib/auth/auth';
 
 export async function GET(req: Request) {
   try {
@@ -40,6 +41,60 @@ export async function GET(req: Request) {
 
     const products = await productQuery;
     return NextResponse.json(products);
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const user = await verifyAuth(req);
+    if (!user) {
+      return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+    }
+
+    await dbConnect();
+    const body = await req.json();
+
+    const {
+      name,
+      brand,
+      category,
+      price,
+      originalPrice,
+      grade,
+      description,
+      image,
+      specs
+    } = body;
+
+    if (!name || !brand || !category || !price || !grade || !image) {
+      return NextResponse.json({ message: 'Missing required product parameters' }, { status: 400 });
+    }
+
+    const calculatedDiscount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+
+    const product = new Product({
+      name,
+      brand,
+      category,
+      price: Number(price),
+      originalPrice: originalPrice ? Number(originalPrice) : undefined,
+      discount: calculatedDiscount,
+      image,
+      images: [image],
+      grade,
+      rating: 4.5,
+      reviewCount: 0,
+      inStock: true,
+      specs: specs || {},
+      description: description || '',
+      seller: user.name || 'NIRA6 Creator'
+    });
+
+    const savedProduct = await product.save();
+    return NextResponse.json(savedProduct, { status: 201 });
   } catch (err) {
     const error = err as Error;
     return NextResponse.json({ message: error.message }, { status: 500 });
