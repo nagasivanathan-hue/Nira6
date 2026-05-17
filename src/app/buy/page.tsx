@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Search, SlidersHorizontal, Grid, List as ListIcon, X, Sparkles, Filter, Check, ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import { useAppDispatch, useAppSelector } from '@/store';
@@ -183,9 +184,11 @@ export default function BuyPage() {
                                   href={`/buy/${p.id}`}
                                   className="flex items-center gap-3 p-2 hover:bg-nira-gray rounded-xl transition-colors"
                                 >
-                                  <img 
+                                  <Image 
                                     src={p.image} 
                                     alt={p.name} 
+                                    width={40}
+                                    height={40}
                                     className="w-10 h-10 object-cover rounded-lg bg-nira-gray"
                                   />
                                   <div className="flex-1 min-w-0">
