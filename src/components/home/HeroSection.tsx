@@ -8,40 +8,40 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-[90vh] hero-gradient overflow-hidden flex items-center">
       {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-nira-yellow/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px]" />
-        <div className="absolute top-10 right-10 w-2 h-2 bg-nira-yellow rounded-full animate-pulse-glow" />
-        <div className="absolute top-40 left-20 w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce-gentle" />
-        <div className="absolute bottom-32 left-1/3 w-1 h-1 bg-nira-yellow/60 rounded-full animate-float" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-nira-yellow/10 rounded-full blur-[80px] sm:blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 sm:w-80 sm:h-80 bg-blue-500/10 rounded-full blur-[60px] sm:blur-[100px]" />
+        <div className="absolute top-10 right-10 w-2 h-2 bg-nira-yellow rounded-full animate-pulse-glow hidden sm:block" />
+        <div className="absolute top-40 left-20 w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce-gentle hidden sm:block" />
+        <div className="absolute bottom-32 left-1/3 w-1 h-1 bg-nira-yellow/60 rounded-full animate-float hidden sm:block" />
       </div>
 
       {/* Floating Product Images */}
       <motion.div
         animate={{ y: [0, -20, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-20 right-[15%] hidden xl:block"
+        className="absolute top-20 right-[15%] hidden xl:block pointer-events-none"
       >
         <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-2xl shadow-black/40 rotate-6">
-          <Image src="/assets/product-camera.png" alt="" fill className="object-cover" />
+          <Image src="/assets/product-camera.png" alt="Creator Camera" fill sizes="(max-width: 1280px) 0vw, 128px" priority className="object-cover" />
         </div>
       </motion.div>
       <motion.div
         animate={{ y: [0, 15, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-32 right-[10%] hidden xl:block"
+        className="absolute bottom-32 right-[10%] hidden xl:block pointer-events-none"
       >
         <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-2xl shadow-black/40 -rotate-6">
-          <Image src="/assets/product-drone.png" alt="" fill className="object-cover" />
+          <Image src="/assets/product-drone.png" alt="Creator Drone" fill sizes="(max-width: 1280px) 0vw, 112px" priority className="object-cover" />
         </div>
       </motion.div>
       <motion.div
         animate={{ y: [0, -15, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        className="absolute top-1/3 right-[5%] hidden xl:block"
+        className="absolute top-1/3 right-[5%] hidden xl:block pointer-events-none"
       >
         <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-2xl shadow-black/40 rotate-12">
-          <Image src="/assets/product-lens.png" alt="" fill className="object-cover" />
+          <Image src="/assets/product-lens.png" alt="Creator Lens" fill sizes="(max-width: 1280px) 0vw, 96px" priority className="object-cover" />
         </div>
       </motion.div>
 

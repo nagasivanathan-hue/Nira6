@@ -145,17 +145,17 @@ export default function Navbar() {
             </div>
 
             {/* Action Icons */}
-            <div className="flex items-center gap-2">
-              <button onClick={() => dispatch(toggleSearch())} className="md:hidden p-2 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Search">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button onClick={() => dispatch(toggleSearch())} className="md:hidden p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Search">
                 <Search className="w-5 h-5" />
               </button>
-              <Link href="/dashboard" className="p-2 hover:bg-nira-gray rounded-lg transition-colors hidden sm:flex" aria-label="Wishlist">
+              <Link href="/dashboard" className="p-3 hover:bg-nira-gray rounded-lg transition-colors hidden sm:flex" aria-label="Wishlist">
                 <Heart className="w-5 h-5" />
               </Link>
-              <Link href="/cart" className="relative p-2 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Cart">
+              <Link href="/cart" className="relative p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Cart">
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-nira-yellow text-nira-dark text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-nira-yellow text-nira-dark text-[10px] font-bold rounded-full flex items-center justify-center">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
@@ -168,12 +168,12 @@ export default function Navbar() {
                     setNotifOpen(!notifOpen);
                     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
                   }}
-                  className={`p-2 hover:bg-nira-gray rounded-lg transition-colors relative ${notifOpen ? 'text-nira-yellow bg-nira-dark' : 'text-nira-dark'}`}
+                  className={`p-3 hover:bg-nira-gray rounded-lg transition-colors relative ${notifOpen ? 'text-nira-yellow bg-nira-dark' : 'text-nira-dark'}`}
                   aria-label="Notifications Center"
                 >
                   <Bell className="w-5 h-5" />
                   {notifications.filter(n => !n.read).length > 0 && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                   )}
                 </button>
 
@@ -268,7 +268,7 @@ export default function Navbar() {
                   Login
                 </Link>
               )}
-              <button onClick={() => dispatch(toggleMobileMenu())} className="lg:hidden p-2 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Menu">
+              <button onClick={() => dispatch(toggleMobileMenu())} className="lg:hidden p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Menu">
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>

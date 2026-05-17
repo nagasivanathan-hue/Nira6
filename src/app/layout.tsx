@@ -1,11 +1,27 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Inter, Poppins } from 'next/font/google';
 import "./globals.css";
 import ReduxProvider from "@/store/ReduxProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import StoreInitializer from "@/components/layout/StoreInitializer";
-import LiveChatWidget from "@/components/support/LiveChatWidget";
+import dynamic from 'next/dynamic';
+
+const LiveChatWidget = dynamic(() => import('@/components/support/LiveChatWidget'));
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-family-body',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  variable: '--font-family-heading',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "NIRA6 — Everything for a Creator in One Place",
@@ -22,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased">
         <ReduxProvider>
           <StoreInitializer>
