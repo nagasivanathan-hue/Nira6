@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { selectCartCount } from '@/store/cartSlice';
 import { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery } from '@/store/uiSlice';
 import { NAV_LINKS } from '@/lib/constants';
 import { Search, ShoppingCart, User, Menu, X, Heart, Bell, MessageSquare, Mail, Smartphone, AlertCircle, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Logo from './Logo';
 
 interface NiraNotification {
   id: string;
@@ -20,6 +21,7 @@ interface NiraNotification {
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const cartCount = useAppSelector(selectCartCount);
   const { mobileMenuOpen, searchOpen, searchQuery } = useAppSelector((s) => s.ui);
@@ -98,31 +100,40 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          hidden ? '-translate-y-full' : 'translate-y-0'
-        } ${scrolled ? 'glass shadow-lg' : 'bg-white'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          hidden ? '-translate-y-full shadow-none' : 'translate-y-0'
+        } ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)]' : 'bg-white/40 backdrop-blur-md border-b border-transparent'}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group" onClick={() => dispatch(closeMobileMenu())}>
-              <div className="w-10 h-10 bg-nira-yellow rounded-xl flex items-center justify-center font-heading font-black text-nira-dark text-lg group-hover:scale-110 transition-transform">
-                N6
-              </div>
-              <span className="font-heading font-bold text-xl hidden sm:block">NIRA6</span>
+            <Link href="/" className="flex items-center group py-2" onClick={() => dispatch(closeMobileMenu())}>
+              <Logo className="group-hover:scale-[1.03] transition-transform duration-300" height={24} width={96} />
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="px-4 py-2 text-sm font-medium text-nira-text-secondary hover:text-nira-dark hover:bg-nira-gray rounded-lg transition-all"
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <nav className="hidden lg:flex items-center gap-2">
+              {NAV_LINKS.map((link) => {
+                const isActive = pathname === link.href || pathname?.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative px-4 py-2 text-sm font-semibold transition-colors ${
+                      isActive ? 'text-nira-dark' : 'text-nira-text-secondary hover:text-nira-dark'
+                    }`}
+                  >
+                    <span>{link.label}</span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNavTab"
+                        className="absolute bottom-0 left-4 right-4 h-0.5 bg-nira-yellow rounded-full"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Search Bar - Desktop */}
@@ -323,10 +334,16 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
-              className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl p-6 pt-20"
+              className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl p-6 pt-8 flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-nira-gray-dark">
+                <Logo height={22} width={88} />
+                <button onClick={() => dispatch(closeMobileMenu())} className="p-2 hover:bg-nira-gray rounded-xl">
+                  <X className="w-5 h-5 text-nira-dark" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-2 flex-1">
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}

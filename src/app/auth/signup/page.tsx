@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { register, clearError } from '@/store/authSlice';
+import Logo from '@/components/layout/Logo';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -31,8 +32,8 @@ export default function SignupPage() {
     <div className="min-h-screen bg-nira-gray flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-nira-yellow rounded-2xl flex items-center justify-center font-heading font-black text-nira-dark text-xl mx-auto mb-4">N6</div>
-          <h1 className="font-heading font-bold text-2xl">Create Account</h1>
+          <Logo className="mx-auto mb-5" height={32} width={128} />
+          <h1 className="font-heading font-bold text-2xl mt-3">Create Account</h1>
           <p className="text-nira-text-secondary text-sm">Join India&apos;s largest creator ecosystem</p>
         </div>
 

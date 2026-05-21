@@ -6,6 +6,7 @@ import ReduxProvider from "@/store/ReduxProvider";
 import StoreInitializer from "@/components/layout/StoreInitializer";
 import AuthGate from "@/components/layout/AuthGate";
 import PwaRegister from "@/components/layout/PwaRegister";
+import SplashLoader from "@/components/layout/SplashLoader";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
   title: "NIRA6 — Everything for a Creator in One Place",
   description: "India's premium AI-powered recommerce platform for creators. Buy, sell, rent, and repair cameras, drones, lenses, and creator equipment at the best prices.",
   keywords: "buy used cameras, sell cameras india, rent camera equipment, creator marketplace, refurbished cameras, used drones, camera rental",
+  icons: {
+    icon: '/assets/logo.png',
+    shortcut: '/assets/logo.png',
+    apple: '/assets/logo.png',
+  },
   openGraph: {
     title: "NIRA6 — Everything for a Creator in One Place",
     description: "India's premium AI-powered recommerce platform for creators.",
@@ -39,6 +45,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="antialiased">
         <ReduxProvider>
           <StoreInitializer>
+            <SplashLoader />
             <PwaRegister />
             <AuthGate>
               {children}
