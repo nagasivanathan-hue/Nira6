@@ -3,12 +3,9 @@ import Script from "next/script";
 import { Inter, Poppins } from 'next/font/google';
 import "./globals.css";
 import ReduxProvider from "@/store/ReduxProvider";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import StoreInitializer from "@/components/layout/StoreInitializer";
-import dynamic from 'next/dynamic';
-
-const LiveChatWidget = dynamic(() => import('@/components/support/LiveChatWidget'));
+import AuthGate from "@/components/layout/AuthGate";
+import PwaRegister from "@/components/layout/PwaRegister";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,10 +39,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="antialiased">
         <ReduxProvider>
           <StoreInitializer>
-            <Navbar />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-            <LiveChatWidget />
+            <PwaRegister />
+            <AuthGate>
+              {children}
+            </AuthGate>
           </StoreInitializer>
         </ReduxProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />

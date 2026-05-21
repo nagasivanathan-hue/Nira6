@@ -71,6 +71,7 @@ export default function CheckoutPage() {
   // Coupon State
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
+  const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
 
@@ -90,13 +91,6 @@ export default function CheckoutPage() {
   };
 
   // Pricing calculations
-  let discountAmount = 0;
-  if (appliedCoupon === 'CREATOR20') {
-    discountAmount = Math.round(total * 0.20);
-  } else if (appliedCoupon === 'NIRA6NEW') {
-    discountAmount = Math.round(total * 0.10);
-  }
-
   const subtotalAfterDiscount = total - discountAmount;
 
   // Taxes: CGST 9% + SGST 9% of discounted subtotal
@@ -117,7 +111,7 @@ export default function CheckoutPage() {
   }
   const finalPayable = Math.max(0, checkoutGrandTotal - walletDeducted);
 
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
     setCouponError('');
     setCouponSuccess('');
     const code = couponInput.trim().toUpperCase();
@@ -127,24 +121,27 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (code === 'CREATOR20' || code === 'NIRA6NEW' || code === 'FREESHIP') {
-      setAppliedCoupon(code);
-      setCouponSuccess(`Coupon ${code} applied successfully!`);
+    try {
+      const { data } = await api.post('/coupons', { code, orderAmount: total });
+      setAppliedCoupon(data.code);
+      setDiscountAmount(data.discountAmount);
+      setCouponSuccess(`Coupon ${data.code} applied successfully!`);
       // Dispatch notification
       window.dispatchEvent(new CustomEvent('nira_notification', {
         detail: {
           type: 'push',
           title: '🎟️ Coupon Applied!',
-          content: `Coupon code ${code} was successfully verified. You saved ₹${code === 'CREATOR20' ? '20% off!' : code === 'NIRA6NEW' ? '10% off!' : '₹199 on fees!'}`
+          content: `Coupon code ${data.code} was successfully verified. You saved ₹${data.discountAmount.toLocaleString('en-IN')}!`
         }
       }));
-    } else {
-      setCouponError('Invalid coupon code. Try CREATOR20 or FREESHIP.');
+    } catch (err: any) {
+      setCouponError(err.response?.data?.message || 'Invalid coupon code. Try CREATOR20 or FREESHIP.');
     }
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon('');
+    setDiscountAmount(0);
     setCouponInput('');
     setCouponSuccess('');
     setCouponError('');

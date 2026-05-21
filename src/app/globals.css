@@ -137,3 +137,38 @@ h1, h2, h3, h4, h5, h6 {
 .hero-gradient {
   background: linear-gradient(135deg, #0A0A0A 0%, #1a1a2e 50%, #16213e 100%);
 }
+
+/* Mobile-First & Performance Optimization Utilities */
+@layer utilities {
+  /* Eliminate 300ms mobile click delay and tap blue highlights */
+  a, button, [role="button"], select, input, textarea, label {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Prevent iOS automatic page zoom on focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* GPU-Accelerate layout-heavy animations */
+  .gpu-accelerate {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity;
+  }
+
+  /* Momentum scroll behavior for absolute/overflow sections */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Safe Area paddings */
+  .pb-safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 16px);
+  }
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
