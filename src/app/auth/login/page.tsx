@@ -97,16 +97,13 @@ export default function LoginPage() {
           <span className="relative px-4 bg-white text-xs text-nira-text-secondary uppercase">Or continue with</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="w-full">
           <button 
             type="button"
             onClick={handleGoogleLogin}
-            className="flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all"
           >
             <Globe className="w-4 h-4" /> Google
-          </button>
-          <button className="flex items-center justify-center gap-2 py-3 border border-nira-gray-dark rounded-xl text-sm hover:bg-nira-gray transition-all">
-            <Globe className="w-4 h-4" /> Github
           </button>
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CreditCard, Shield, ChevronRight, MapPin, ArrowLeft, CheckCircle, Loader2, Sparkles, Coins } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -39,10 +40,11 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const items = useAppSelector(selectCartItems);
   const total = useAppSelector(selectCartTotal);
-  const { user: userInfo } = useAppSelector((state) => state.auth);
+  const { user: userInfo, isAuthenticated } = useAppSelector((state) => state.auth);
 
   const [payMethod, setPayMethod] = useState('razorpay');
   const [placed, setPlaced] = useState(false);
@@ -58,8 +60,8 @@ export default function CheckoutPage() {
     pincode: ''
   });
 
-  // Guest Checkout State
-  const [isGuestMode] = useState(true);
+  // Guest Checkout State (Disabled to enforce user auth for payments)
+  const [isGuestMode] = useState(false);
   const isGuest = userInfo ? false : isGuestMode;
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
@@ -74,6 +76,13 @@ export default function CheckoutPage() {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
+
+  // Enforce authentication check for final buying payment
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/auth/login?redirect=/checkout');
+    }
+  }, [isAuthenticated, router]);
 
   // Load wallet balance on mount if authenticated
   useEffect(() => {
