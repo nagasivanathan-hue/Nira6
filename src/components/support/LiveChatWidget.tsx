@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Camera, Shield, Wrench, RefreshCw, Sparkles } from 'lucide-react';
+import Logo from '@/components/layout/Logo';
 
 interface ChatMessage {
   sender: 'bot' | 'user';
@@ -82,7 +83,7 @@ export default function LiveChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50 transition-all duration-300">
       <AnimatePresence>
         {!open ? (
           <motion.button
@@ -90,15 +91,20 @@ export default function LiveChatWidget() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             onClick={() => setOpen(true)}
-            className="w-14 h-14 bg-nira-yellow text-nira-dark rounded-full flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 cursor-pointer relative group transition-all"
-            style={{ boxShadow: '0 8px 30px rgba(255, 218, 3, 0.4)' }}
+            className="w-14 h-14 bg-nira-dark/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 cursor-pointer relative group transition-all"
           >
-            <MessageSquare className="w-6 h-6 animate-pulse-glow" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-nira-dark border-2 border-nira-yellow rounded-full flex items-center justify-center">
-              <span className="w-1.5 h-1.5 bg-nira-yellow rounded-full animate-ping" />
+            {/* Idle Breathing Pulse Rings */}
+            <span className="absolute inset-0 rounded-full bg-nira-yellow/20 animate-ping opacity-75 -z-10" />
+            <span className="absolute -inset-1 rounded-full bg-nira-yellow/10 animate-pulse -z-10" />
+
+            <MessageSquare className="w-6 h-6 text-nira-yellow" />
+            
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-nira-yellow border-2 border-nira-dark rounded-full flex items-center justify-center">
+              <span className="w-1.5 h-1.5 bg-nira-dark rounded-full animate-ping" />
             </span>
-            <div className="absolute right-16 bg-nira-dark text-white text-xs font-bold px-3 py-1.5 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-1 shadow-md">
-              <Sparkles className="w-3.5 h-3.5 text-nira-yellow" /> Chat with NIRA AI
+            
+            <div className="absolute right-16 bg-nira-dark border border-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-1 shadow-md">
+              <Sparkles className="w-3.5 h-3.5 text-nira-yellow" /> Ask NIRA AI
             </div>
           </motion.button>
         ) : (
@@ -106,20 +112,20 @@ export default function LiveChatWidget() {
             initial={{ y: 50, scale: 0.9, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 50, scale: 0.9, opacity: 0 }}
-            className="w-[360px] sm:w-[380px] h-[520px] bg-white rounded-3xl border border-nira-gray-dark shadow-2xl overflow-hidden flex flex-col"
-            style={{ boxShadow: '0 12px 50px rgba(0,0,0,0.12)' }}
+            className="w-[340px] sm:w-[380px] h-[500px] bg-white/95 backdrop-blur-xl rounded-3xl border border-nira-gray-dark shadow-2xl overflow-hidden flex flex-col"
+            style={{ boxShadow: '0 12px 50px rgba(0,0,0,0.15)' }}
           >
             {/* Header */}
             <div className="bg-nira-dark text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-nira-yellow rounded-2xl flex items-center justify-center text-nira-dark font-bold text-lg relative">
-                  N6
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-nira-success border-2 border-nira-dark rounded-full" />
+                <div className="relative flex items-center py-1">
+                  <Logo theme="dark" height={20} width={80} />
+                  <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-nira-success border-2 border-nira-dark rounded-full animate-pulse" />
                 </div>
-                <div>
-                  <h4 className="font-heading font-bold text-sm tracking-wide">NIRA Support Agent</h4>
-                  <p className="text-[10px] text-nira-yellow font-semibold flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 animate-spin-slow" /> AI Co-Technician Active
+                <div className="border-l border-white/10 pl-3">
+                  <h4 className="font-heading font-bold text-xs tracking-wide">Support Desk</h4>
+                  <p className="text-[9px] text-nira-yellow font-semibold flex items-center gap-1">
+                    <Sparkles className="w-2.5 h-2.5 animate-spin-slow" /> AI Tech Active
                   </p>
                 </div>
               </div>
@@ -132,12 +138,12 @@ export default function LiveChatWidget() {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-nira-gray/40">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-nira-gray/20">
               {messages.map((m, idx) => (
                 <div key={idx} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] p-3.5 rounded-2xl text-sm ${m.sender === 'user' ? 'bg-nira-yellow text-nira-dark font-medium rounded-tr-none' : 'bg-white text-nira-dark shadow-sm border border-nira-gray-dark rounded-tl-none'}`}>
-                    <p className="leading-relaxed">{m.text}</p>
-                    <span className="block text-[9px] text-nira-text-secondary mt-1 text-right">{m.time}</span>
+                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.sender === 'user' ? 'bg-nira-yellow text-nira-dark font-semibold rounded-tr-none' : 'bg-white text-nira-dark shadow-sm border border-nira-gray-dark rounded-tl-none'}`}>
+                    <p className="leading-relaxed text-xs">{m.text}</p>
+                    <span className="block text-[8px] text-nira-text-secondary mt-1 text-right">{m.time}</span>
                   </div>
                 </div>
               ))}
@@ -145,8 +151,8 @@ export default function LiveChatWidget() {
               {typing && (
                 <div className="flex justify-start">
                   <div className="bg-white p-3 rounded-2xl shadow-sm border border-nira-gray-dark rounded-tl-none flex items-center gap-1.5">
-                    <RefreshCw className="w-3.5 h-3.5 text-nira-yellow animate-spin" />
-                    <span className="text-[10px] text-nira-text-secondary font-medium">NIRA is typing...</span>
+                    <RefreshCw className="w-3 h-3 text-nira-yellow animate-spin" />
+                    <span className="text-[9px] text-nira-text-secondary font-medium">NIRA is analyzing...</span>
                   </div>
                 </div>
               )}
@@ -156,13 +162,13 @@ export default function LiveChatWidget() {
             {/* Presets Grid */}
             {messages.length === 1 && (
               <div className="p-3 border-t border-nira-gray-dark bg-white">
-                <p className="text-[10px] text-nira-text-secondary font-bold uppercase tracking-wider mb-2">Common Inquiries</p>
+                <p className="text-[9px] text-nira-text-secondary font-bold uppercase tracking-wider mb-2">Common Inquiries</p>
                 <div className="grid grid-cols-2 gap-2">
                   {PRESETS.map((p, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSendMessage(p.text)}
-                      className="p-2 border border-nira-gray-dark hover:border-nira-yellow hover:bg-nira-yellow/5 rounded-xl text-[10px] font-semibold text-left text-nira-dark flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="p-2 border border-nira-gray-dark hover:border-nira-yellow hover:bg-nira-yellow/5 rounded-xl text-[9px] font-bold text-left text-nira-dark flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                       <p.icon className="w-3 h-3 text-nira-yellow flex-shrink-0" />
                       <span>{p.text}</span>
@@ -176,7 +182,7 @@ export default function LiveChatWidget() {
             <div className="p-3 border-t border-nira-gray-dark bg-white flex gap-2">
               <input
                 type="text"
-                placeholder="Ask about DSLR camera grades, DJI drones..."
+                placeholder="Ask about gear grading, rentals..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
