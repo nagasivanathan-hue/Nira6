@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
+import Image from 'next/image';
 import { 
-  Building2, Smartphone, ShieldCheck, Mail, MapPin, IndianRupee, BarChart3, 
-  Package, Calendar, Truck, Wallet, MessageSquare, Star, Settings, 
-  ShieldAlert, Sparkles, Plus, Trash2, Edit3, Eye, FileText, Upload, 
-  User, LogIn, Key, HelpCircle, CheckCircle2, ChevronRight, X, Info
+  ShieldCheck, MapPin, BarChart3, 
+  Package, Calendar, Truck, Wallet, MessageSquare, Star, 
+  ShieldAlert, Sparkles, Plus, Trash2, Upload, 
+  User, ChevronRight, Info
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { Product } from '@/types';
@@ -133,17 +133,24 @@ const initialOrders: OrderListing[] = [
   }
 ];
 
-interface SupportTicket {
+
+interface PayoutLog {
   id: string;
-  subject: string;
-  status: string;
+  amount: number;
   date: string;
+  status: string;
+  channel: string;
 }
 
-const initialTickets: SupportTicket[] = [
-  { id: 'TCK-2098', subject: 'Payout verification delay query', status: 'In Review', date: '2026-05-16' },
-  { id: 'TCK-1982', subject: 'How to list custom rental inventory terms', status: 'Resolved', date: '2026-05-12' }
-];
+interface SellerChatMessage {
+  sender: 'buyer' | 'seller';
+  text: string;
+  time: string;
+}
+
+function generateTrackingNumber(): string {
+  return `TRK-NIRA-${Math.floor(100000 + Math.random() * 900000)}`;
+}
 
 export default function SellerPartnerPage() {
   // Onboarding Phase Control
@@ -180,7 +187,6 @@ export default function SellerPartnerPage() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [services, setServices] = useState<ServiceListing[]>(initialServices);
   const [orders, setOrders] = useState<OrderListing[]>(initialOrders);
-  const [tickets, setTickets] = useState<SupportTicket[]>(initialTickets);
 
   // Forms to add new product / service
   const [newProd, setNewProd] = useState({
@@ -207,20 +213,19 @@ export default function SellerPartnerPage() {
 
   // Withdrawal ledger states
   const [balance, setBalance] = useState(283000);
-  const [payoutLogs, setPayoutLogs] = useState<any[]>([
+  const [payoutLogs, setPayoutLogs] = useState<PayoutLog[]>([
     { id: 'PAY-8921', amount: 154000, date: '2026-05-10', status: 'Completed', channel: 'Bank Transfer' },
     { id: 'PAY-7822', amount: 35000, date: '2026-05-04', status: 'Completed', channel: 'UPI' }
   ]);
   const [withdrawAmt, setWithdrawAmt] = useState('');
   
   // Live simulated chat states
-  const [chatMessages, setChatMessages] = useState<any[]>([
+  const [chatMessages, setChatMessages] = useState<SellerChatMessage[]>([
     { sender: 'buyer', text: 'Hi Madurai Studio, is the Sigma lens available for instant shipping today?', time: '10:05 AM' }
   ]);
   const [replyInput, setReplyInput] = useState('');
 
   // Bulk Product Spreadsheet Uploader Simulator
-  const [bulkFileUploaded, setBulkFileUploaded] = useState(false);
   const [bulkProgress, setBulkProgress] = useState(false);
 
   // Auto Onboarding demo bypass
@@ -354,7 +359,7 @@ export default function SellerPartnerPage() {
 
   // Accept Order & Generate Pickup Request
   const handleShipOrder = (orderId: string) => {
-    const trackingNo = `TRK-NIRA-${Math.floor(100000 + Math.random() * 900000)}`;
+    const trackingNo = generateTrackingNumber();
     setOrders(orders.map(o => o.id === orderId ? {
       ...o,
       status: 'Shipped',
@@ -1065,7 +1070,7 @@ export default function SellerPartnerPage() {
                         <div key={p.id} className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-nira-gray rounded-xl overflow-hidden relative shrink-0">
-                              <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                              <Image src={p.image} alt={p.name} fill className="object-cover" unoptimized />
                             </div>
                             <div>
                               <p className="text-xs font-black text-nira-dark">{p.name}</p>

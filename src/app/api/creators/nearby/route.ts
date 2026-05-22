@@ -1,7 +1,38 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import CreatorProfile from '@/models/CreatorProfile';
-import User from '@/models/User';
+
+interface CreatorProfilePopulated {
+  _id: { toString(): string };
+  userId?: { _id?: { toString(): string }; name?: string; avatar?: string; email?: string; phone?: string };
+  category: string;
+  title: string;
+  bio: string;
+  location: string;
+  coordinates: {
+    type: string;
+    coordinates: number[];
+  };
+  rating: number;
+  reviewCount: number;
+  completedJobs: number;
+  startingPrice: number;
+  hourlyRate: number;
+  availability: string;
+  verified: boolean;
+  verificationLevel: string;
+  trustScore: number;
+  portfolio: string[];
+  skills: string[];
+  styles: string[];
+  gear: string[];
+  languages: string[];
+  experience: number;
+  responseTime: string;
+  featured: boolean;
+  tags: string[];
+  socialLinks?: { instagram?: string; youtube?: string; website?: string };
+}
 
 export async function GET(req: Request) {
   try {
@@ -17,7 +48,7 @@ export async function GET(req: Request) {
     const lng = lngStr ? parseFloat(lngStr) : 78.1131;
     const radiusInMeters = radiusStr ? parseFloat(radiusStr) * 1000 : 50000; // default 50km radius
 
-    let query: any = {
+    const query: Record<string, unknown> = {
       coordinates: {
         $near: {
           $geometry: {
@@ -40,10 +71,10 @@ export async function GET(req: Request) {
     // Populate user info from User model associated with profile
     const profiles = await CreatorProfile.find(query)
       .populate('userId', 'name avatar email phone')
-      .lean();
+      .lean() as unknown as CreatorProfilePopulated[];
 
     // Map DB structure to front-end Creator interface format
-    const creators = profiles.map((p: any) => ({
+    const creators = profiles.map((p: CreatorProfilePopulated) => ({
       id: p._id.toString(),
       userId: p.userId?._id?.toString(),
       name: p.userId?.name || 'Anonymous Creator',

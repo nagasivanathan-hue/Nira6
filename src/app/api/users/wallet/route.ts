@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth/auth';
+import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
   try {
@@ -11,7 +12,20 @@ export async function GET(req: Request) {
     }
 
     await dbConnect();
-    const dbUser = await User.findById(user._id).select('walletBalance walletTransactions').lean() as any;
+
+    interface UserWalletDoc {
+      _id: mongoose.Types.ObjectId;
+      walletBalance: number;
+      walletTransactions: {
+        type: 'credit' | 'debit';
+        amount: number;
+        description: string;
+        date: Date;
+        status: string;
+      }[];
+    }
+
+    const dbUser = await User.findById(user._id).select('walletBalance walletTransactions').lean() as unknown as UserWalletDoc | null;
 
     if (!dbUser) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });

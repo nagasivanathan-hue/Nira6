@@ -46,10 +46,24 @@ export async function POST(req: Request) {
       reel.comments.push(newComment);
       await reel.save();
 
+      interface PopulatedReel {
+        _id: string;
+        comments: {
+          _id: string;
+          userId: {
+            _id: string;
+            name: string;
+            avatar?: string;
+          };
+          text: string;
+          createdAt: string;
+        }[];
+      }
+
       // Return the newly populated comments
       const populated = await Reel.findById(reelId)
         .populate('comments.userId', 'name avatar')
-        .lean() as any;
+        .lean() as unknown as PopulatedReel | null;
 
       return NextResponse.json({ success: true, comments: populated?.comments || [] });
     }

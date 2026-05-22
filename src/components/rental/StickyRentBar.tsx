@@ -1,5 +1,5 @@
 'use client';
-import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
 
 interface StickyRentBarProps {
   onFilterToggle: () => void;

@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Shield, Calendar, Zap } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { RentalItem } from '@/types';
 
 interface RentalCardProps {
-  item: any;
+  item: RentalItem;
   index: number;
 }
 

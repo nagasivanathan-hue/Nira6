@@ -55,9 +55,10 @@ function BookingContent() {
           }
         }));
       }
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.message || 'Failed to complete booking. Scheduling conflict may exist.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      console.error(error);
+      alert(error.response?.data?.message || 'Failed to complete booking. Scheduling conflict may exist.');
     } finally {
       setBookingLoading(false);
     }

@@ -1,8 +1,9 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, MessageCircle, Share2, Plus, ArrowLeft, Send, X, Loader2, Play, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Plus, ArrowLeft, Send, X, Loader2, Volume2, VolumeX } from 'lucide-react';
 import { useAppSelector } from '@/store';
 import api from '@/services/api';
 
@@ -56,7 +57,7 @@ export default function ReelsPage() {
   const [muted, setMuted] = useState(true);
 
   // Fetch feed reels
-  const fetchReels = async () => {
+  const fetchReels = useCallback(async () => {
     try {
       const { data } = await api.get('/reels');
       // If db is empty, set some beautiful stock placeholders
@@ -104,11 +105,21 @@ export default function ReelsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchReels();
-  }, []);
+    let active = true;
+    const load = async () => {
+      await Promise.resolve();
+      if (active) {
+        fetchReels();
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [fetchReels]);
 
   // Handle Like
   const handleLike = async (reelId: string) => {
@@ -175,8 +186,9 @@ export default function ReelsPage() {
         fetchReels(); // reload feed
         alert('Reel posted successfully!');
       }
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to post reel');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Failed to post reel');
     } finally {
       setPosting(false);
     }
@@ -237,8 +249,8 @@ export default function ReelsPage() {
             {/* Bottom Details Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-20 flex flex-col justify-end text-left z-20">
               <div className="flex items-center gap-2.5 mb-2.5">
-                <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20">
-                  <img src={currentReel.creatorId.avatar} alt={currentReel.creatorId.name} className="w-full h-full object-cover" />
+                <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20 relative">
+                  <Image src={currentReel.creatorId.avatar} alt={currentReel.creatorId.name} fill className="object-cover" unoptimized />
                 </div>
                 <div>
                   <h4 className="font-bold text-xs">{currentReel.creatorId.name}</h4>
@@ -345,8 +357,8 @@ export default function ReelsPage() {
                 ) : (
                   currentReel.comments.map((comm) => (
                     <div key={comm._id} className="flex gap-3 text-left">
-                      <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-gray-100">
-                        <img src={comm.userId.avatar} alt={comm.userId.name} className="w-full h-full object-cover" />
+                      <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-gray-100 relative">
+                        <Image src={comm.userId.avatar} alt={comm.userId.name} fill className="object-cover" unoptimized />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-xs text-nira-dark">{comm.userId.name}</p>

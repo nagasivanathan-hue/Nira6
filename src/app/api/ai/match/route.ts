@@ -1,7 +1,32 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import CreatorProfile from '@/models/CreatorProfile';
-import User from '@/models/User';
+
+interface CreatorProfilePopulated {
+  _id: { toString(): string };
+  userId?: { _id?: { toString(): string }; name?: string; avatar?: string; email?: string; phone?: string };
+  category: string;
+  title: string;
+  bio: string;
+  location: string;
+  rating: number;
+  reviewCount: number;
+  completedJobs: number;
+  startingPrice: number;
+  hourlyRate: number;
+  availability: string;
+  verified: boolean;
+  trustScore: number;
+  portfolio: string[];
+  skills: string[];
+  styles: string[];
+  gear: string[];
+  languages: string[];
+  experience: number;
+  responseTime: string;
+  featured: boolean;
+  tags: string[];
+}
 
 export async function POST(req: Request) {
   try {
@@ -14,21 +39,20 @@ export async function POST(req: Request) {
       maxBudget,
       minExperience = 1,
       styles = [],
-      location
     } = data;
 
     // Fetch all profiles to calculate recommendations
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (category && category !== 'all') {
       query.category = category;
     }
 
     const profiles = await CreatorProfile.find(query)
       .populate('userId', 'name avatar email phone')
-      .lean();
+      .lean() as unknown as CreatorProfilePopulated[];
 
-    const scored = profiles.map((p: any) => {
-      let scoreDetails: any = {
+    const scored = profiles.map((p: CreatorProfilePopulated) => {
+      const scoreDetails = {
         categoryMatch: 1.0,
         skillsOverlap: 0.0,
         budgetScore: 1.0,
@@ -133,7 +157,7 @@ export async function POST(req: Request) {
     });
 
     // Sort by match percentage in descending order
-    scored.sort((a: any, b: any) => b.matchPercentage - a.matchPercentage);
+    scored.sort((a, b) => b.matchPercentage - a.matchPercentage);
 
     return NextResponse.json(scored.slice(0, 10)); // return top 10 matches
   } catch (err) {

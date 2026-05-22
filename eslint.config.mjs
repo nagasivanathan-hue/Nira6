@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "import_amazon_products.js",
+    "seed_creator_ecosystem.js",
   ]),
 ]);
 

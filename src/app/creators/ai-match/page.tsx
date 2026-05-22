@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Calendar, MessageSquare, Star, ArrowRight, RefreshCw, Check, Briefcase, Plus, X } from 'lucide-react';
+import { Sparkles, Calendar, MessageSquare, ArrowRight, RefreshCw, Check, Plus } from 'lucide-react';
 import api from '@/services/api';
 
 const STYLE_OPTIONS = ['Cinematic', 'Vintage', 'Modern', 'Minimalist', 'Dramatic', 'Commercial', 'Fashion', 'Street', 'Documentary', 'Artistic'];
@@ -283,8 +284,8 @@ export default function AiMatchPage() {
 
                       {/* Left: Avatar & Match % */}
                       <div className="flex flex-col items-center shrink-0">
-                        <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md mb-3 border border-gray-100">
-                          <img src={res.creator.avatar} alt={res.creator.name} className="w-full h-full object-cover" />
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md mb-3 border border-gray-100 relative">
+                          <Image src={res.creator.avatar} alt={res.creator.name} fill className="object-cover" unoptimized />
                         </div>
                         <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-full font-black text-xs uppercase flex items-center gap-1">
                           <Sparkles className="w-3.5 h-3.5" /> {res.matchPercentage}% Match

@@ -1,8 +1,9 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Zap, ShieldCheck, Tag, Eye } from 'lucide-react';
+import { RentalItem } from '@/types';
 
-export default function RentSpecs({ item }: { item: any }) {
+export default function RentSpecs({ item }: { item: RentalItem }) {
   const score = item.conditionScore || 90;
   const scoreColor = score >= 90 ? 'text-nira-success' : score >= 70 ? 'text-nira-yellow' : 'text-nira-error';
   const scoreLabel = score >= 90 ? 'Excellent' : score >= 70 ? 'Good' : 'Fair';

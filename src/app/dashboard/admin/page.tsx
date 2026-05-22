@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ShieldCheck, ShieldAlert, Check, X, Users, CreditCard, Calendar, ArrowLeft, Loader2, Award } from 'lucide-react';
 import { useAppSelector } from '@/store';
@@ -43,7 +43,7 @@ export default function AdminDashboardPage() {
     escrowDisbursed: 0
   });
 
-  const fetchAdminData = async () => {
+  const fetchAdminData = useCallback(async () => {
     try {
       const { data } = await api.get('/admin/moderation');
       setBookings(data);
@@ -71,13 +71,21 @@ export default function AdminDashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (currentUser?.role === 'admin') {
-      fetchAdminData();
-    }
-  }, [currentUser]);
+    let active = true;
+    const load = async () => {
+      await Promise.resolve();
+      if (active && currentUser?.role === 'admin') {
+        fetchAdminData();
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [currentUser, fetchAdminData]);
 
   const handleResolveDispute = async (bookingId: string, resolution: 'refund' | 'disburse') => {
     setResolvingId(bookingId);
@@ -90,8 +98,9 @@ export default function AdminDashboardPage() {
         alert(`Dispute successfully resolved with: ${resolution.toUpperCase()}`);
         fetchAdminData();
       }
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to resolve dispute');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Failed to resolve dispute');
     } finally {
       setResolvingId(null);
     }

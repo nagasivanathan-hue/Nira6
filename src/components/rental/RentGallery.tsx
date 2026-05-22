@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { RentalItem } from '@/types';
 
-export default function RentGallery({ item }: { item: any }) {
+export default function RentGallery({ item }: { item: RentalItem }) {
   const images = item.images?.length > 0 ? item.images : [item.image];
   const [activeIdx, setActiveIdx] = useState(0);
 

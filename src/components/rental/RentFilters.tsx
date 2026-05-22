@@ -21,6 +21,34 @@ interface Filters {
   maxPrice: string;
 }
 
+const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="mb-6">
+    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 mb-3">{title}</p>
+    {children}
+  </div>
+);
+
+const ChipSelect = ({ items, selected, onToggle, multi = false }: { items: string[]; selected: string | string[]; onToggle: (v: string) => void; multi?: boolean }) => (
+  <div className="flex flex-wrap gap-1.5">
+    {items.map(item => {
+      const isActive = multi ? (selected as string[]).includes(item) : selected === item;
+      return (
+        <button
+          key={item}
+          onClick={() => onToggle(item)}
+          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+            isActive
+              ? 'bg-nira-yellow text-nira-dark'
+              : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60 border border-white/5'
+          }`}
+        >
+          {item}
+        </button>
+      );
+    })}
+  </div>
+);
+
 interface RentFiltersProps {
   filters: Filters;
   onChange: (f: Filters) => void;
@@ -49,34 +77,6 @@ export default function RentFilters({ filters, onChange, onReset, open, onClose 
     filters.available,
     filters.minPrice || filters.maxPrice,
   ].filter(Boolean).length;
-
-  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="mb-6">
-      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 mb-3">{title}</p>
-      {children}
-    </div>
-  );
-
-  const ChipSelect = ({ items, selected, onToggle, multi = false }: { items: string[]; selected: string | string[]; onToggle: (v: string) => void; multi?: boolean }) => (
-    <div className="flex flex-wrap gap-1.5">
-      {items.map(item => {
-        const isActive = multi ? (selected as string[]).includes(item) : selected === item;
-        return (
-          <button
-            key={item}
-            onClick={() => onToggle(item)}
-            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-              isActive
-                ? 'bg-nira-yellow text-nira-dark'
-                : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60 border border-white/5'
-            }`}
-          >
-            {item}
-          </button>
-        );
-      })}
-    </div>
-  );
 
   const content = (
     <div className="flex flex-col h-full">

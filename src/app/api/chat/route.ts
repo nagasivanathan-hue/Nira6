@@ -3,6 +3,14 @@ import dbConnect from '@/lib/db/mongodb';
 import ChatMessage from '@/models/ChatMessage';
 import { verifyAuth } from '@/lib/auth/auth';
 
+interface ChatMessagePopulated {
+  senderId: { _id: { toString(): string }; name: string; avatar: string };
+  recipientId: { _id: { toString(): string }; name: string; avatar: string };
+  content: string;
+  createdAt: string;
+  read: boolean;
+}
+
 export async function GET(req: Request) {
   try {
     const user = await verifyAuth(req);
@@ -22,11 +30,11 @@ export async function GET(req: Request) {
         .populate('senderId', 'name avatar')
         .populate('recipientId', 'name avatar')
         .sort({ createdAt: -1 })
-        .lean();
+        .lean() as unknown as ChatMessagePopulated[];
 
       // Group by unique contact
       const conversationsMap = new Map();
-      messages.forEach((msg: any) => {
+      messages.forEach((msg) => {
         const otherUser = msg.senderId._id.toString() === user._id.toString()
           ? msg.recipientId
           : msg.senderId;

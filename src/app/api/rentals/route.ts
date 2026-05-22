@@ -1,6 +1,40 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import RentalItem from '@/models/RentalItem';
+import mongoose from 'mongoose';
+import { RentalItem as SharedRentalItem } from '@/types';
+
+interface LeanRentalItemDoc {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  brand: string;
+  category: string;
+  image: string;
+  images?: string[];
+  description?: string;
+  dailyRate: number;
+  hourlyRate: number;
+  weeklyRate?: number;
+  monthlyRate?: number;
+  securityDeposit: number;
+  available: boolean;
+  bookedDates?: { start: Date; end: Date }[];
+  pickupLocations?: string[];
+  lensMount?: string;
+  sensorType?: string;
+  videoSpecs?: string;
+  conditionScore?: number;
+  shutterCount?: number;
+  insuranceAvailable?: boolean;
+  insuranceRate?: number;
+  bestFor?: string[];
+  specs?: Map<string, string> | Record<string, string>;
+  rating: number;
+  reviewCount: number;
+  location: string;
+  owner: string;
+  ownerId?: mongoose.Types.ObjectId;
+}
 
 const SEED_RENTALS = [
   { name: 'Sony A7S III', brand: 'Sony', category: 'cameras', image: '/assets/product-camera.png', images: ['/assets/product-camera.png'], description: 'The ultimate low-light full-frame mirrorless camera. 12.1MP sensor optimized for video with 4K 120fps, 15+ stops of dynamic range, and dual card slots.', dailyRate: 3500, hourlyRate: 500, weeklyRate: 21000, monthlyRate: 70000, securityDeposit: 25000, available: true, rating: 4.9, reviewCount: 45, location: 'Mumbai', owner: 'RentalHub', lensMount: 'E-mount', sensorType: 'Full Frame', videoSpecs: '4K', conditionScore: 95, shutterCount: 12400, insuranceAvailable: true, insuranceRate: 250, bestFor: ['Filmmaking', 'Weddings', 'YouTube'], specs: { Sensor: '12.1MP Full Frame BSI CMOS', Video: '4K 120fps / 1080p 240fps', ISO: '80-102400 (Expandable 40-409600)', AF: '759 Phase Detection', Stabilization: '5-axis IBIS', Weight: '699g' }, pickupLocations: ['Mumbai Central', 'Andheri West', 'Bandra'], reviews: [{ userName: 'Arjun', rating: 5, comment: 'Incredible low-light beast. Used for a wedding shoot and the footage was cinema-grade.', date: new Date() }] },
@@ -45,7 +79,19 @@ export async function GET(req: Request) {
     }
 
     // Build query
-    const query: any = {};
+    const query: {
+      category?: string;
+      brand?: { $in: string[] };
+      lensMount?: string;
+      sensorType?: string;
+      videoSpecs?: string;
+      bestFor?: { $in: string[] };
+      available?: boolean;
+      location?: { $regex: string; $options: string };
+      dailyRate?: { $gte?: number; $lte?: number };
+      $or?: { [key: string]: unknown }[];
+    } = {};
+
     if (category) query.category = category;
     if (brand) query.brand = { $in: brand.split(',') };
     if (lensMount) query.lensMount = lensMount;
@@ -74,13 +120,13 @@ export async function GET(req: Request) {
     else if (sort === 'rating') dbQuery = dbQuery.sort({ rating: -1 });
     else dbQuery = dbQuery.sort({ createdAt: -1 });
 
-    const rentals = await dbQuery.lean();
+    const rentals = await dbQuery.lean() as unknown as LeanRentalItemDoc[];
 
-    const formatted = rentals.map((r: any) => ({
+    const formatted: SharedRentalItem[] = rentals.map((r) => ({
       ...r,
       id: r._id.toString(),
-      specs: r.specs instanceof Map ? Object.fromEntries(r.specs) : r.specs
-    }));
+      specs: r.specs instanceof Map ? Object.fromEntries(r.specs) : (r.specs as Record<string, string>)
+    }) as unknown as SharedRentalItem);
 
     return NextResponse.json(formatted);
   } catch (err) {

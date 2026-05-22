@@ -143,8 +143,9 @@ export default function CheckoutPage() {
           content: `Coupon code ${data.code} was successfully verified. You saved ₹${data.discountAmount.toLocaleString('en-IN')}!`
         }
       }));
-    } catch (err: any) {
-      setCouponError(err.response?.data?.message || 'Invalid coupon code. Try CREATOR20 or FREESHIP.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setCouponError(error.response?.data?.message || 'Invalid coupon code. Try CREATOR20 or FREESHIP.');
     }
   };
 

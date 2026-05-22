@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import Reel from '@/models/Reel';
-import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth/auth';
 
 export async function GET(req: Request) {

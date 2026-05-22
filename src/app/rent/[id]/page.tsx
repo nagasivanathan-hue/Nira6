@@ -9,11 +9,12 @@ import RentSpecs from '@/components/rental/RentSpecs';
 import RentBookingPanel from '@/components/rental/RentBookingPanel';
 import RentReviews from '@/components/rental/RentReviews';
 import RentSimilar from '@/components/rental/RentSimilar';
+import { RentalItem } from '@/types';
 
 export default function RentalDetailPage() {
   const params = useParams();
-  const [item, setItem] = useState<any>(null);
-  const [similar, setSimilar] = useState<any[]>([]);
+  const [item, setItem] = useState<RentalItem | null>(null);
+  const [similar, setSimilar] = useState<RentalItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

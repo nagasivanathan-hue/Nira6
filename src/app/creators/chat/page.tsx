@@ -1,18 +1,20 @@
 'use client';
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Send, ArrowLeft, User, ShieldAlert, Sparkles, Loader2 } from 'lucide-react';
 import { useAppSelector } from '@/store';
 import api from '@/services/api';
 
+interface ContactDetails {
+  _id: string;
+  name: string;
+  avatar: string;
+}
+
 interface Contact {
-  contact: {
-    _id: string;
-    name: string;
-    avatar: string;
-  };
+  contact: ContactDetails;
   lastMessage: string;
   timestamp: string;
   unreadCount: number;
@@ -33,14 +35,18 @@ function ChatContent() {
   const { user: currentUser } = useAppSelector((state) => state.auth);
 
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [selectedContact, setSelectedContact] = useState<any | null>(null);
+  const [selectedContact, setSelectedContact] = useState<ContactDetails | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [loadingContacts, setLoadingContacts] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const selectedContactRef = useRef<ContactDetails | null>(null);
+
+  useEffect(() => {
+    selectedContactRef.current = selectedContact;
+  }, [selectedContact]);
 
   // Auto scroll
   const scrollToBottom = () => {
@@ -52,13 +58,13 @@ function ChatContent() {
   }, [messages]);
 
   // Load conversations sidebar
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const { data } = await api.get('/chat');
       setContacts(data);
 
       // If initialContactId is specified in URL, fetch/create it
-      if (initialContactId && !selectedContact) {
+      if (initialContactId && !selectedContactRef.current) {
         const found = data.find((c: Contact) => c.contact._id === initialContactId);
         if (found) {
           setSelectedContact(found.contact);
@@ -85,11 +91,21 @@ function ChatContent() {
     } finally {
       setLoadingContacts(false);
     }
-  };
+  }, [initialContactId]);
 
   useEffect(() => {
-    fetchConversations();
-  }, [initialContactId]);
+    let active = true;
+    const load = async () => {
+      await Promise.resolve();
+      if (active) {
+        fetchConversations();
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [fetchConversations]);
 
   // Poll messages every 3 seconds for simulated live chat
   useEffect(() => {
@@ -194,7 +210,7 @@ function ChatContent() {
                   onClick={() => setSelectedContact(c.contact)}
                   className={`w-full flex items-center gap-3 p-3 rounded-2xl text-left transition-all ${selectedContact?._id === c.contact._id ? 'bg-nira-yellow/10 border border-nira-yellow/20' : 'hover:bg-nira-gray border border-transparent'}`}
                 >
-                  <img src={c.contact.avatar} alt={c.contact.name} className="w-10 h-10 rounded-xl object-cover shrink-0" />
+                  <Image src={c.contact.avatar} alt={c.contact.name} width={40} height={40} className="rounded-xl object-cover shrink-0" unoptimized />
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center">
                       <p className="font-bold text-xs text-nira-dark truncate">{c.contact.name}</p>
@@ -216,7 +232,7 @@ function ChatContent() {
             <>
               {/* Header */}
               <div className="p-4 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
-                <img src={selectedContact.avatar} alt={selectedContact.name} className="w-10 h-10 rounded-xl object-cover" />
+                <Image src={selectedContact.avatar} alt={selectedContact.name} width={40} height={40} className="rounded-xl object-cover" unoptimized />
                 <div>
                   <h4 className="font-bold text-xs text-nira-dark">{selectedContact.name}</h4>
                   <p className="text-[9px] text-nira-success font-bold uppercase tracking-wider">Secure Escrow Chat</p>

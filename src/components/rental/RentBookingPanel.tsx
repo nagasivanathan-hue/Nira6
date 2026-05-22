@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Shield, MapPin, ChevronDown, Sparkles, IndianRupee } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { RentalItem } from '@/types';
 
-export default function RentBookingPanel({ item }: { item: any }) {
+export default function RentBookingPanel({ item }: { item: RentalItem }) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [insurance, setInsurance] = useState(false);

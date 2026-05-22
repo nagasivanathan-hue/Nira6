@@ -5,6 +5,7 @@ import RentHero from '@/components/rental/RentHero';
 import RentFilters from '@/components/rental/RentFilters';
 import RentalCard from '@/components/rental/RentalCard';
 import StickyRentBar from '@/components/rental/StickyRentBar';
+import { RentalItem } from '@/types';
 
 const EMPTY_FILTERS = {
   brand: [] as string[],
@@ -19,7 +20,7 @@ const EMPTY_FILTERS = {
 };
 
 export default function RentPage() {
-  const [rentals, setRentals] = useState<any[]>([]);
+  const [rentals, setRentals] = useState<RentalItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [searchQuery, setSearchQuery] = useState('');
