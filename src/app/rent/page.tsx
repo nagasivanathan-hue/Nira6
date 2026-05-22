@@ -1,23 +1,50 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Star, MapPin, Calendar, Shield } from 'lucide-react';
+import { Star, MapPin, Calendar, Shield, Loader2 } from 'lucide-react';
 import { mockRentals } from '@/lib/mockData';
 import { formatPrice } from '@/lib/utils';
 
 export default function RentPage() {
+  const [rentals, setRentals] = useState<any[]>(mockRentals);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/rentals')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setRentals(data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching rentals:', err);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen bg-nira-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="font-heading font-bold text-3xl lg:text-4xl mb-2">Rent Creator Equipment</h1>
-          <p className="text-nira-text-secondary">Access premium gear without the hefty price tag</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="font-heading font-bold text-3xl lg:text-4xl mb-2">Rent Creator Equipment</h1>
+            <p className="text-nira-text-secondary">Access premium gear without the hefty price tag</p>
+          </div>
+          {loading && (
+            <div className="flex items-center gap-2 text-nira-text-secondary text-sm font-semibold bg-white px-4 py-2 rounded-xl border border-nira-gray-dark shadow-sm">
+              <Loader2 className="w-4 h-4 animate-spin text-nira-yellow" />
+              <span>Syncing Live Catalog...</span>
+            </div>
+          )}
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {mockRentals.map((item, i) => (
+          {rentals.map((item, i) => (
             <motion.div
-              key={item.id}
+              key={item.id || item._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
