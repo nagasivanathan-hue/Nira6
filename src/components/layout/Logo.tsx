@@ -12,41 +12,47 @@ interface LogoProps {
 export default function Logo({ className = '', height = 28, width = 112, theme = 'auto' }: LogoProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  /* 
+   * The logo.png is a 1:1 square with a large yellow background and heavy padding.
+   * We aggressively scale + clip to show only the NIRA6 wordmark.
+   * overflow-hidden on the wrapper ensures no yellow bleeds out.
+   */
   return (
     <div 
-      className={`relative flex items-center justify-center select-none transition-all duration-300 hover:opacity-95 ${className}`}
+      className={`relative flex items-center justify-center select-none overflow-hidden ${className}`}
       style={{ height, width }}
     >
-      {/* 6-Blade Camera Aperture Shutter Loader */}
+      {/* Camera Aperture Shutter Loader — shown until image is decoded */}
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+        <div className="absolute inset-0 flex items-center justify-center z-10">
           <svg 
             viewBox="0 0 100 100" 
-            className="animate-spin-slow w-5 h-5 text-nira-yellow" 
-            fill="currentColor"
+            className="animate-spin-slow" 
+            style={{ width: Math.min(height * 0.6, 20), height: Math.min(height * 0.6, 20) }}
           >
-            {/* Outer Rim */}
-            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="4" />
-            {/* Overlapping aperture blades */}
-            <path d="M50,5 L89,27.5 L73.5,60 Z" opacity="0.9" />
-            <path d="M89,27.5 L89,72.5 L58,72.5 Z" opacity="0.9" />
-            <path d="M89,72.5 L50,95 L34.5,62.5 Z" opacity="0.9" />
-            <path d="M50,95 L11,72.5 L26.5,40 Z" opacity="0.9" />
-            <path d="M11,72.5 L11,27.5 L42,27.5 Z" opacity="0.9" />
-            <path d="M11,27.5 L50,5 L65.5,37.5 Z" opacity="0.9" />
+            <circle cx="50" cy="50" r="45" fill="none" stroke={theme === 'dark' || theme === 'auto' ? '#FFDA03' : '#111'} strokeWidth="4" />
+            {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+              <path 
+                key={i}
+                d={`M50,5 L89,27.5 L73.5,60 Z`} 
+                fill={theme === 'dark' || theme === 'auto' ? '#FFDA03' : '#111'}
+                opacity="0.85"
+                transform={`rotate(${angle} 50 50)`}
+              />
+            ))}
           </svg>
         </div>
       )}
 
-      {/* Advanced Snug-Fitting Crop using slight scaling to clip visual margins */}
+      {/* Logo Image — scaled 1.55x to crop the yellow padding off */}
       <Image
         src="/assets/logo.png"
         alt="NIRA6 Logo"
-        width={width}
-        height={height}
+        width={Math.round(width * 1.6)}
+        height={Math.round(height * 1.6)}
         onLoad={() => setIsLoaded(true)}
-        className={`object-contain transition-all duration-500 scale-[1.12] ${
-          isLoaded ? 'opacity-100' : 'opacity-0 scale-[0.98]'
+        className={`object-contain transition-all duration-500 scale-[1.55] ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
         } ${
           theme === 'dark' 
             ? 'brightness-0 invert' 
@@ -54,6 +60,7 @@ export default function Logo({ className = '', height = 28, width = 112, theme =
               ? 'brightness-0' 
               : ''
         }`}
+        style={{ maxWidth: 'none' }}
         priority
       />
     </div>
