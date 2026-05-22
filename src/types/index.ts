@@ -48,18 +48,55 @@ export interface User {
 
 export interface RentalItem {
   id: string;
+  _id?: string;
   name: string;
   brand: string;
   category: string;
   image: string;
+  images?: string[];
+  description?: string;
   dailyRate: number;
   hourlyRate: number;
+  weeklyRate?: number;
+  monthlyRate?: number;
   securityDeposit: number;
   available: boolean;
+  bookedDates?: { start: string; end: string }[];
+  pickupLocations?: string[];
+  lensMount?: string;
+  sensorType?: string;
+  videoSpecs?: string;
+  conditionScore?: number;
+  shutterCount?: number;
+  insuranceAvailable?: boolean;
+  insuranceRate?: number;
+  bestFor?: string[];
+  specs?: Record<string, string>;
   rating: number;
   reviewCount: number;
   location: string;
   owner: string;
+  reviews?: RentalReview[];
+}
+
+export interface RentalReview {
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export interface RentalBooking {
+  rentalItemId: string;
+  startDate: string;
+  endDate: string;
+  days: number;
+  dailyRate: number;
+  deposit: number;
+  insurance: boolean;
+  insuranceCost: number;
+  totalCost: number;
+  pickupLocation: string;
 }
 
 export interface CreatorService {

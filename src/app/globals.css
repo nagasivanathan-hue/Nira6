@@ -138,6 +138,64 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(135deg, #0A0A0A 0%, #1a1a2e 50%, #16213e 100%);
 }
 
+/* Cinematic Rental Dark Theme */
+.rent-dark {
+  background: linear-gradient(180deg, #09090b 0%, #0c0c10 40%, #111118 100%);
+  color: #f4f4f5;
+}
+
+.rent-hero-gradient {
+  background: radial-gradient(ellipse 120% 80% at 50% 20%, rgba(255,218,3,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse 80% 60% at 80% 40%, rgba(59,130,246,0.04) 0%, transparent 50%),
+              linear-gradient(180deg, #07070a 0%, #0c0c12 100%);
+}
+
+/* Dark glassmorphic card with glow on hover */
+.card-dark {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-dark:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,218,3,0.15);
+  box-shadow: 0 0 40px rgba(255,218,3,0.04), 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+
+/* Condition score bar */
+.condition-bar {
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 40%, #22c55e 70%, #10b981 100%);
+  border-radius: 999px;
+  height: 4px;
+}
+
+/* Cinematic text gradient */
+.text-gradient-cinema {
+  background: linear-gradient(135deg, #FFDA03 0%, #FF6B35 50%, #A855F7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dark input styling */
+.input-dark {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f4f4f5;
+  transition: all 0.3s ease;
+}
+.input-dark:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,218,3,0.4);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,218,3,0.08);
+}
+.input-dark::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+
 /* Mobile-First & Performance Optimization Utilities */
 @layer utilities {
   /* Eliminate 300ms mobile click delay and tap blue highlights */

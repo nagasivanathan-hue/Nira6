@@ -1,99 +1,136 @@
 'use client';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { Star, MapPin, Calendar, Shield, Loader2 } from 'lucide-react';
-import { mockRentals } from '@/lib/mockData';
-import { formatPrice } from '@/lib/utils';
+import { useState, useEffect, useCallback } from 'react';
+import { Loader2 } from 'lucide-react';
+import RentHero from '@/components/rental/RentHero';
+import RentFilters from '@/components/rental/RentFilters';
+import RentalCard from '@/components/rental/RentalCard';
+import StickyRentBar from '@/components/rental/StickyRentBar';
+
+const EMPTY_FILTERS = {
+  brand: [] as string[],
+  lensMount: '',
+  sensorType: '',
+  videoSpecs: '',
+  bestFor: [] as string[],
+  location: '',
+  available: false,
+  minPrice: '',
+  maxPrice: '',
+};
 
 export default function RentPage() {
-  const [rentals, setRentals] = useState<any[]>(mockRentals);
+  const [rentals, setRentals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('');
+  const [sort, setSort] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const fetchRentals = useCallback(async () => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (activeCategory) params.set('category', activeCategory);
+    if (filters.brand.length) params.set('brand', filters.brand.join(','));
+    if (filters.lensMount) params.set('lensMount', filters.lensMount);
+    if (filters.sensorType) params.set('sensorType', filters.sensorType);
+    if (filters.videoSpecs) params.set('videoSpecs', filters.videoSpecs);
+    if (filters.bestFor.length) params.set('bestFor', filters.bestFor.join(','));
+    if (filters.location) params.set('location', filters.location);
+    if (filters.available) params.set('available', 'true');
+    if (filters.minPrice) params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+    if (searchQuery) params.set('keyword', searchQuery);
+    if (sort) params.set('sort', sort);
+
+    try {
+      const res = await fetch(`/api/rentals?${params.toString()}`);
+      const data = await res.json();
+      if (Array.isArray(data)) setRentals(data);
+    } catch (err) {
+      console.error('Error fetching rentals:', err);
+    }
+    setLoading(false);
+  }, [filters, activeCategory, searchQuery, sort]);
 
   useEffect(() => {
-    fetch('/api/rentals')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setRentals(data);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching rentals:', err);
-        setLoading(false);
-      });
-  }, []);
+    const debounce = setTimeout(fetchRentals, 300);
+    return () => clearTimeout(debounce);
+  }, [fetchRentals]);
 
   return (
-    <div className="min-h-screen bg-nira-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="font-heading font-bold text-3xl lg:text-4xl mb-2">Rent Creator Equipment</h1>
-            <p className="text-nira-text-secondary">Access premium gear without the hefty price tag</p>
-          </div>
-          {loading && (
-            <div className="flex items-center gap-2 text-nira-text-secondary text-sm font-semibold bg-white px-4 py-2 rounded-xl border border-nira-gray-dark shadow-sm">
-              <Loader2 className="w-4 h-4 animate-spin text-nira-yellow" />
-              <span>Syncing Live Catalog...</span>
-            </div>
-          )}
+    <div className="rent-dark min-h-screen">
+      {/* Hero Section */}
+      <RentHero
+        searchQuery={searchQuery}
+        onSearch={setSearchQuery}
+        activeCategory={activeCategory}
+        onCategory={setActiveCategory}
+      />
+
+      {/* Mobile Sticky Bar */}
+      <StickyRentBar
+        onFilterToggle={() => setFiltersOpen(true)}
+        sort={sort}
+        onSort={setSort}
+        resultCount={rentals.length}
+      />
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Desktop Sort Bar */}
+        <div className="hidden lg:flex items-center justify-between mb-8">
+          <p className="text-sm text-white/30 font-medium">
+            <span className="text-white font-bold">{rentals.length}</span> items found
+          </p>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="input-dark rounded-xl px-4 py-2.5 text-xs font-bold cursor-pointer"
+          >
+            <option value="">Newest First</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+            <option value="rating">Top Rated</option>
+          </select>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {rentals.map((item, i) => (
-            <motion.div
-              key={item.id || item._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-2xl overflow-hidden border border-nira-gray-dark hover:shadow-lg transition-all group"
-            >
-              <div className="relative aspect-[4/3] bg-nira-gray overflow-hidden">
-                <Image src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                {!item.available && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="px-4 py-2 bg-white/90 text-nira-dark font-semibold rounded-lg text-sm">Currently Rented</span>
-                  </div>
-                )}
-                <span className={`absolute top-3 right-3 px-2.5 py-1 text-xs font-bold rounded-lg ${item.available ? 'bg-nira-success text-white' : 'bg-nira-error text-white'}`}>
-                  {item.available ? 'Available' : 'Unavailable'}
-                </span>
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          <RentFilters
+            filters={filters}
+            onChange={setFilters}
+            onReset={() => setFilters(EMPTY_FILTERS)}
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+          />
+
+          {/* Results Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-3">
+                <Loader2 className="w-6 h-6 text-nira-yellow animate-spin" />
+                <p className="text-xs font-bold text-white/20">Loading Catalog...</p>
               </div>
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs font-medium text-nira-text-secondary uppercase">{item.brand}</p>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow" />
-                    <span className="text-xs font-semibold">{item.rating}</span>
-                  </div>
-                </div>
-                <h3 className="font-semibold mb-3">{item.name}</h3>
-                <div className="flex items-center gap-4 mb-3">
-                  <div>
-                    <p className="text-xs text-nira-text-secondary">Per Day</p>
-                    <p className="font-heading font-bold text-lg">{formatPrice(item.dailyRate)}</p>
-                  </div>
-                  <div className="w-px h-8 bg-nira-gray-dark" />
-                  <div>
-                    <p className="text-xs text-nira-text-secondary">Per Hour</p>
-                    <p className="font-heading font-bold text-lg">{formatPrice(item.hourlyRate)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 text-xs text-nira-text-secondary mb-4">
-                  <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>
-                  <span className="flex items-center gap-1"><Shield className="w-3 h-3" />Deposit: {formatPrice(item.securityDeposit)}</span>
-                </div>
+            ) : rentals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+                <p className="text-lg font-heading font-bold text-white/40">No gear matches your filters</p>
+                <p className="text-xs text-white/20">Try adjusting your search or removing some filters</p>
                 <button
-                  disabled={!item.available}
-                  className="w-full py-2.5 bg-nira-dark text-white font-medium rounded-xl hover:bg-nira-dark/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={() => { setFilters(EMPTY_FILTERS); setSearchQuery(''); setActiveCategory(''); }}
+                  className="mt-3 px-5 py-2 text-xs font-bold bg-nira-yellow text-nira-dark rounded-xl cursor-pointer hover:bg-nira-yellow-dark transition-colors"
                 >
-                  <Calendar className="w-4 h-4" /> Book Now
+                  Reset All Filters
                 </button>
               </div>
-            </motion.div>
-          ))}
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
+                {rentals.map((item, i) => (
+                  <RentalCard key={item.id || item._id} item={item} index={i} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
