@@ -550,7 +550,7 @@ export default function BuyPage() {
             )}
 
             {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {[1,2,3,4,5,6].map(i => (
                   <div key={i} className="bg-white rounded-2xl aspect-[4/5] animate-pulse border border-nira-gray-dark" />
                 ))}

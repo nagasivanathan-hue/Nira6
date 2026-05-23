@@ -108,10 +108,11 @@ export default function RentPage() {
 
           {/* Results Grid */}
           <div className="flex-1">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-24 gap-3">
-                <Loader2 className="w-6 h-6 text-nira-yellow animate-spin" />
-                <p className="text-xs font-bold text-white/20">Loading Catalog...</p>
+             {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5 animate-fade-in">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="bg-white/5 rounded-3xl aspect-[4/5] animate-pulse border border-white/5" />
+                ))}
               </div>
             ) : rentals.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
