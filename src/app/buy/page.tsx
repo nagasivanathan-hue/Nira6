@@ -1,15 +1,34 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Search, SlidersHorizontal, Grid, List as ListIcon, X, Sparkles, Filter, Check, ArrowRight } from 'lucide-react';
+import { Search, SlidersHorizontal, Grid, List as ListIcon, X, Sparkles, Filter, Check, ArrowRight, History, Tag, Award, Package } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { fetchProducts } from '@/store/productSlice';
 import { setSearchQuery } from '@/store/uiSlice';
+import { mockProducts } from '@/lib/mockData';
 
-const CATEGORIES = ['All', 'Cameras', 'Lenses', 'Drones', 'Gimbals', 'Audio', 'Lighting'];
+const CATEGORIES = ['All', 'Cameras', 'Lenses', 'Drones', 'Gimbals', 'Audio', 'Lighting', 'Accessories'];
 const GRADES = ['All', 'Like New', 'Excellent', 'Good', 'Fair'];
-const BRANDS = ['All', 'Sony', 'Canon', 'Nikon', 'DJI', 'Fujifilm', 'Blackmagic'];
+const BRANDS = ['All', 'Sony', 'Canon', 'Nikon', 'DJI', 'Fujifilm', 'Blackmagic', 'Digitek', 'ULANZI', 'Neewer', 'Hiffin'];
+
+// Lightweight text highlighting component
+function HighlightText({ text, highlight }: { text: string; highlight: string }) {
+  if (!highlight.trim()) return <span>{text}</span>;
+  const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+  return (
+    <span>
+      {parts.map((part, index) => 
+        regex.test(part) ? (
+          <mark key={index} className="bg-nira-yellow/30 text-nira-dark font-extrabold rounded-xs px-0.5">{part}</mark>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </span>
+  );
+}
 
 export default function BuyPage() {
   const dispatch = useAppDispatch();
@@ -24,6 +43,51 @@ export default function BuyPage() {
   // UX Optimizations
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  
+  // Search Experience States & Effects
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        dispatch(setSearchQuery(localSearch));
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [localSearch, dispatch, searchQuery]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nira_recent_searches');
+    if (saved) {
+      try {
+        setRecentSearches(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse recent searches:', e);
+      }
+    }
+  }, []);
+
+  const saveSearchTerm = (term: string) => {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    setRecentSearches(prev => {
+      const filtered = prev.filter(t => t !== trimmed);
+      const updated = [trimmed, ...filtered].slice(0, 5);
+      localStorage.setItem('nira_recent_searches', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    if (searchQuery.trim() !== '') {
+      saveSearchTerm(searchQuery);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -36,29 +100,57 @@ export default function BuyPage() {
     dispatch(fetchProducts(params));
   }, [dispatch, activeCategory, activeGrade, activeBrand, sortBy, searchQuery]);
 
-  // Smart suggestions mock dataset
-  const commonSuggestions = [
-    { text: 'Sony FX3 Cinema Camera', category: 'Cameras' },
-    { text: 'Canon EOS R5 Mirrorless', category: 'Cameras' },
-    { text: 'DJI Mavic 3 Pro Drone', category: 'Drones' },
-    { text: 'Sony FE 24-70mm f/2.8 GM II', category: 'Lenses' },
-    { text: 'Rode Wireless PRO Microphone', category: 'Audio' },
-    { text: 'Aputure Amaran 200d LED Light', category: 'Lighting' },
-    { text: 'DJI RS 4 Pro Gimbal', category: 'Gimbals' },
-    { text: 'Nikon Z8 Mirrorless Camera', category: 'Cameras' },
-    { text: 'Sigma 24-70mm f/2.8 DG DN Art', category: 'Lenses' }
-  ];
-
   const popularTags = ['Sony FX3', 'Mavic 3', 'Rode Mic', 'Sigma Art', 'Canon R5', 'Lenses'];
 
-  const matchingProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  ).slice(0, 4);
+  // Dynamic search suggestions engine based on loaded products list
+  const getDynamicSuggestions = () => {
+    if (!localSearch.trim()) return [];
+    const term = localSearch.toLowerCase().trim();
+    const suggestionsSet = new Set<string>();
+    const results: { text: string; category: string; type: 'brand' | 'category' | 'product' }[] = [];
 
-  const filteredCommonSuggestions = commonSuggestions.filter(item => 
-    item.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    // 1. Matches for Brands
+    BRANDS.forEach(brand => {
+      if (brand !== 'All' && brand.toLowerCase().includes(term) && !suggestionsSet.has(brand.toLowerCase())) {
+        suggestionsSet.add(brand.toLowerCase());
+        results.push({ text: brand, category: 'Brand', type: 'brand' });
+      }
+    });
+
+    // 2. Matches for Categories
+    CATEGORIES.forEach(cat => {
+      if (cat !== 'All' && cat.toLowerCase().includes(term) && !suggestionsSet.has(cat.toLowerCase())) {
+        suggestionsSet.add(cat.toLowerCase());
+        results.push({ text: cat, category: 'Category', type: 'category' });
+      }
+    });
+
+    // 3. Matches for Products
+    const matchedProducts = mockProducts.filter(p => 
+      p.name.toLowerCase().includes(term) || 
+      p.brand.toLowerCase().includes(term)
+    );
+
+    matchedProducts.forEach(p => {
+      const lowerName = p.name.toLowerCase();
+      if (!suggestionsSet.has(lowerName) && results.length < 8) {
+        suggestionsSet.add(lowerName);
+        results.push({ 
+          text: p.name, 
+          category: p.category.charAt(0).toUpperCase() + p.category.slice(1), 
+          type: 'product' 
+        });
+      }
+    });
+
+    return results.slice(0, 6);
+  };
+
+  const dynamicSuggestions = getDynamicSuggestions();
+
+  const matchingProducts = mockProducts.filter(p => 
+    p.name.toLowerCase().includes(localSearch.toLowerCase()) ||
+    p.brand.toLowerCase().includes(localSearch.toLowerCase())
   ).slice(0, 4);
 
   const hasActiveFilters = activeCategory !== 'All' || activeGrade !== 'All' || activeBrand !== 'All' || searchQuery !== '';
@@ -73,13 +165,17 @@ export default function BuyPage() {
     if (type === 'category') setActiveCategory('All');
     if (type === 'brand') setActiveBrand('All');
     if (type === 'grade') setActiveGrade('All');
-    if (type === 'search') dispatch(setSearchQuery(''));
+    if (type === 'search') {
+      setLocalSearch('');
+      dispatch(setSearchQuery(''));
+    }
   };
 
   const clearAllFilters = () => {
     setActiveCategory('All');
     setActiveBrand('All');
     setActiveGrade('All');
+    setLocalSearch('');
     dispatch(setSearchQuery(''));
   };
 
@@ -97,17 +193,18 @@ export default function BuyPage() {
               <input 
                 type="text" 
                 placeholder="Search cameras, lenses, drones..." 
-                value={searchQuery}
+                value={localSearch}
                 onChange={(e) => {
-                  dispatch(setSearchQuery(e.target.value));
+                  setLocalSearch(e.target.value);
                   setShowSuggestions(true);
                 }}
                 onFocus={() => setShowSuggestions(true)}
                 className="w-full pl-12 pr-10 py-3 bg-nira-gray rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow transition-all"
               />
-              {searchQuery && (
+              {localSearch && (
                 <button 
                   onClick={() => {
+                    setLocalSearch('');
                     dispatch(setSearchQuery(''));
                     setShowSuggestions(false);
                   }}
@@ -126,11 +223,60 @@ export default function BuyPage() {
                     onClick={() => setShowSuggestions(false)} 
                   />
                   <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-nira-gray-dark z-50 overflow-hidden animate-fade-in max-h-[420px] overflow-y-auto">
-                    {searchQuery.trim() === '' ? (
+                    {localSearch.trim() === '' ? (
                       <div className="p-5">
+                        {/* Recent Searches */}
+                        {recentSearches.length > 0 && (
+                          <div className="mb-5">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary flex items-center gap-1.5">
+                                <History className="w-3.5 h-3.5 text-nira-text-secondary animate-pulse" />
+                                Recent Searches
+                              </h4>
+                              <button 
+                                onClick={() => {
+                                  setRecentSearches([]);
+                                  localStorage.removeItem('nira_recent_searches');
+                                }}
+                                className="text-[10px] text-nira-text-secondary hover:text-nira-error font-extrabold transition-colors cursor-pointer uppercase"
+                              >
+                                Clear All
+                              </button>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {recentSearches.map(term => (
+                                <div key={term} className="flex items-center gap-1.5 bg-nira-gray hover:bg-nira-yellow/10 rounded-xl transition-all pl-3.5 pr-2 py-1.5 group">
+                                  <button
+                                    onClick={() => {
+                                      setLocalSearch(term);
+                                      dispatch(setSearchQuery(term));
+                                      setShowSuggestions(false);
+                                    }}
+                                    className="text-nira-text-secondary group-hover:text-nira-dark text-xs cursor-pointer font-bold transition-colors"
+                                  >
+                                    {term}
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setRecentSearches(prev => {
+                                        const updated = prev.filter(t => t !== term);
+                                        localStorage.setItem('nira_recent_searches', JSON.stringify(updated));
+                                        return updated;
+                                      });
+                                    }}
+                                    className="text-nira-text-secondary hover:text-nira-error hover:bg-nira-gray-dark p-0.5 rounded-full transition-all"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         <div className="mb-4">
                           <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3 flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow" />
+                            <Sparkles className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow animate-bounce" />
                             Popular Searches
                           </h4>
                           <div className="flex flex-wrap gap-2">
@@ -138,6 +284,7 @@ export default function BuyPage() {
                               <button
                                 key={tag}
                                 onClick={() => {
+                                  setLocalSearch(tag);
                                   dispatch(setSearchQuery(tag));
                                   setShowSuggestions(false);
                                 }}
@@ -175,6 +322,7 @@ export default function BuyPage() {
                         {matchingProducts.length > 0 && (
                           <div className="p-4 border-b border-nira-gray">
                             <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3 flex items-center gap-1.5">
+                              <Package className="w-3.5 h-3.5 text-nira-text-secondary" />
                               Store Matches
                             </h4>
                             <div className="space-y-2">
@@ -192,7 +340,9 @@ export default function BuyPage() {
                                     className="w-10 h-10 object-cover rounded-lg bg-nira-gray"
                                   />
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-semibold text-nira-dark truncate">{p.name}</p>
+                                    <p className="text-xs font-semibold text-nira-dark truncate">
+                                      <HighlightText text={p.name} highlight={localSearch} />
+                                    </p>
                                     <p className="text-[10px] text-nira-text-secondary font-medium">Grade: {p.grade} • {p.brand}</p>
                                   </div>
                                   <div className="text-right">
@@ -210,23 +360,38 @@ export default function BuyPage() {
                           <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary px-2 mb-2">
                             Search Suggestions
                           </h4>
-                          {filteredCommonSuggestions.length === 0 && matchingProducts.length === 0 && (
+                          {dynamicSuggestions.length === 0 && matchingProducts.length === 0 && (
                             <div className="p-4 text-center text-xs text-nira-text-secondary">
-                              No quick suggestions for &ldquo;{searchQuery}&rdquo;
+                              No quick suggestions for &ldquo;{localSearch}&rdquo;
                             </div>
                           )}
-                          {filteredCommonSuggestions.map(item => (
+                          {dynamicSuggestions.map(item => (
                             <button
-                              key={item.text}
+                              key={item.text + '-' + item.type}
                               onClick={() => {
+                                setLocalSearch(item.text);
                                 dispatch(setSearchQuery(item.text));
                                 setShowSuggestions(false);
                               }}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-nira-gray rounded-xl text-left text-xs text-nira-dark transition-colors cursor-pointer"
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-nira-gray rounded-xl text-left text-xs text-nira-dark transition-colors cursor-pointer group"
                             >
-                              <Search className="w-3.5 h-3.5 text-nira-text-secondary" />
-                              <span className="flex-1 truncate">{item.text}</span>
-                              <span className="text-[10px] bg-nira-gray px-2 py-0.5 rounded-md text-nira-text-secondary font-medium">{item.category}</span>
+                              {item.type === 'category' ? (
+                                <Tag className="w-3.5 h-3.5 text-purple-500 group-hover:scale-110 transition-transform" />
+                              ) : item.type === 'brand' ? (
+                                <Award className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
+                              ) : (
+                                <Search className="w-3.5 h-3.5 text-nira-text-secondary group-hover:scale-110 transition-transform" />
+                              )}
+                              <span className="flex-1 truncate">
+                                <HighlightText text={item.text} highlight={localSearch} />
+                              </span>
+                              <span className={`text-[9px] px-2 py-0.5 rounded-md font-bold uppercase ${
+                                item.type === 'category' ? 'bg-purple-100 text-purple-700' :
+                                item.type === 'brand' ? 'bg-blue-100 text-blue-700' :
+                                'bg-nira-gray text-nira-text-secondary'
+                              }`}>
+                                {item.category}
+                              </span>
                             </button>
                           ))}
                         </div>
@@ -397,18 +562,50 @@ export default function BuyPage() {
                 <button onClick={() => window.location.reload()} className="mt-4 px-6 py-2 bg-nira-error text-white rounded-xl text-sm font-bold shadow-sm">Retry</button>
               </div>
             ) : products.length === 0 ? (
-              <div className="bg-white p-12 rounded-2xl text-center border border-nira-gray-dark">
-                <Search className="w-12 h-12 text-nira-text-secondary/40 mx-auto mb-4" />
-                <h3 className="font-heading font-bold text-lg text-nira-dark">No products found</h3>
-                <p className="text-nira-text-secondary text-sm mt-1">Try adjusting your filters or search terms</p>
-                {hasActiveFilters && (
-                  <button 
-                    onClick={clearAllFilters}
-                    className="mt-4 px-5 py-2 bg-nira-yellow text-nira-dark font-bold text-sm rounded-xl shadow-sm hover:scale-102 active:scale-98 transition-all"
-                  >
-                    Clear All Filters
-                  </button>
-                )}
+              <div className="bg-white p-12 rounded-2xl text-center border border-nira-gray-dark max-w-2xl mx-auto my-8 shadow-sm">
+                <Search className="w-16 h-16 text-nira-yellow/60 mx-auto mb-4 animate-bounce" />
+                <h3 className="font-heading font-extrabold text-xl text-nira-dark">No gear matches found</h3>
+                <p className="text-nira-text-secondary text-sm mt-2 max-w-md mx-auto">We couldn&apos;t find any items matching your active filters or search term: &ldquo;{searchQuery}&rdquo;</p>
+                
+                <div className="mt-8 pt-6 border-t border-nira-gray-dark">
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3">Try Popular Keywords instead</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {popularTags.map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => {
+                          setLocalSearch(tag);
+                          dispatch(setSearchQuery(tag));
+                        }}
+                        className="px-4 py-2 bg-nira-gray hover:bg-nira-yellow/10 hover:text-nira-dark text-nira-text-secondary text-xs rounded-xl font-bold transition-all cursor-pointer"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-center gap-4 mt-8">
+                  {searchQuery && (
+                    <button 
+                      onClick={() => {
+                        setLocalSearch('');
+                        dispatch(setSearchQuery(''));
+                      }}
+                      className="px-5 py-2.5 bg-nira-gray text-nira-dark text-xs font-bold rounded-xl transition-all hover:bg-nira-gray-dark cursor-pointer"
+                    >
+                      Clear Search Keyword
+                    </button>
+                  )}
+                  {hasActiveFilters && (
+                    <button 
+                      onClick={clearAllFilters}
+                      className="px-5 py-2.5 bg-nira-yellow text-nira-dark text-xs font-bold rounded-xl shadow-sm hover:scale-102 transition-all cursor-pointer"
+                    >
+                      Reset All Filters
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">

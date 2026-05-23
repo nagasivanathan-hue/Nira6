@@ -4,6 +4,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 import type { Product, RentalItem, CreatorService, Freelancer, Review, Testimonial, BlogPost, WalletTransaction } from '@/types';
+import { accessoriesMockProducts } from './accessoriesMockData';
 
 export const mockProducts: Product[] = [
   {
@@ -114,6 +115,7 @@ export const mockProducts: Product[] = [
     createdAt: '2026-05-04', description: '40.2MP APS-C mirrorless with classic design, in-body stabilization, and stunning color science.',
     specs: { 'Sensor': '40.2MP APS-C', 'Video': '6.2K', 'IBIS': '7 stops', 'Film Sim': '19 modes', 'Weight': '557g' },
   },
+  ...accessoriesMockProducts,
 ];
 
 export const mockRentals: RentalItem[] = [

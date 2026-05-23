@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import Product from '@/models/Product';
 import { verifyAuth } from '@/lib/auth/auth';
+import { mockProducts } from '@/lib/mockData';
 
 export async function GET(req: Request) {
   try {
@@ -55,8 +56,59 @@ export async function GET(req: Request) {
     const products = await productQuery;
     return NextResponse.json(products);
   } catch (err) {
-    const error = err as Error;
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    console.error('Database connection or query failed in products GET, falling back to mock data:', err);
+    try {
+      const { searchParams } = new URL(req.url);
+      const category = searchParams.get('category')?.toLowerCase();
+      const brand = searchParams.get('brand')?.toLowerCase();
+      const grade = searchParams.get('grade')?.toLowerCase();
+      const minPrice = searchParams.get('minPrice');
+      const maxPrice = searchParams.get('maxPrice');
+      const sort = searchParams.get('sort');
+      const keyword = searchParams.get('keyword')?.toLowerCase();
+
+      let products = [...mockProducts];
+
+      if (category && category !== 'all') {
+        products = products.filter(p => p.category?.toLowerCase() === category);
+      }
+      if (brand && brand !== 'all') {
+        products = products.filter(p => p.brand?.toLowerCase() === brand);
+      }
+      if (grade && grade !== 'all') {
+        products = products.filter(p => p.grade?.toLowerCase() === grade || p.condition?.toLowerCase() === grade);
+      }
+      if (minPrice) {
+        products = products.filter(p => p.price >= Number(minPrice));
+      }
+      if (maxPrice) {
+        products = products.filter(p => p.price <= Number(maxPrice));
+      }
+      if (keyword) {
+        products = products.filter(p => 
+          p.name?.toLowerCase().includes(keyword) || 
+          p.brand?.toLowerCase().includes(keyword) || 
+          p.description?.toLowerCase().includes(keyword)
+        );
+      }
+
+      if (sort === 'price_asc') {
+        products.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price_desc') {
+        products.sort((a, b) => b.price - a.price);
+      } else {
+        products.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        });
+      }
+
+      return NextResponse.json(products);
+    } catch (fallbackErr) {
+      const error = fallbackErr as Error;
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
   }
 }
 

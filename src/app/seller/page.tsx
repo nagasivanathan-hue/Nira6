@@ -227,6 +227,7 @@ export default function SellerPartnerPage() {
 
   // Bulk Product Spreadsheet Uploader Simulator
   const [bulkProgress, setBulkProgress] = useState(false);
+  const [bulkFileUploaded, setBulkFileUploaded] = useState(false);
 
   // Auto Onboarding demo bypass
   const handleBypassDemo = () => {
@@ -411,7 +412,7 @@ export default function SellerPartnerPage() {
   const handleSendChat = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyInput.trim()) return;
-    const sentMsg = { sender: 'seller', text: replyInput, time: 'Just Now' };
+    const sentMsg: SellerChatMessage = { sender: 'seller', text: replyInput, time: 'Just Now' };
     setChatMessages([...chatMessages, sentMsg]);
     setReplyInput('');
 

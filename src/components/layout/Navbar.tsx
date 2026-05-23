@@ -29,6 +29,20 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastY, setLastY] = useState(0);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localSearch !== searchQuery) {
+        dispatch(setSearchQuery(localSearch));
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [localSearch, dispatch, searchQuery]);
 
   // Simulated notifications terminal log
   const [notifications, setNotifications] = useState<NiraNotification[]>([
@@ -143,8 +157,8 @@ export default function Navbar() {
                 <input
                   type="text"
                   placeholder="Search cameras, lenses, drones..."
-                  value={searchQuery}
-                  onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+                  value={localSearch}
+                  onChange={(e) => setLocalSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       router.push('/buy');
@@ -301,8 +315,8 @@ export default function Navbar() {
                   <input
                     type="text"
                     placeholder="Search cameras, lenses, drones..."
-                    value={searchQuery}
-                    onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         dispatch(toggleSearch());

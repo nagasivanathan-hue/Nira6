@@ -77,6 +77,10 @@ export const BRANDS = [
   { id: 'gopro', name: 'GoPro' },
   { id: 'sigma', name: 'Sigma' },
   { id: 'tamron', name: 'Tamron' },
+  { id: 'ulanzi', name: 'ULANZI' },
+  { id: 'digitek', name: 'Digitek' },
+  { id: 'neewer', name: 'Neewer' },
+  { id: 'hiffin', name: 'Hiffin' },
 ] as const;
 
 export const CONDITION_GRADES = {
