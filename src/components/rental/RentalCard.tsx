@@ -57,26 +57,47 @@ export default function RentalCard({ item, index }: RentalCardProps) {
 
           {/* Content */}
           <div className="p-4">
-            {/* Rating + Condition */}
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-nira-yellow fill-nira-yellow" />
-                <span className="text-[11px] font-bold text-white/70">{item.rating}</span>
-                <span className="text-[10px] text-white/30">({item.reviewCount})</span>
+            {/* Rating Row */}
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <div className="flex items-center gap-0.5 text-nira-yellow">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-3 h-3 ${
+                      i < Math.floor(item.rating)
+                        ? 'fill-nira-yellow text-nira-yellow'
+                        : 'text-white/10'
+                    }`}
+                  />
+                ))}
               </div>
-              <div className="flex items-center gap-1">
-                <Zap className={`w-3 h-3 ${scoreColor}`} />
-                <span className={`text-[10px] font-bold ${scoreColor}`}>{score}%</span>
-              </div>
+              <span className="text-[11px] font-bold text-white/90">{item.rating}</span>
+              <span className="text-[10px] text-white/30">({item.reviewCount} reviews)</span>
             </div>
 
             {/* Name */}
             <h3 className="font-heading font-bold text-sm text-white mb-2 line-clamp-1 group-hover:text-nira-yellow transition-colors">{item.name}</h3>
 
+            {/* Nira Inspected Trust Badge */}
+            <div className="flex items-center gap-1 text-[9px] font-bold text-emerald-400/90 mb-2.5 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md w-fit">
+              <Shield className="w-3 h-3 text-emerald-400 fill-emerald-400/5" />
+              <span>Nira Inspected • Rent Protected</span>
+            </div>
+
+            {/* Availability and Location timeline */}
+            <div className="flex items-center gap-1.5 text-[10px] mb-3">
+              <span className={`w-1.5 h-1.5 rounded-full ${item.available ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+              <span className={item.available ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}>
+                {item.available ? 'Available Tomorrow' : 'Rented Out'}
+              </span>
+              <span className="text-white/30">•</span>
+              <span className="text-white/40 flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" />{item.location}</span>
+            </div>
+
             {/* Best For Tags */}
             {item.bestFor && item.bestFor.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-3">
-                {item.bestFor.slice(0, 3).map((tag: string) => (
+                {item.bestFor.slice(0, 2).map((tag: string) => (
                   <span key={tag} className="px-2 py-0.5 text-[9px] font-bold bg-white/5 text-white/40 rounded-md border border-white/5">
                     {tag}
                   </span>
@@ -85,26 +106,24 @@ export default function RentalCard({ item, index }: RentalCardProps) {
             )}
 
             {/* Pricing */}
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-3.5 border-t border-white/5 pt-3">
               <div>
                 <p className="text-[9px] text-white/30 uppercase font-bold">Per Day</p>
                 <p className="font-heading font-black text-base text-nira-yellow">{formatPrice(item.dailyRate)}</p>
               </div>
               <div className="w-px h-8 bg-white/5" />
               <div>
-                <p className="text-[9px] text-white/30 uppercase font-bold">Per Hour</p>
-                <p className="font-heading font-bold text-sm text-white/60">{formatPrice(item.hourlyRate)}</p>
+                <p className="text-[9px] text-white/30 uppercase font-bold">Security Deposit</p>
+                <p className="font-heading font-bold text-sm text-white/60">₹{(item.securityDeposit / 1000).toFixed(0)}K refundable</p>
               </div>
             </div>
 
-            {/* Location + Deposit */}
-            <div className="flex items-center justify-between text-[10px] text-white/30 mb-4">
-              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>
-              <span className="flex items-center gap-1"><Shield className="w-3 h-3" />₹{(item.securityDeposit / 1000).toFixed(0)}K deposit</span>
-            </div>
-
-            {/* Condition Bar */}
+            {/* Condition score indicator */}
             <div className="mb-4">
+              <div className="flex justify-between text-[9px] font-semibold text-white/40 mb-1">
+                <span>Grade {score >= 90 ? 'A+' : 'A'} Condition</span>
+                <span>{score}% Score</span>
+              </div>
               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                 <div className="condition-bar h-full rounded-full" style={{ width: `${score}%` }} />
               </div>

@@ -28,7 +28,7 @@ export default function Logo({ className = '', height = 28, theme = 'auto', icon
     <div className={`flex items-center gap-2 select-none pointer-events-none ${className}`}>
       {/* Brand Icon (Square frame with logo image) */}
       <div 
-        className="relative overflow-hidden rounded-lg bg-nira-yellow border border-nira-yellow/20 shadow-sm flex-shrink-0"
+        className="relative flex-shrink-0 overflow-hidden"
         style={{ width: iconSize, height: iconSize }}
       >
         <Image
@@ -37,7 +37,7 @@ export default function Logo({ className = '', height = 28, theme = 'auto', icon
           fill
           sizes={`${iconSize}px`}
           onLoad={() => setIsLoaded(true)}
-          className={`object-cover transition-opacity duration-300 ${
+          className={`object-contain transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           priority

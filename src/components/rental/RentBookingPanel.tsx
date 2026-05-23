@@ -28,6 +28,7 @@ export default function RentBookingPanel({ item }: { item: RentalItem }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.5 }}
+      id="rent-booking-panel"
       className="card-dark rounded-2xl p-6 sticky top-24"
     >
       {/* Title + Rating */}

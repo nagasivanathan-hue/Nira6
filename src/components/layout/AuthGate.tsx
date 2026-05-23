@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '@/store';
 import Navbar from '@/components/layout/Navbar';
@@ -12,9 +13,23 @@ const LiveChatWidget = dynamic(() => import('@/components/support/LiveChatWidget
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Allow accessing Auth pages without nesting inside AuthGate
   const isAuthPage = pathname?.startsWith('/auth/');
+
+  if (!mounted) {
+    // Render a minimal loader that looks identical on server and client to avoid hydration mismatch
+    return (
+      <div className="min-h-screen bg-[#0c0c10] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-nira-yellow/20 border-t-nira-yellow rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (isAuthPage) {
     return <main className="min-h-screen">{children}</main>;

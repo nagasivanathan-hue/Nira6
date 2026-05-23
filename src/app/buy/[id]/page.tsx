@@ -144,12 +144,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const filteredList = parsedList.filter((p: Product) => p.id !== product.id);
       const updatedList = [product, ...filteredList].slice(0, 4);
       localStorage.setItem('nira_recently_viewed', JSON.stringify(updatedList));
-      Promise.resolve().then(() => setRecentlyViewed(updatedList));
-
-      // 3. Populate Amazon-style accessories and Q&A lists
       const accessories = getBundleAccessories(product.category);
-      setSelectedBundleItems([product.id, ...accessories.map(a => a.id)]);
-      setQaList(getPreFilledQA(product.category));
+      Promise.resolve().then(() => {
+        setRecentlyViewed(updatedList);
+        setSelectedBundleItems([product.id, ...accessories.map(a => a.id)]);
+        setQaList(getPreFilledQA(product.category));
+      });
     }
   }, [product]);
 
@@ -246,13 +246,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         dispatch(addToCart({
           id: acc.id,
           name: acc.name,
-          price: acc.price,
-          image: acc.image,
           brand: 'Nira Essentials',
           category: 'Accessories',
-          grade: 'New',
-          description: 'Essential accessory bundled with your gear.'
-        } as any));
+          price: acc.price,
+          originalPrice: acc.price,
+          discount: 0,
+          image: acc.image,
+          images: [acc.image],
+          condition: 'Like New',
+          grade: 'A+',
+          warranty: '1 Year',
+          rating: 5,
+          reviewCount: 1,
+          sellerName: 'Nira Certified',
+          sellerRating: 5,
+          specs: {},
+          description: 'Essential accessory bundled with your gear.',
+          emiAvailable: false,
+          inStock: true,
+          featured: false,
+          trending: false,
+          createdAt: new Date().toISOString()
+        } as Product));
       });
 
     window.dispatchEvent(new CustomEvent('nira_notification', {
@@ -716,6 +731,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
         )}
+
+        {/* Mobile Sticky CTA Bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-100 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-between lg:hidden md:px-6">
+          <div className="flex flex-col min-w-0 pr-4">
+            <h4 className="text-xs font-bold text-neutral-900 truncate leading-snug">{product.name}</h4>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="font-heading font-black text-sm text-neutral-950">{formatPrice(product.price)}</span>
+              <span className="text-[9px] font-bold text-nira-success bg-green-50 px-1.5 py-0.5 rounded border border-green-100">Grade {product.grade}</span>
+            </div>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <button
+              onClick={() => {
+                dispatch(addToCart(product));
+                window.dispatchEvent(new CustomEvent('nira_notification', {
+                  detail: { type: 'push', title: '🛒 Item Added to Cart!', content: `${product.name} was successfully loaded into shopping cart.` }
+                }));
+              }}
+              className="px-3.5 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold rounded-xl text-xs flex items-center justify-center cursor-pointer transition-colors"
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </button>
+            <Link
+              href="/checkout"
+              onClick={() => dispatch(addToCart(product))}
+              className="px-5 py-2.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-xs rounded-xl flex items-center justify-center shadow-md cursor-pointer transition-colors"
+            >
+              Buy Now
+            </Link>
+          </div>
+        </div>
 
       </div>
     </div>

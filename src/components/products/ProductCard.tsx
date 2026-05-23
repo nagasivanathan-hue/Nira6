@@ -94,34 +94,51 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Product Information */}
       <div className="p-5 flex flex-col flex-grow">
-        {/* Brand */}
-        <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider mb-1.5">
-          {product.brand}
-        </p>
+        {/* Brand and Warranty */}
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+            {product.brand}
+          </p>
+          {product.warranty && (
+            <span className="text-[9px] px-2 py-0.5 bg-green-50/80 text-green-700 rounded-md font-bold border border-green-100/50">
+              {product.warranty} Warranty
+            </span>
+          )}
+        </div>
         
         {/* Title */}
-        <Link href={`/buy/${product.id}`} className="block flex-grow mb-3">
+        <Link href={`/buy/${product.id}`} className="block flex-grow mb-2.5">
           <h3 className="font-heading font-bold text-sm text-neutral-800 line-clamp-2 leading-snug group-hover:text-nira-yellow-dark transition-colors duration-200">
             {product.name}
           </h3>
         </Link>
         
-        {/* Rating and Warranty Pill */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
-          <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span className="text-xs font-bold text-amber-800">{product.rating.toFixed(1)}</span>
+        {/* Rating Row */}
+        <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+          <div className="flex items-center gap-0.5 text-amber-500">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-3 h-3 ${
+                  i < Math.floor(product.rating)
+                    ? 'fill-amber-500 text-amber-500'
+                    : 'text-neutral-200'
+                }`}
+              />
+            ))}
           </div>
-          <span className="text-xs text-neutral-400">({product.reviewCount} reviews)</span>
-          {product.warranty && (
-            <span className="ml-auto text-[9px] px-2.5 py-1 bg-green-50 text-green-700 rounded-full font-bold border border-green-100">
-              {product.warranty}
-            </span>
-          )}
+          <span className="text-[11px] font-black text-neutral-800">{product.rating.toFixed(1)}</span>
+          <span className="text-[10px] text-neutral-400 font-medium">({product.reviewCount} reviews)</span>
+        </div>
+
+        {/* Nira Certified Trust Badge */}
+        <div className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-emerald-700 mb-3.5 bg-emerald-50/60 px-2.5 py-1 rounded-lg border border-emerald-100/80 w-fit">
+          <Shield className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/10" />
+          <span>NIRA CERTIFIED • 30-POINT DIAGNOSED</span>
         </div>
 
         {/* Pricing Segment */}
-        <div className="border-t border-neutral-100 pt-4 flex flex-col gap-1">
+        <div className="border-t border-neutral-100 pt-3.5 flex flex-col gap-1.5 mt-auto">
           <div className="flex items-baseline gap-2">
             <span className="font-heading font-black text-xl text-neutral-900">
               {formatPrice(product.price)}
@@ -129,12 +146,22 @@ export default function ProductCard({ product }: { product: Product }) {
             <span className="text-xs text-neutral-400 line-through">
               {formatPrice(product.originalPrice)}
             </span>
+            <span className="text-[10px] font-bold text-nira-success">
+              ({product.discount}% OFF)
+            </span>
           </div>
-          {product.emiAvailable && (
-            <p className="text-[10px] text-blue-600 font-medium">
-              EMI available from {formatPrice(Math.round(product.price / 12))}/month
+
+          <div className="flex flex-col gap-0.5">
+            {product.emiAvailable && (
+              <p className="text-[10px] text-blue-600 font-semibold">
+                EMI available from {formatPrice(Math.round(product.price / 12))}/mo
+              </p>
+            )}
+            <p className="text-[10px] text-neutral-500 flex items-center gap-1 font-semibold">
+              <span className="text-emerald-600">⚡ Free Delivery</span>
+              <span>• tomorrow</span>
             </p>
-          )}
+          </div>
         </div>
       </div>
     </motion.div>

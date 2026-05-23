@@ -43,8 +43,8 @@ export default function SplashLoader() {
             <motion.div
               initial={{ 
                 opacity: 0, 
-                scale: 0.8,
-                filter: 'blur(16px)'
+                scale: 0.85,
+                filter: 'blur(10px)'
               }}
               animate={logoLoaded ? { 
                 opacity: 1, 
@@ -52,14 +52,14 @@ export default function SplashLoader() {
                 filter: 'blur(0px)'
               } : {}}
               transition={{ 
-                delay: 0.3, // 0.3s instead of 0.6s
-                duration: 0.8, // 0.8s instead of 1.2s
+                delay: 0.25,
+                duration: 0.7,
                 ease: [0.16, 1, 0.3, 1] 
               }}
-              className="absolute z-10 flex flex-col items-center justify-center p-6 rounded-2xl bg-neutral-900/40 border border-neutral-800/80 backdrop-blur-lg shadow-3xl"
+              className="absolute z-10 flex flex-col items-center justify-center text-center pointer-events-none select-none"
             >
-              <Logo height={32} theme="dark" />
-              <span className="mt-2 text-[8px] font-semibold tracking-[0.3em] text-neutral-400 uppercase">
+              <Logo height={48} theme="dark" />
+              <span className="mt-2 text-[8px] font-bold tracking-[0.4em] text-neutral-400 uppercase">
                 CREATOR PLATFORM
               </span>
             </motion.div>
