@@ -1,0 +1,1008 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Sparkles, Camera, Plus, Trash2, Send, Check, 
+  RefreshCw, Upload, Shield, Sliders, X, 
+  MessageSquare, ArrowRight, Clock, HelpCircle, User, Info, DollarSign
+} from 'lucide-react';
+
+const formatPrice = (p: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(p);
+};
+
+// -------------------------------------------------------------
+// MOCK DATA STRUCTURES
+// -------------------------------------------------------------
+
+interface GearItem {
+  id: string;
+  name: string;
+  category: 'camera' | 'lens' | 'lighting' | 'audio';
+  image: string;
+  buyPrice: number;
+  rentRate: number; // per day
+}
+
+const INVENTORY: GearItem[] = [
+  { id: 'cam-fx3', name: 'Sony FX3 Cinema Camera', category: 'camera', image: '/assets/product-camera.png', buyPrice: 295000, rentRate: 2500 },
+  { id: 'cam-a7iv', name: 'Sony Alpha 7 IV Mirrorless', category: 'camera', image: '/assets/product-camera.png', buyPrice: 198000, rentRate: 1600 },
+  { id: 'lens-85gm', name: 'Sony FE 85mm f/1.4 GM', category: 'lens', image: '/assets/product-lens.png', buyPrice: 145000, rentRate: 1100 },
+  { id: 'lens-2470gm', name: 'Sony FE 24-70mm f/2.8 GM II', category: 'lens', image: '/assets/product-lens.png', buyPrice: 199000, rentRate: 1400 },
+  { id: 'light-godox', name: 'Godox SZ150R Zoom RGB LED', category: 'lighting', image: '/assets/product-drone.png', buyPrice: 48000, rentRate: 500 },
+  { id: 'light-aputure', name: 'Aputure LS 600d Pro Light', category: 'lighting', image: '/assets/product-drone.png', buyPrice: 185000, rentRate: 1800 },
+  { id: 'audio-rodewp', name: 'Rode Wireless PRO Mic System', category: 'audio', image: '/assets/product-camera.png', buyPrice: 38000, rentRate: 400 },
+  { id: 'audio-ntg5', name: 'Rode NTG5 Shotgun Mic Kit', category: 'audio', image: '/assets/product-camera.png', buyPrice: 42000, rentRate: 450 },
+];
+
+interface BarterListing {
+  id: string;
+  creatorName: string;
+  creatorAvatar: string;
+  creatorRating: number;
+  offeredService: string;
+  requestedGear: string;
+  duration: string;
+  status: 'active' | 'accepted' | 'countered';
+  counterProposal?: string;
+}
+
+const INITIAL_BARTER_LISTINGS: BarterListing[] = [
+  {
+    id: 'bart-1',
+    creatorName: 'Rahul Mehra',
+    creatorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80',
+    creatorRating: 4.9,
+    offeredService: '10 Hours of Professional Video Color Grading (DaVinci Resolve Studio)',
+    requestedGear: 'Sony FX3 Full-Frame Cinema Camera Body',
+    duration: '3 Days Weekend Rental',
+    status: 'active'
+  },
+  {
+    id: 'bart-2',
+    creatorName: 'Sonia Kapoor',
+    creatorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80',
+    creatorRating: 4.8,
+    offeredService: 'High-End Wedding Album Retouching & Color Grading (50 Photos)',
+    requestedGear: 'DJI Mavic 3 Pro Cine Drone Combo',
+    duration: '2 Days Saturday-Sunday Rental',
+    status: 'active'
+  },
+  {
+    id: 'bart-3',
+    creatorName: 'Karan Parikh',
+    creatorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80',
+    creatorRating: 4.7,
+    offeredService: 'Cinematic Sound Design & Stereo Mixing for Short Films',
+    requestedGear: 'Aputure LS 600d Pro + Light Dome II Kit',
+    duration: '4 Days Shoot Rental',
+    status: 'active'
+  }
+];
+
+// -------------------------------------------------------------
+// CORE PAGE COMPONENT
+// -------------------------------------------------------------
+
+export default function CreatorStudioPage() {
+  const [activeTab, setActiveTab] = useState<'concierge' | 'barter' | 'grader' | 'garage'>('concierge');
+  
+  // States for Feature 1: DP Concierge
+  const [dpPrompt, setDpPrompt] = useState('');
+  const [dpLoading, setDpLoading] = useState(false);
+  const [dpLogs, setDpLogs] = useState<string[]>([]);
+  const [dpResult, setDpResult] = useState<{
+    packageName: string;
+    items: GearItem[];
+    buyTotal: number;
+    rentRateTotal: number;
+  } | null>(null);
+
+  // States for Feature 2: Barter Board
+  const [barterListings, setBarterListings] = useState<BarterListing[]>(INITIAL_BARTER_LISTINGS);
+  const [counterInput, setCounterInput] = useState('');
+  const [activeCounterId, setActiveCounterId] = useState<string | null>(null);
+  const [chattingListingId, setChattingListingId] = useState<string | null>(null);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatLogs, setChatLogs] = useState<Record<string, string[]>>({});
+
+  // States for Feature 3: Visual Grader
+  const [selectedGraderFile, setSelectedGraderFile] = useState<string | null>(null);
+  const [graderLoading, setGraderLoading] = useState(false);
+  const [graderLogs, setGraderLogs] = useState<string[]>([]);
+  const [graderResult, setGraderResult] = useState<{
+    modelName: string;
+    conditionScore: number;
+    shutterCount: number;
+    quickSellPrice: number;
+    maxProfitPrice: number;
+  } | null>(null);
+  const [selectedPayout, setSelectedPayout] = useState<'quick' | 'max' | null>(null);
+
+  // States for Feature 4: Creator's Garage
+  const [garageItems, setGarageItems] = useState<GearItem[]>([
+    INVENTORY[0], // pre-populate with FX3
+    INVENTORY[2], // pre-populate with 85 GM
+  ]);
+  const [rentToggle, setRentToggle] = useState(true); // true = Rent for 1 Week, false = Buy Outright
+
+  // Action to send DP Concierge items into the Garage setup builder
+  const handleSendToGarage = (items: GearItem[]) => {
+    setGarageItems(items);
+    setActiveTab('garage');
+    window.dispatchEvent(new CustomEvent('nira_notification', {
+      detail: { 
+        type: 'push', 
+        title: '🛠️ Garage Loaded!', 
+        content: `DP Concierge bundle has been loaded onto your Garage canvas.` 
+      }
+    }));
+  };
+
+  // -------------------------------------------------------------
+  // LOGIC & TIMERS SIMULATION
+  // -------------------------------------------------------------
+
+  // Run DP Concierge simulation
+  const handleDpConcierge = () => {
+    if (!dpPrompt.trim()) return;
+    setDpLoading(true);
+    setDpResult(null);
+    setDpLogs([]);
+
+    const logSequence = [
+      'Tokenizing scene description parameters...',
+      'Matching composition requirements with high-contrast chiaroscuro optics...',
+      'Filtering for 8K-ready low-light sensors...',
+      'Optimizing three-point lighting rig luminance levels...',
+      'Finalizing tailored director bundle packages...'
+    ];
+
+    logSequence.forEach((log, index) => {
+      setTimeout(() => {
+        setDpLogs(prev => [...prev, `[system]: ${log}`]);
+        if (index === logSequence.length - 1) {
+          // Select matched items based on prompt length or random
+          let matched: GearItem[] = [];
+          let pkg = 'Cinematic Masterclass Bundle';
+          
+          if (dpPrompt.toLowerCase().includes('light') || dpPrompt.toLowerCase().includes('lighting') || dpPrompt.toLowerCase().includes('chiaroscuro')) {
+            matched = [INVENTORY[0], INVENTORY[2], INVENTORY[5]];
+            pkg = 'Chiaroscuro Dark Cinema Kit';
+          } else if (dpPrompt.toLowerCase().includes('audio') || dpPrompt.toLowerCase().includes('interview') || dpPrompt.toLowerCase().includes('film')) {
+            matched = [INVENTORY[1], INVENTORY[3], INVENTORY[6]];
+            pkg = 'Documentary & Dialogue Kit';
+          } else {
+            matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4], INVENTORY[6]];
+            pkg = 'Run-and-Gun Commercial Pack';
+          }
+
+          const buyTotal = matched.reduce((sum, item) => sum + item.buyPrice, 0);
+          const rentRateTotal = matched.reduce((sum, item) => sum + item.rentRate, 0);
+
+          setDpResult({
+            packageName: pkg,
+            items: matched,
+            buyTotal,
+            rentRateTotal
+          });
+          setDpLoading(false);
+        }
+      }, (index + 1) * 800);
+    });
+  };
+
+  // Run Grader simulation
+  const handleGraderSimulation = () => {
+    setGraderLoading(true);
+    setGraderResult(null);
+    setGraderLogs([]);
+    setSelectedPayout(null);
+
+    const graderSequence = [
+      'Extracting camera body cosmetic micro-abrasions...',
+      'Evaluating lens element lens-flare and dust patterns...',
+      'Analyzing sensor pixel integrity & CMOS wear count...',
+      'Querying real-time MongoDB recommerce valuation indexes...'
+    ];
+
+    graderSequence.forEach((log, index) => {
+      setTimeout(() => {
+        setGraderLogs(prev => [...prev, `[AI Grader]: ${log}`]);
+        if (index === graderSequence.length - 1) {
+          setGraderResult({
+            modelName: 'Sony Alpha 7 IV Cinema Config',
+            conditionScore: 92,
+            shutterCount: 12402,
+            quickSellPrice: 112000,
+            maxProfitPrice: 139000
+          });
+          setGraderLoading(false);
+        }
+      }, (index + 1) * 900);
+    });
+  };
+
+  // Toggle garage items
+  const toggleGarageItem = (item: GearItem) => {
+    setGarageItems(prev =>
+      prev.some(x => x.id === item.id) ? prev.filter(x => x.id !== item.id) : [...prev, item]
+    );
+  };
+
+  // Calculate Garage Totals
+  const garageBuyTotal = garageItems.reduce((sum, item) => sum + item.buyPrice, 0);
+  const garageRentTotal = garageItems.reduce((sum, item) => sum + item.rentRate, 0) * 7; // 1 week
+
+  return (
+    <div className="min-h-screen bg-neutral-950 text-white font-sans py-24 px-4 sm:px-6 lg:px-8 border-t border-neutral-900">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Hub Header */}
+        <div className="text-center mb-12">
+          <span className="px-3 py-1 bg-[#FFDA03]/10 text-[#FFDA03] text-xs font-bold uppercase tracking-widest rounded-full border border-[#FFDA03]/20">
+            Nira Creator Sandbox
+          </span>
+          <h1 className="font-heading font-black text-4xl lg:text-5xl mt-3 text-white">
+            CREATOR <span className="text-[#FFDA03]">STUDIO</span>
+          </h1>
+          <p className="text-neutral-400 text-sm max-w-xl mx-auto mt-2">
+            Accelerate your productions with natural language AI concierges, visual grading engines, bartering marketplaces, and visual setups.
+          </p>
+        </div>
+
+        {/* Tab Selection */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10 border-b border-neutral-900 pb-6">
+          {[
+            { id: 'concierge', label: 'AI DP Concierge', icon: Sparkles },
+            { id: 'barter', label: 'Barter Board', icon: RefreshCw },
+            { id: 'grader', label: 'Wear & Tear Grader', icon: Sliders },
+            { id: 'garage', label: 'Creators Garage', icon: Camera },
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+                  isActive 
+                    ? 'bg-[#FFDA03] text-neutral-950 border-[#FFDA03] shadow-lg shadow-[#FFDA03]/10' 
+                    : 'bg-neutral-900/50 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tabs Content Wrapper */}
+        <div className="grid grid-cols-1 gap-8">
+          
+          {/* TAB 1: AI DP CONCIERGE */}
+          {activeTab === 'concierge' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="grid lg:grid-cols-12 gap-8"
+            >
+              <div className="lg:col-span-7 flex flex-col gap-6">
+                <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
+                  <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-3">
+                    <Sparkles className="w-5 h-5 text-[#FFDA03]" /> AI Director of Photography Concierge
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed mb-6">
+                    Describe your cinematic vision, shoot environment, lighting goals, or camera configurations. The AI matches and curates the equipment you need.
+                  </p>
+
+                  {/* Suggestion Prompts */}
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {[
+                      'Golden hour noir short film, soft backlight, ultra-sharp f/1.4 prime lens setup',
+                      'High-end studio product shoot, dramatic overhead lights, slow-motion detail shots',
+                      'Outdoor run-and-gun music video, stabilized gimbal, ultra-wide drone setup'
+                    ].map((p, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setDpPrompt(p)}
+                        className="text-[10px] text-left px-3 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:text-white text-neutral-400 rounded-lg transition-colors cursor-pointer"
+                      >
+                        "{p.substring(0, 52)}..."
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative mb-5">
+                    <textarea
+                      value={dpPrompt}
+                      onChange={(e) => setDpPrompt(e.target.value)}
+                      placeholder='e.g., "Shooting a low-light moody interview, need cinematic shallow depth of field, high CRI lighting rigs, and professional wireless lavs..."'
+                      rows={4}
+                      className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl p-4 text-sm text-neutral-200 focus:outline-none focus:border-[#FFDA03] transition-all resize-none font-sans"
+                    />
+                  </div>
+
+                  <button
+                    disabled={dpLoading || !dpPrompt.trim()}
+                    onClick={handleDpConcierge}
+                    className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {dpLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" /> Synthesizing Package...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" /> Generate DP Bundle setup
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Console Logs Output */}
+                {(dpLoading || dpLogs.length > 0) && (
+                  <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-neutral-500 h-44 overflow-y-auto">
+                    <div className="text-neutral-400 border-b border-neutral-900 pb-2 mb-2 flex justify-between items-center">
+                      <span>DP AI Concierge Logs</span>
+                      {dpLoading && <span className="w-1.5 h-1.5 bg-[#FFDA03] rounded-full animate-ping" />}
+                    </div>
+                    {dpLogs.map((log, i) => (
+                      <div key={i} className="mb-1">
+                        <span className="text-[#FFDA03]/60 mr-2">{'>'}</span>{log}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Matched Bundle Result Section */}
+              <div className="lg:col-span-5">
+                <AnimatePresence mode="wait">
+                  {dpResult ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-3xl backdrop-blur-md h-full flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-4 border-b border-neutral-800 pb-4">
+                          <div>
+                            <span className="text-[9px] font-black uppercase text-[#FFDA03] bg-[#FFDA03]/10 px-2 py-0.5 rounded border border-[#FFDA03]/25">
+                              Matched Bundle
+                            </span>
+                            <h4 className="font-heading font-black text-lg text-white mt-1">
+                              {dpResult.packageName}
+                            </h4>
+                          </div>
+                          <Clock className="w-5 h-5 text-neutral-500" />
+                        </div>
+
+                        {/* Matched Bundle Items */}
+                        <div className="space-y-3.5 mb-6">
+                          {dpResult.items.map(item => (
+                            <div key={item.id} className="flex items-center gap-3 bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
+                              <div className="w-10 h-10 relative bg-neutral-900 rounded-lg flex items-center justify-center p-1.5">
+                                <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-bold text-white truncate">{item.name}</p>
+                                <p className="text-[10px] text-neutral-400 capitalize">{item.category}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-[10px] text-[#FFDA03] font-bold">{formatPrice(item.rentRate)}/d</p>
+                                <p className="text-[8px] text-neutral-500">{formatPrice(item.buyPrice)} buy</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Price Details */}
+                        <div className="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 space-y-2 mb-6">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-neutral-400">Total Purchase Value</span>
+                            <span className="font-bold text-white">{formatPrice(dpResult.buyTotal)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-neutral-400">Daily Rental Fee</span>
+                            <span className="font-bold text-[#FFDA03]">{formatPrice(dpResult.rentRateTotal)}/day</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action trigger */}
+                      <button
+                        onClick={() => handleSendToGarage(dpResult.items)}
+                        className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-neutral-800 flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Plus className="w-4 h-4 text-[#FFDA03]" /> Send Bundle to Creator Garage
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <div className="bg-neutral-900/10 border border-dashed border-neutral-800 rounded-3xl p-8 h-full flex flex-col items-center justify-center text-center text-neutral-500 min-h-[300px]">
+                      <Sparkles className="w-10 h-10 text-neutral-700 mb-3 animate-pulse" />
+                      <p className="text-xs font-bold text-neutral-400">No Bundle Generated Yet</p>
+                      <p className="text-[10px] text-neutral-500 max-w-xs mt-1">
+                        Describe your project context on the left side and hit generate to query matched rigs.
+                      </p>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 2: BARTER BOARD */}
+          {activeTab === 'barter' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="grid lg:grid-cols-12 gap-8"
+            >
+              {/* Left Column: Barter Listings Matrix */}
+              <div className="lg:col-span-8 space-y-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2">
+                    <RefreshCw className="w-5 h-5 text-[#FFDA03]" /> Creative Barter Board
+                  </h3>
+                  <span className="text-[10px] text-neutral-500 font-bold bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800">
+                    Peer-to-Peer Trades
+                  </span>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {barterListings.map(listing => (
+                    <div 
+                      key={listing.id}
+                      className="bg-neutral-900/50 border border-neutral-900 p-5 rounded-2xl flex flex-col justify-between hover:border-neutral-800 transition-all backdrop-blur-sm relative"
+                    >
+                      {listing.status === 'accepted' && (
+                        <div className="absolute top-3 right-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider">
+                          ✓ Trade Sealed
+                        </div>
+                      )}
+                      {listing.status === 'countered' && (
+                        <div className="absolute top-3 right-3 bg-[#FFDA03]/10 text-[#FFDA03] border border-[#FFDA03]/25 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider">
+                          ⚠ Counter Offered
+                        </div>
+                      )}
+
+                      <div>
+                        {/* Profile Header */}
+                        <div className="flex items-center gap-2.5 mb-4">
+                          <img src={listing.creatorAvatar} alt={listing.creatorName} className="w-8 h-8 rounded-full border border-neutral-800 object-cover" />
+                          <div>
+                            <p className="text-xs font-bold text-white leading-tight">{listing.creatorName}</p>
+                            <p className="text-[9px] text-neutral-400">Rating: {listing.creatorRating} ★</p>
+                          </div>
+                        </div>
+
+                        {/* Trade Specifications */}
+                        <div className="space-y-3 mb-5">
+                          <div className="bg-neutral-950 p-2.5 rounded-xl border border-neutral-900">
+                            <span className="text-[8px] font-black text-[#FFDA03] uppercase tracking-wider block mb-0.5">Offered Service</span>
+                            <p className="text-xs text-neutral-200 font-medium leading-relaxed">{listing.offeredService}</p>
+                          </div>
+                          
+                          <div className="bg-neutral-950 p-2.5 rounded-xl border border-neutral-900">
+                            <span className="text-[8px] font-black text-neutral-500 uppercase tracking-wider block mb-0.5">Requested Gear</span>
+                            <p className="text-xs text-neutral-200 font-medium leading-relaxed">{listing.requestedGear}</p>
+                            <span className="text-[8px] font-bold text-neutral-400 bg-neutral-900 px-1.5 py-0.5 rounded mt-1.5 inline-block">
+                              Duration: {listing.duration}
+                            </span>
+                          </div>
+
+                          {listing.counterProposal && (
+                            <div className="bg-[#FFDA03]/5 p-2.5 rounded-xl border border-[#FFDA03]/15">
+                              <span className="text-[8px] font-black text-[#FFDA03] uppercase tracking-wider block mb-0.5">Counter Proposal</span>
+                              <p className="text-xs text-neutral-300 font-medium leading-relaxed italic">"{listing.counterProposal}"</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex gap-2 border-t border-neutral-800/60 pt-3">
+                        {listing.status === 'active' ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                setBarterListings(prev => prev.map(b => b.id === listing.id ? { ...b, status: 'accepted' } : b));
+                                window.dispatchEvent(new CustomEvent('nira_notification', {
+                                  detail: { type: 'push', title: '🤝 Trade Accepted!', content: `You accepted ${listing.creatorName}'s barter request.` }
+                                }));
+                              }}
+                              className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[10px] rounded-lg transition-colors cursor-pointer text-center"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => {
+                                setActiveCounterId(listing.id);
+                                setCounterInput('');
+                              }}
+                              className="flex-1 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold text-[10px] rounded-lg transition-colors cursor-pointer border border-neutral-700 text-center"
+                            >
+                              Counter
+                            </button>
+                          </>
+                        ) : (
+                          <div className="flex-1 text-center py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-[10px] font-bold text-neutral-500">
+                            Listing Locked
+                          </div>
+                        )}
+                        <button
+                          onClick={() => {
+                            setChattingListingId(listing.id);
+                          }}
+                          className="px-2.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-[#FFDA03] font-bold text-[10px] rounded-lg transition-colors border border-neutral-800 flex items-center justify-center cursor-pointer"
+                          aria-label="Message creator"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Interaction Modals / Chat Console overlay */}
+              <div className="lg:col-span-4 space-y-6">
+                
+                {/* Counter Offer Box */}
+                <AnimatePresence>
+                  {activeCounterId && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      className="bg-neutral-900/50 border border-[#FFDA03]/30 p-6 rounded-2xl backdrop-blur-md relative"
+                    >
+                      <button 
+                        onClick={() => setActiveCounterId(null)}
+                        className="absolute top-4 right-4 text-neutral-400 hover:text-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <h4 className="font-heading font-black text-sm text-white uppercase tracking-wider mb-2">
+                        Submit Counter Proposal
+                      </h4>
+                      <p className="text-[10px] text-neutral-400 mb-4">
+                        Suggest changes in service duration, task counts, or additional edits to match values.
+                      </p>
+
+                      <textarea
+                        value={counterInput}
+                        onChange={(e) => setCounterInput(e.target.value)}
+                        placeholder="e.g. 'I can offer 12 hours of color grading but need the camera for 4 days instead of 3 days...'"
+                        rows={3}
+                        className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-200 focus:outline-none focus:border-[#FFDA03] transition-all resize-none font-sans mb-4"
+                      />
+
+                      <button
+                        onClick={() => {
+                          if (!counterInput.trim()) return;
+                          setBarterListings(prev => prev.map(b => b.id === activeCounterId ? { ...b, status: 'countered', counterProposal: counterInput } : b));
+                          setActiveCounterId(null);
+                          window.dispatchEvent(new CustomEvent('nira_notification', {
+                            detail: { type: 'push', title: '⚡ Counter Submitted!', content: 'Creator has been notified of your counter-proposal.' }
+                          }));
+                        }}
+                        className="w-full py-2.5 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-[10px] uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                      >
+                        Send Counter Proposal
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Chat Panel console */}
+                <AnimatePresence>
+                  {chattingListingId && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-2xl backdrop-blur-md relative h-96 flex flex-col justify-between"
+                    >
+                      <button 
+                        onClick={() => setChattingListingId(null)}
+                        className="absolute top-4 right-4 text-neutral-400 hover:text-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      
+                      {/* Chat Header */}
+                      <div className="border-b border-neutral-800 pb-3">
+                        <h4 className="font-heading font-black text-xs text-white uppercase tracking-wider">
+                          Creator Chatroom
+                        </h4>
+                        <p className="text-[9px] text-neutral-400 mt-0.5">
+                          Discussing barter proposal #{chattingListingId}
+                        </p>
+                      </div>
+
+                      {/* Chat Messages Logs */}
+                      <div className="flex-1 overflow-y-auto py-4 space-y-3 font-sans text-xs">
+                        <div className="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900 text-neutral-400 max-w-[85%] self-start">
+                          Hi there! Let me know if you have any questions about my portfolio or standard grading turnaround.
+                        </div>
+                        
+                        {(chatLogs[chattingListingId] || []).map((msg, i) => (
+                          <div key={i} className="bg-[#FFDA03]/10 p-2.5 rounded-xl border border-[#FFDA03]/15 text-neutral-200 max-w-[85%] ml-auto text-right">
+                            {msg}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Input controls */}
+                      <div className="flex gap-2 border-t border-neutral-800 pt-3">
+                        <input
+                          type="text"
+                          value={chatMessage}
+                          onChange={(e) => setChatMessage(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && chatMessage.trim()) {
+                              const listId = chattingListingId;
+                              setChatLogs(prev => ({
+                                ...prev,
+                                [listId]: [...(prev[listId] || []), chatMessage.trim()]
+                              }));
+                              setChatMessage('');
+                            }
+                          }}
+                          placeholder="Type response message..."
+                          className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#FFDA03] text-neutral-200"
+                        />
+                        <button
+                          onClick={() => {
+                            if (!chatMessage.trim()) return;
+                            const listId = chattingListingId;
+                            setChatLogs(prev => ({
+                              ...prev,
+                              [listId]: [...(prev[listId] || []), chatMessage.trim()]
+                            }));
+                            setChatMessage('');
+                          }}
+                          className="px-3 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Empty State Instructions */}
+                {!activeCounterId && !chattingListingId && (
+                  <div className="bg-neutral-900/10 border border-dashed border-neutral-800 rounded-2xl p-6 text-center text-neutral-500">
+                    <MessageSquare className="w-8 h-8 text-neutral-700 mx-auto mb-2" />
+                    <p className="text-[10px] font-bold text-neutral-400">Interaction Terminal</p>
+                    <p className="text-[9px] text-neutral-500 max-w-[200px] mx-auto mt-0.5">
+                      Accept, counter, or message listings to initiate discussions.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 3: WEAR & TEAR GRADER */}
+          {activeTab === 'grader' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="grid lg:grid-cols-12 gap-8"
+            >
+              <div className="lg:col-span-7 flex flex-col gap-6">
+                <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
+                  <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-3">
+                    <Sliders className="w-5 h-5 text-[#FFDA03]" /> Algorithmic Wear & Tear Visual Grader
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed mb-6">
+                    Our recommerce algorithm evaluates cosmetic condition, shutter count, and sensor pixel arrays to calculate maximum buyout rates instantly.
+                  </p>
+
+                  {/* Drag-and-drop simulation zone */}
+                  <div 
+                    onClick={() => {
+                      setSelectedGraderFile('mock-camera-upload.jpg');
+                      handleGraderSimulation();
+                    }}
+                    className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+                      selectedGraderFile 
+                        ? 'border-[#FFDA03]/50 bg-[#FFDA03]/5' 
+                        : 'border-neutral-800 hover:border-neutral-700 bg-neutral-950/40'
+                    }`}
+                  >
+                    <input type="file" className="hidden" id="grader-file" />
+                    <Upload className={`w-8 h-8 mb-3 ${selectedGraderFile ? 'text-[#FFDA03]' : 'text-neutral-600'}`} />
+                    <p className="text-xs font-bold text-neutral-300">
+                      {selectedGraderFile ? 'File: camera_diagonal_sensor.jpg' : 'Drag & Drop your gear photos here'}
+                    </p>
+                    <p className="text-[10px] text-neutral-500 mt-1">
+                      Supports high-resolution PNG, JPG, or HEIC formats. Or tap to simulate scan.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Progress Scan Logs */}
+                {(graderLoading || graderLogs.length > 0) && (
+                  <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-neutral-500 h-44 overflow-y-auto relative">
+                    {graderLoading && (
+                      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFDA03] to-transparent animate-pulse" />
+                    )}
+                    <div className="text-neutral-400 border-b border-neutral-900 pb-2 mb-2 flex justify-between items-center">
+                      <span>Neural Vision Scanning Logs</span>
+                      {graderLoading && <RefreshCw className="w-3.5 h-3.5 text-[#FFDA03] animate-spin" />}
+                    </div>
+                    {graderLogs.map((log, i) => (
+                      <div key={i} className="mb-1">
+                        <span className="text-[#FFDA03]/60 mr-2">{'[scan]'}</span>{log}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Evaluated Price details widget */}
+              <div className="lg:col-span-5">
+                <AnimatePresence mode="wait">
+                  {graderResult ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-3xl backdrop-blur-md h-full flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Title header */}
+                        <div className="border-b border-neutral-800 pb-4 mb-5">
+                          <span className="text-[9px] font-black uppercase text-[#FFDA03] bg-[#FFDA03]/10 px-2 py-0.5 rounded border border-[#FFDA03]/25">
+                            AI Diagnostic Report
+                          </span>
+                          <h4 className="font-heading font-black text-lg text-white mt-1.5">
+                            {graderResult.modelName}
+                          </h4>
+                          <div className="flex gap-4 mt-2 text-[10px] text-neutral-400">
+                            <span>Score: <strong className="text-emerald-400">{graderResult.conditionScore}%</strong></span>
+                            <span>Shutter Count: <strong className="text-white">{graderResult.shutterCount}</strong></span>
+                          </div>
+                        </div>
+
+                        {/* Dual Payout Pricing Options */}
+                        <div className="space-y-3 mb-6">
+                          {/* Option 1: Quick Sell */}
+                          <button
+                            onClick={() => setSelectedPayout('quick')}
+                            className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex justify-between items-center ${
+                              selectedPayout === 'quick'
+                                ? 'bg-neutral-950 border-[#FFDA03] shadow-md'
+                                : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700'
+                            }`}
+                          >
+                            <div>
+                              <span className="text-[9px] font-black uppercase text-emerald-400 tracking-wider">Option A: Instant Payout</span>
+                              <h5 className="text-sm font-bold text-white mt-0.5">Quick Cash Buyout</h5>
+                              <p className="text-[9px] text-neutral-500 mt-0.5">Nira buys outright, free home pickup tomorrow.</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-base font-black text-[#FFDA03]">{formatPrice(graderResult.quickSellPrice)}</p>
+                              <p className="text-[8px] text-neutral-400">Instant Wallet Cash</p>
+                            </div>
+                          </button>
+
+                          {/* Option 2: Max Profit */}
+                          <button
+                            onClick={() => setSelectedPayout('max')}
+                            className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex justify-between items-center ${
+                              selectedPayout === 'max'
+                                ? 'bg-neutral-950 border-[#FFDA03] shadow-md'
+                                : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700'
+                            }`}
+                          >
+                            <div>
+                              <span className="text-[9px] font-black uppercase text-[#FFDA03] tracking-wider">Option B: Marketplace Listing</span>
+                              <h5 className="text-sm font-bold text-white mt-0.5">Maximum Profit Value</h5>
+                              <p className="text-[9px] text-neutral-500 mt-0.5">List on Nira recommerce. 5% transaction commission.</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-base font-black text-white">{formatPrice(graderResult.maxProfitPrice)}</p>
+                              <p className="text-[8px] text-neutral-400">Est. Sell in 4 days</p>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Checkout / Finish execution */}
+                      <button
+                        disabled={!selectedPayout}
+                        onClick={() => {
+                          window.dispatchEvent(new CustomEvent('nira_notification', {
+                            detail: { 
+                              type: 'push', 
+                              title: '💰 Payout Chosen!', 
+                              content: `You selected the ${selectedPayout === 'quick' ? 'Quick Cash Buyout' : 'Marketplace Listing'} method.` 
+                            }
+                          }));
+                          setSelectedGraderFile(null);
+                          setGraderResult(null);
+                        }}
+                        className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        Proceed with Payout Selection
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <div className="bg-neutral-900/10 border border-dashed border-neutral-800 rounded-3xl p-8 h-full flex flex-col items-center justify-center text-center text-neutral-500 min-h-[300px]">
+                      <Sliders className="w-10 h-10 text-neutral-700 mb-3 animate-pulse" />
+                      <p className="text-xs font-bold text-neutral-400">Diagnostic Data Awaiting Scan</p>
+                      <p className="text-[10px] text-neutral-500 max-w-xs mt-1">
+                        Use the photo upload zone on the left to activate visual grader scanner diagnostics.
+                      </p>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 4: CREATOR'S GARAGE CANVAS */}
+          {activeTab === 'garage' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="grid lg:grid-cols-12 gap-8"
+            >
+              {/* Left Column: Gear Selection Dock */}
+              <div className="lg:col-span-5 bg-neutral-900/50 border border-neutral-900 p-6 rounded-3xl backdrop-blur-md">
+                <div className="mb-6">
+                  <h4 className="font-heading font-black text-sm text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <Sliders className="w-4 h-4 text-[#FFDA03]" /> Equipment Dock
+                  </h4>
+                  <p className="text-[10px] text-neutral-400 mt-1">
+                    Select the equipment models to place inside your visual canvas slot grid.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+                  {INVENTORY.map(item => {
+                    const isAdded = garageItems.some(x => x.id === item.id);
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => toggleGarageItem(item)}
+                        className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                          isAdded
+                            ? 'bg-neutral-950 border-[#FFDA03] text-white shadow-sm shadow-[#FFDA03]/5'
+                            : 'bg-neutral-950/40 border-neutral-800 text-neutral-400 hover:border-neutral-700'
+                        }`}
+                      >
+                        <div className="w-10 h-10 relative bg-neutral-900 rounded-lg p-1.5 flex items-center justify-center">
+                          <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h5 className="text-[10px] font-bold truncate leading-snug">{item.name.replace('Sony ', '')}</h5>
+                          <span className="text-[8px] font-bold text-neutral-500 uppercase">{item.category}</span>
+                          <p className="text-[9px] text-[#FFDA03] font-bold mt-0.5">{formatPrice(item.rentRate)}/d</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right Column: Visual Setup Builder Canvas */}
+              <div className="lg:col-span-7 flex flex-col justify-between bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
+                <div>
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-4 mb-6">
+                    <div>
+                      <h4 className="font-heading font-black text-base text-white uppercase tracking-wider flex items-center gap-2">
+                        <Camera className="w-4 h-4 text-[#FFDA03]" /> Creator's Garage Setup Canvas
+                      </h4>
+                      <p className="text-[10px] text-neutral-400 mt-1">
+                        Build your custom workspace. Pricing updates instantly below.
+                      </p>
+                    </div>
+                    <span className="text-[10px] bg-neutral-950 text-[#FFDA03] border border-neutral-800 px-3 py-1 rounded-full font-bold">
+                      {garageItems.length} active slots
+                    </span>
+                  </div>
+
+                  {/* Virtual Grid Canvas */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-neutral-950/80 p-5 rounded-2xl border border-neutral-900 min-h-[160px] items-center justify-center">
+                    {garageItems.length > 0 ? (
+                      garageItems.map(item => (
+                        <div 
+                          key={item.id}
+                          className="bg-neutral-900/80 border border-neutral-800 p-3 rounded-xl flex flex-col items-center justify-between text-center relative group"
+                        >
+                          <button
+                            onClick={() => toggleGarageItem(item)}
+                            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-md"
+                            aria-label="Remove item"
+                          >
+                            ✕
+                          </button>
+                          <div className="w-14 h-14 relative bg-neutral-950 rounded-lg p-2 mb-2 flex items-center justify-center">
+                            <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                          </div>
+                          <p className="text-[9px] font-bold text-white truncate w-full">{item.name.replace('Sony ', '')}</p>
+                          <span className="text-[8px] text-neutral-500 capitalize">{item.category}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-4 text-center py-8 text-neutral-500">
+                        <Camera className="w-8 h-8 text-neutral-700 mx-auto mb-2 animate-pulse" />
+                        <p className="text-[10px] font-bold text-neutral-400">Canvas Slots Empty</p>
+                        <p className="text-[8px] text-neutral-500 mt-0.5">Select equipment from the dock to deploy them on canvas.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pricing & Checkout Section */}
+                <div className="mt-8 border-t border-neutral-800 pt-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    {/* Dual Pricing Toggle Slider */}
+                    <div className="flex items-center gap-3">
+                      <span className={`text-[10px] font-bold transition-all ${!rentToggle ? 'text-white' : 'text-neutral-500'}`}>Buy Outright</span>
+                      <button
+                        onClick={() => setRentToggle(!rentToggle)}
+                        className="w-12 h-6 bg-neutral-800 rounded-full p-1 transition-all relative flex items-center border border-neutral-700 cursor-pointer"
+                        aria-label="Toggle buy or rent pricing"
+                      >
+                        <motion.div
+                          layout
+                          className="w-4 h-4 bg-[#FFDA03] rounded-full shadow-sm"
+                          animate={{ x: rentToggle ? 22 : 0 }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        />
+                      </button>
+                      <span className={`text-[10px] font-bold transition-all ${rentToggle ? 'text-white' : 'text-neutral-500'}`}>Rent (1 Week)</span>
+                    </div>
+
+                    {/* Total Value */}
+                    <div className="text-center sm:text-right">
+                      <p className="text-[9px] text-neutral-500 uppercase font-black tracking-wider">Calculated Total</p>
+                      <h4 className="font-heading font-black text-2xl text-[#FFDA03] mt-0.5">
+                        {rentToggle ? formatPrice(garageRentTotal) : formatPrice(garageBuyTotal)}
+                      </h4>
+                      <p className="text-[8px] text-neutral-400">
+                        {rentToggle ? 'For 7 days rental plan' : 'Including standard warranty'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    disabled={garageItems.length === 0}
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('nira_notification', {
+                        detail: { 
+                          type: 'push', 
+                          title: '🛒 Setup Ordered!', 
+                          content: `Your Creator setup package totaling ${rentToggle ? formatPrice(garageRentTotal) : formatPrice(garageBuyTotal)} has been compiled.` 
+                        }
+                      }));
+                    }}
+                    className="w-full mt-6 py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Deploy Workspace & Checkout Setup
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
