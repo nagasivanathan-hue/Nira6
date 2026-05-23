@@ -91,7 +91,7 @@ export default function CheckoutPage() {
         .then((res) => {
           setWalletBalance(res.data.walletBalance || 0);
         })
-        .catch((err) => console.log('Wallet loading skipped/failed', err));
+        .catch(() => {});
     }
   }, [userInfo]);
 
@@ -158,92 +158,14 @@ export default function CheckoutPage() {
   };
 
   const triggerSimulatedNotifications = (ordId: string, finalTotal: number) => {
-    // 1. Trigger Push Toast Notification
+    // In-app push notification for order confirmation
     window.dispatchEvent(new CustomEvent('nira_notification', {
       detail: {
         type: 'push',
         title: '🎉 Order Placed Successfully!',
-        content: `Your creator order #${ordId.slice(-8).toUpperCase()} has been registered. View logs below.`
+        content: `Your order #${ordId.slice(-8).toUpperCase()} for ₹${finalTotal.toLocaleString('en-IN')} has been confirmed. You earned ₹${Math.round(total * 0.01)} NIRA loyalty points! Track your order in the Dashboard.`
       }
     }));
-
-    // 2. Trigger simulated Transactional SMS
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('nira_notification', {
-        detail: {
-          type: 'sms',
-          title: 'SMS Transaction Alert',
-          content: `NIRA6 SECURE ORDER: Hi Creator, order #${ordId.slice(-8).toUpperCase()} for ₹${finalTotal.toLocaleString('en-IN')} has been placed. You earned ₹${Math.round(total * 0.01)} NIRA loyalty points! Tracking link: nira6.in/track`
-        }
-      }));
-    }, 1500);
-
-    // 3. Trigger styled HTML Email invoice
-    setTimeout(() => {
-      const emailHtml = `
-        <div style="font-family: sans-serif; color: #1e1e1e; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-          <div style="background-color: #0f0f0f; color: #ffffff; padding: 24px; text-align: center;">
-            <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">NIRA6 RECOMMERCE</h1>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: #FFDA03; font-weight: bold; text-transform: uppercase;">Creator Order Receipt</p>
-          </div>
-          <div style="padding: 24px;">
-            <p>Dear Creator,</p>
-            <p>Your pre-owned creative equipment order has been confirmed! Our lab technicians are preparing standard 30-point inspections for shipment.</p>
-            
-            <div style="background-color: #f7fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
-              <h4 style="margin: 0 0 8px 0;">Order Summary: #${ordId.slice(-8).toUpperCase()}</h4>
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                ${items.map(item => `
-                  <tr>
-                    <td style="padding: 6px 0; color: #4a5568;">${item.product.name} × ${item.quantity}</td>
-                    <td style="padding: 6px 0; text-align: right; font-weight: bold;">₹${(item.product.price * item.quantity).toLocaleString('en-IN')}</td>
-                  </tr>
-                `).join('')}
-                <tr style="border-top: 1px solid #e2e8f0;">
-                  <td style="padding: 6px 0; color: #718096;">Subtotal</td>
-                  <td style="padding: 6px 0; text-align: right;">₹${total.toLocaleString('en-IN')}</td>
-                </tr>
-                ${discountAmount > 0 ? `
-                  <tr>
-                    <td style="padding: 6px 0; color: #e53e3e;">Coupon Discount (${appliedCoupon})</td>
-                    <td style="padding: 6px 0; text-align: right; color: #e53e3e;">-₹${discountAmount.toLocaleString('en-IN')}</td>
-                  </tr>
-                ` : ''}
-                <tr>
-                  <td style="padding: 6px 0; color: #718096;">CGST (9%) + SGST (9%)</td>
-                  <td style="padding: 6px 0; text-align: right;">₹${taxTotal.toLocaleString('en-IN')}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: #718096;">Platform Fee</td>
-                  <td style="padding: 6px 0; text-align: right;">₹${platformFee.toLocaleString('en-IN')}</td>
-                </tr>
-                ${walletDeducted > 0 ? `
-                  <tr>
-                    <td style="padding: 6px 0; color: #319795; font-weight: bold;">Paid via NIRA Wallet</td>
-                    <td style="padding: 6px 0; text-align: right; color: #319795; font-weight: bold;">-₹${walletDeducted.toLocaleString('en-IN')}</td>
-                  </tr>
-                ` : ''}
-                <tr style="border-top: 2px solid #e2e8f0; font-size: 15px; font-weight: bold;">
-                  <td style="padding: 10px 0; color: #0f0f0f;">Amount Payable</td>
-                  <td style="padding: 10px 0; text-align: right; color: #0f0f0f;">₹${finalPayable.toLocaleString('en-IN')}</td>
-                </tr>
-              </table>
-            </div>
-
-            <p style="font-size: 12px; color: #718096; text-align: center; margin-top: 30px;">
-              This is a digital simulated transactional statement generated by NIRA6 recommerce diagnostics engines.
-            </p>
-          </div>
-        </div>
-      `;
-      window.dispatchEvent(new CustomEvent('nira_notification', {
-        detail: {
-          type: 'email',
-          title: '📧 Your NIRA6 Order Receipt - #' + ordId.slice(-8).toUpperCase(),
-          content: emailHtml
-        }
-      }));
-    }, 3000);
   };
 
   const handlePlaceOrder = async () => {

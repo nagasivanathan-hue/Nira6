@@ -37,7 +37,7 @@ export default function SplashLoader() {
           </div>
 
           {/* Aperture Shutter & Logo Container */}
-          <div className="relative w-64 h-64 flex items-center justify-center">
+          <div className="relative w-64 h-64 flex items-center justify-center mx-auto my-auto">
             
             {/* 1. Centered Brand Logo (revealed behind opening aperture) */}
             <motion.div

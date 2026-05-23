@@ -7,6 +7,7 @@ import StoreInitializer from "@/components/layout/StoreInitializer";
 import AuthGate from "@/components/layout/AuthGate";
 import PwaRegister from "@/components/layout/PwaRegister";
 import SplashLoader from "@/components/layout/SplashLoader";
+import ErrorBoundary from "@/components/layout/ErrorBoundary";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -47,9 +48,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <StoreInitializer>
             <SplashLoader />
             <PwaRegister />
-            <AuthGate>
-              {children}
-            </AuthGate>
+            <ErrorBoundary>
+              <AuthGate>
+                {children}
+              </AuthGate>
+            </ErrorBoundary>
           </StoreInitializer>
         </ReduxProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />

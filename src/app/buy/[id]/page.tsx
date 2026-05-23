@@ -128,7 +128,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         .then((res) => {
           setReviews(res.data || []);
         })
-        .catch(() => console.log('Reviews skipped/failed'))
+        .catch(() => {})
         .finally(() => setReviewsLoading(false));
 
       // 2. LocalStorage Recently Viewed Gear Tracker
