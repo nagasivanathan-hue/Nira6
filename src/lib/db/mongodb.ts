@@ -10,6 +10,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
+  dbFailed?: boolean;
 }
 
 declare global {
@@ -17,13 +18,17 @@ declare global {
 }
 
 if (!global.mongoose) {
-  global.mongoose = { conn: null, promise: null };
+  global.mongoose = { conn: null, promise: null, dbFailed: false };
 }
 const cached = global.mongoose;
 
 async function dbConnect() {
   if (!MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable');
+  }
+
+  if (cached.dbFailed) {
+    throw new Error('Database previously failed to connect, using fallback to avoid timeout delay.');
   }
 
   if (cached.conn) {
@@ -33,8 +38,8 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 1200,
+      connectTimeoutMS: 1200,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
@@ -46,6 +51,13 @@ async function dbConnect() {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    cached.dbFailed = true;
+    // Reset the failed status after 30 seconds to allow retry
+    setTimeout(() => {
+      if (global.mongoose) {
+        global.mongoose.dbFailed = false;
+      }
+    }, 30000);
     throw e;
   }
 

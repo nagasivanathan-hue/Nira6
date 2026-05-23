@@ -16,7 +16,7 @@ export default function SplashLoader() {
     // Fade out the splash loader after the aperture finishes opening
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 2400);
+    }, 1400); // 1400ms instead of 2400ms
     return () => clearTimeout(timer);
   }, []);
 
@@ -27,7 +27,7 @@ export default function SplashLoader() {
           initial={{ opacity: 1 }}
           exit={{ 
             opacity: 0,
-            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } // 0.6s instead of 0.8s
           }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-neutral-950 select-none overflow-hidden"
         >
@@ -52,8 +52,8 @@ export default function SplashLoader() {
                 filter: 'blur(0px)'
               } : {}}
               transition={{ 
-                delay: 0.6, 
-                duration: 1.2, 
+                delay: 0.3, // 0.3s instead of 0.6s
+                duration: 0.8, // 0.8s instead of 1.2s
                 ease: [0.16, 1, 0.3, 1] 
               }}
               className="absolute z-10 flex flex-col items-center justify-center p-6 rounded-2xl bg-neutral-900/40 border border-neutral-800/80 backdrop-blur-lg shadow-3xl"
@@ -72,8 +72,8 @@ export default function SplashLoader() {
                 scale: [0.8, 1.35, 1.7] 
               } : {}}
               transition={{ 
-                delay: 0.4, 
-                duration: 1.1, 
+                delay: 0.15, // 0.15s instead of 0.4s
+                duration: 0.8, // 0.8s instead of 1.1s
                 ease: 'easeOut' 
               }}
               className="absolute w-52 h-52 rounded-full pointer-events-none z-15"
@@ -148,8 +148,8 @@ export default function SplashLoader() {
                       opacity: [1, 1, 0.9, 0] // Keep blades opaque during movement, fade out at edge
                     } : {}}
                     transition={{ 
-                      delay: 0.3,
-                      duration: 1.5, 
+                      delay: 0.15,
+                      duration: 0.9, 
                       ease: [0.16, 1, 0.3, 1] 
                     }}
                     style={{ transformOrigin: '50px 50px' }}
