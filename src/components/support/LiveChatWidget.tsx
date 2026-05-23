@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { MessageSquare, X, Send, Camera, Shield, Wrench, RefreshCw, Sparkles } from 'lucide-react';
 import Logo from '@/components/layout/Logo';
 
@@ -19,6 +19,28 @@ const PRESETS = [
 
 export default function LiveChatWidget() {
   const [open, setOpen] = useState(false);
+  const dragControls = useDragControls();
+  const [constraints, setConstraints] = useState({ left: -800, right: 0, top: -600, bottom: 0 });
+  const isDraggingRef = useRef(false);
+
+  useEffect(() => {
+    const updateConstraints = () => {
+      setConstraints({
+        left: -window.innerWidth + 80,
+        right: 20,
+        top: -window.innerHeight + 100,
+        bottom: 20,
+      });
+    };
+    updateConstraints();
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, []);
+
+  const handleDragStart = (e: React.PointerEvent) => {
+    dragControls.start(e);
+  };
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'bot',
@@ -83,15 +105,37 @@ export default function LiveChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50 transition-all duration-300">
+    <motion.div
+      drag
+      dragControls={dragControls}
+      dragListener={false}
+      dragMomentum={false}
+      dragElastic={0.1}
+      dragConstraints={constraints}
+      onDragStart={() => {
+        isDraggingRef.current = true;
+      }}
+      onDragEnd={() => {
+        setTimeout(() => {
+          isDraggingRef.current = false;
+        }, 100);
+      }}
+      className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50 select-none"
+    >
       <AnimatePresence>
         {!open ? (
           <motion.button
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            onClick={() => setOpen(true)}
-            className="w-14 h-14 bg-nira-dark/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 cursor-pointer relative group transition-all"
+            onClick={() => {
+              if (!isDraggingRef.current) {
+                setOpen(true);
+              }
+            }}
+            onPointerDown={handleDragStart}
+            className="w-14 h-14 bg-nira-dark/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 cursor-grab active:cursor-grabbing relative group"
+            style={{ touchAction: 'none' }}
           >
             {/* Idle Breathing Pulse Rings */}
             <span className="absolute inset-0 rounded-full bg-nira-yellow/20 animate-ping opacity-75 -z-10" />
@@ -115,11 +159,15 @@ export default function LiveChatWidget() {
             className="w-[340px] sm:w-[380px] h-[500px] bg-white/95 backdrop-blur-xl rounded-3xl border border-nira-gray-dark shadow-2xl overflow-hidden flex flex-col"
             style={{ boxShadow: '0 12px 50px rgba(0,0,0,0.15)' }}
           >
-            {/* Header */}
-            <div className="bg-nira-dark text-white p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            {/* Header / Drag Handle */}
+            <div 
+              onPointerDown={handleDragStart}
+              className="bg-nira-dark text-white p-4 flex items-center justify-between cursor-grab active:cursor-grabbing select-none"
+              style={{ touchAction: 'none' }}
+            >
+              <div className="flex items-center gap-3 pointer-events-none">
                 <div className="relative flex items-center py-1">
-                  <Logo theme="dark" height={20} width={80} />
+                  <Logo theme="dark" height={20} />
                   <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-nira-success border-2 border-nira-dark rounded-full animate-pulse" />
                 </div>
                 <div className="border-l border-white/10 pl-3">
@@ -131,7 +179,8 @@ export default function LiveChatWidget() {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer"
+                onPointerDown={(e) => e.stopPropagation()}
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer relative z-10"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -198,6 +247,6 @@ export default function LiveChatWidget() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

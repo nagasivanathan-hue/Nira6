@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    NIRA6 — Imported Accessories Mock Data
-   Automatically generated from amazon_photography_accessories_1000.xlsx
+   Automatically generated from amazon_photography_accessories_1000.csv
    ═══════════════════════════════════════════════════════════ */
 
 import type { Product } from '@/types';
@@ -36,7 +36,7 @@ export const accessoriesMockProducts: Product[] = [
     "inStock": true,
     "featured": true,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_2",
@@ -61,14 +61,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-Reflector-47-inch-Collapsible-Multi-Disc/dp/B0BNB9D8Z9/ref=sr_1_3?tag=nira6studio-21"
     },
     "description": "Digitek (DRB 5-1) Camera Reflector 45-inch /110 cm 5 in 1 Collapsible Multi-Disc Light with Bag - Translucent, Silver, Gold, White and Black for Studio Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_3",
@@ -93,14 +94,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Sounce-Mobile-Harness-Holder-Compatible/dp/B0CMJ4Y5GK/ref=sr_1_4?tag=nira6studio-21"
     },
     "description": "Sounce Mobile Phone Chest Strap Mount GoPro Chest Harness Holder for VLOG/POV Compatible with All Cell Phones and GoPro Hero 9, 8, 7, 6, 5,OSMO Action, AKASO and Other Action Camera. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_4",
@@ -125,14 +127,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Syvo-3130-Aluminum-Universal-Lightweight/dp/B07N42JB4S/ref=sr_1_5?tag=nira6studio-21"
     },
     "description": "Syvo WT 3130 Aluminum Tripod (133 cm), Universal Lightweight Tripod with Mobile Phone Holder Mount & Carry Bag for All Smart Phones, Gopro, Cameras. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_5",
@@ -157,14 +160,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/foldable-Lightbox-23-Portable-Photography/dp/B08D3DSVWD/ref=sr_1_6?tag=nira6studio-21"
     },
     "description": "HIFFIN Foldable Light Box 23cm Portable Light Room with 2 Color Photography Backdrop Photo Studio | Mini Shooting Tent for Photography Backdrop Mini Cube Box Lighting Tent Kit. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_6",
@@ -189,14 +193,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SMILEDRIVE%C2%AE-Light-Cone-Product-Photography/dp/B0F54CBSSH/ref=sr_1_7?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Light Cone for Product Photography - Diffuser for Shadow/Reflection-Free Photography - 2 Units (1 Big, 1 Small). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_7",
@@ -221,14 +226,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Sounce-Bluetooth-Control-Compatible-BTCTROL/dp/B0922XL7SH/ref=sr_1_8?tag=nira6studio-21"
     },
     "description": "Sounce Shutter Remote Control with Bluetooth Wireless Technology - Create Amazing Photos and Videos Hands-Free - Works with Most Smartphones and Tablets (iOS and Android) (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_8",
@@ -253,14 +259,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Double-Sided-Background-Cosmetics-21/dp/B0D4Z5Z4TF/ref=sr_1_9?tag=nira6studio-21"
     },
     "description": "HomeArt Sheet 2 in 1 Product Photography Backdrop 3D Flat Lay Tabletop Double-Sided 20x29 Photo Background PVC Wrinkle Free for Small Products Food, Cosmetics Shoot (Combo 21). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_9",
@@ -285,14 +292,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Brightness-Settings-Rotation-Photoshoot-Videography/dp/B0D7Q327L8/ref=sr_1_10?tag=nira6studio-21"
     },
     "description": "Amazon Basics 10-inch Ring Light with Tripod Stand | 3 Color Modes | 10 Brightness Settings | 360° Rotation | Suitable for Mobile Phones & Camera, YouTube, Photoshoot, Videography and More. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_10",
@@ -317,14 +325,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Store2508-Photography-Reflector-Background-Cardboard/dp/B08WHCWBHD/ref=sr_1_13?tag=nira6studio-21"
     },
     "description": "Store2508 3 in 1 Photography Reflector Background Cardboard 17 x 12 inch Folding Light Diffuser Board for Still Life Product and Food Photo Shooting Black Silver and White. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_11",
@@ -349,14 +358,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/MAXXOX-Professional-YouTube-Compatible-Smartphones/dp/B0DDLK435M/ref=sr_1_14?tag=nira6studio-21"
     },
     "description": "MAXXOX Mobile Camera Lens, 0.45X Super Wide Angle Lens, 15X Macro Lens, Clip-On 2 in 1 Professional Kit for TIK Tok, Vlog, YouTube, Reels Compatible with All Smartphones-(Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_12",
@@ -381,14 +391,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SMILEDRIVE%C2%AE-Water-Resistant-Lightweight-Professional-Photography/dp/B0FLPWY6L4/ref=sr_1_15?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Waterproof DSLR Camera & Laptop Backpack – Multicolor Multiple Sizes Single & Combo Variants Lightweight, Stylish & Durable Gear Bag for Travel, Office, College & Hiking. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_13",
@@ -413,14 +424,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/NEEWER-Photography-Flashlight-Spotlight-FL10/dp/B0F6YG2KFV/ref=sr_1_16?tag=nira6studio-21"
     },
     "description": "NEEWER Basics RGB Photography Flashlight,4 Colors/20 GOBO Filters/CRI95+/7500mAh,10W 6300K Portable LED Video Spotlight Patterned Ambient Aluminum Sunset Light for Recording Studio Lighting, USB, FL10. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_14",
@@ -445,14 +457,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Backdrop-Double-Sided-Background-Cosmetics/dp/B0CX96M952/ref=sr_1_17?tag=nira6studio-21"
     },
     "description": "HomeArt 2 Sheet 2 in 1 Product Photography Backdrop 3D Flat Lay Tabletop Double-Sided 20x29 Photo Background PVC Wrinkle Free for Small Products Food, Cosmetics Shoot (Combo 7). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_15",
@@ -477,14 +490,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/pTron-MHR1-Detachable-Clamping-Compatible/dp/B0FZKRM2V8/ref=sr_1_18?tag=nira6studio-21"
     },
     "description": "pTron MHR1 Phone Clip Camera Grip Handle w/Detachable BTv5.4 Remote Shutter, 55-90mm Clamping Range, Shoot Videos, Take Snaps, Stable & Firm Grip, Compatible with iOS & Android Devices (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_16",
@@ -509,14 +523,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Background-Chromakey-Backgrounds-Woodworking/dp/B08WHN9C5T/ref=sr_1_19?tag=nira6studio-21"
     },
     "description": "HIFFIN 10 PCS Photography Backdrop Support Spring Clamp 4.3\"/11cm for Background Muslin, Canvas, Paper, Chromakey Screen, Heavy Duty Clip, Photo Studio, Backdrops Backgrounds Woodworking. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_17",
@@ -541,14 +556,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Product-Photography-Combination-Jewellery-Lipstick/dp/B0C1J4BR3Y/ref=sr_1_20?tag=nira6studio-21"
     },
     "description": "ZORBES® Product Photography Props, Photography Product Display Stand Props for Product Photography, 6pcs EVA Ladder Combination Jewellery Photography Props for Lipstick, Jewelry, Makeups. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_18",
@@ -573,14 +589,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN%C2%AE-Photography-Accessories-Backdrop-Background/dp/B08WHH8788/ref=sr_1_19?tag=nira6studio-21"
     },
     "description": "HIFFIN® Photography Accessories Backdrop Photo Light Studio Muslin Background Stand Backdrop Support System Kit (Stand with Curtain, White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_19",
@@ -605,14 +622,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Photography-Background-Backgrounds-Woodworking/dp/B0818TR3GT/ref=sr_1_20?tag=nira6studio-21"
     },
     "description": "SHOPEE 10 PCS Photography Backdrop Support Spring Clamp 4.3\"/11cm for Background Muslin, Canvas, Paper, Chromakey Screen, Heavy Duty Clip, Photo Studio, Backdrops Backgrounds Woodworking (ORANGE). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_20",
@@ -637,14 +655,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-Professional-Photography-DFB-002/dp/B082SX7Q23/ref=sr_1_21?tag=nira6studio-21"
     },
     "description": "DIGITEK DFB-002 Professional Speedlight Flash Bot & Modifier Kit with Diffuser, Sphere, Grid, Grip, Gel Mount, 8 Creative Gels & Wallet – Photography Lighting Accessory, Magmod Alternative. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_21",
@@ -669,14 +688,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BKN-Portable-Dimmable-2700-6500k-Photography/dp/B0FTXCVLY7/ref=sr_1_22?tag=nira6studio-21"
     },
     "description": "BKN M160 RGB Portable Pocket Camera Light Dimmable Panel Lamp | Full Color 2700-6500k 6.5W for Phone Photography Video Led Light 1800 mAh for Zoom Calls/Live Stream/Selfies/Makeup. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_22",
@@ -701,14 +721,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/RGB-Photography-Flashlight-Spotlight-Recording/dp/B0FLY3B3CT/ref=sr_1_23?tag=nira6studio-21"
     },
     "description": "HIFFIN G-Flash RGB Photography Flashlight Portable Video Light LED Spotlight 7500mAh Battery 1–100% Dimming 4 Color Modes 20 GOBO Filters USB-C for Recording Studio Lighting, YouTube, Reels, Vlogging. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_23",
@@ -733,14 +754,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SAVIAURA-Photography-Double-Sided-Background-Wrinkle-Free/dp/B08XKDV2VP/ref=sr_1_24?tag=nira6studio-21"
     },
     "description": "1 Sheet 2 in 1 Photography Backdrop 3D Flat Lay Tabletop Double-Sided 22x16 Photo Background PVC Wrinkle-Free for Small Products Food, Cosmetics Shoot (#6-White Wood Plank & Soft Surface). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_24",
@@ -765,14 +787,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Beetle-Diffuser-Lite-Macro-Photography/dp/B0G34F9Q24/ref=sr_1_25?tag=nira6studio-21"
     },
     "description": "Lite - Macro Photography Diffuser. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_25",
@@ -797,14 +820,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Print-Master-India-Professional-Pack/dp/B0B57728P4/ref=sr_1_29?tag=nira6studio-21"
     },
     "description": "Premium Flat Lay Tabletop Photography Backdrop Background, Double Sided Waterproof Paper for Food, Small Product Professional Photo Shoot (56x90cm, Pack of 3) 6 Designs (Grunge). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_26",
@@ -829,14 +853,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-LED-D1120-Portable-2700K-6500K-Photography/dp/B0DN9SPLS1/ref=sr_1_30?tag=nira6studio-21"
     },
     "description": "Digitek (LED-D1120) 55W Portable LED Video Light with Barndoor, 2700K-6500K Color Temp, 3750 LM, 8 FX Modes, RA 96, 1120 Lamp Beads, AC/DC Power, 1/4 Mount, Studio Light For Photography & Video Shoots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_27",
@@ -861,14 +886,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-LED-D6W-RGB-3000K-6000K-Photography/dp/B0DR2VV5W2/ref=sr_1_31?tag=nira6studio-21"
     },
     "description": "Digitek (LED-D6W RGB) Portable Mini RGB LED Video Light with inbuild Battery & 360° HSI, 3000K-6000K, 8-Level Control, 9 Special FX Modes, Type-C Charging, 2hr Battery, for Photography & Videoshoots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_28",
@@ -893,14 +919,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-store-Reflective-Professional-Photography/dp/B09XJ455R9/ref=sr_1_32?tag=nira6studio-21"
     },
     "description": "Square Acrylic Black & White Reflective Display Table Riser for Professional Product Photography, flatlay Photography, Product Photography, Food Photography and etc.. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_29",
@@ -925,14 +952,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/JIKRA-Professional-Lightweight-Photography-Smartphones/dp/B0GZ39CD2C/ref=sr_1_33?tag=nira6studio-21"
     },
     "description": "Professional 3-in-1 Selfie Stick Tripod with Bluetooth Remote | Lightweight Mobile Stand Stick for Vlogging & Photography | Extendable Triport Compatible with Android & iOS Smartphones. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_30",
@@ -957,14 +985,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Kreo-Adjustable-Photography-Temperatures-3200K-5600K/dp/B0CKYSLNQ8/ref=sr_1_34?tag=nira6studio-21"
     },
     "description": "Kreo Slab Video Light | Adjustable LED Video Light with 5 Color Temperatures (3200K–5600K), 1455 Lumens, 120 LEDs & Extendable Stand | Photography, Streaming & Content Creation. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_31",
@@ -989,14 +1018,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Fianoeir-Comfortable-Mirrorless-Lightweight-Photography/dp/B0FMNMT617/ref=sr_1_35?tag=nira6studio-21"
     },
     "description": "Camera Wrist Strap, Secure and Comfortable Wrist Strap for Mirrorless and DSLR Cameras, Lightweight Design for Photography and Outdoor Use, Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_32",
@@ -1021,14 +1051,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Reflector-Photography-Translucent-Diffuser-Photoshoot/dp/B0DXJTW6C8/ref=sr_1_36?tag=nira6studio-21"
     },
     "description": "ZIBUYU® 5 in 1 Reflector for Photography Silver/Gold/White/Black/Translucent Diffuser Foldable Light Reflector (24\"x36\") for Outdoor & Studio Photoshoot(1pc). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_33",
@@ -1053,14 +1084,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Jubilant-Photography-Shooting-Lighting-Backdrops/dp/B096NSD45H/ref=sr_1_35?tag=nira6studio-21"
     },
     "description": "Jubilant 23cm LED Ring Light Box Photo Studio Light Box Softbox Photography Shooting Tent Kit with White/Warm/Soft Lighting & 6 Color Backdrops. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_34",
@@ -1085,14 +1117,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Professional-Backdrop-Background-Photography-Accurate/dp/B09CV87PNQ/ref=sr_1_36?tag=nira6studio-21"
     },
     "description": "HIFFIN® Black 6X9FT Professional Backdrop for Background Photography Background Stand for Photo Light Studio Accurate Size (6x9 Ft, Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_35",
@@ -1117,14 +1150,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Tygot-YouTube-Shooting-Foldable-Lightweight/dp/B08MCD9JFY/ref=sr_1_37?tag=nira6studio-21"
     },
     "description": "Tygot 10 Inches Big LED Ring Light for Camera, Phone, tiktok, YouTube, Video Shooting and Makeup, 10\" inch Ring Light with 7 Feet Long Foldable and Lightweight Tripod Stand. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_36",
@@ -1149,14 +1183,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Photography-Photoshoot-Production-Decoration/dp/B09DYNNZLF/ref=sr_1_38?tag=nira6studio-21"
     },
     "description": "6FTX9FT White Backdrop Background Rod Pocket for Photography Backdrop,Photoshoot Background,Video Production, Home Decoration,Weddings, Newborns, Product Photography, Screen Video, Curtain. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_37",
@@ -1181,14 +1216,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Lighting-Rechargeable-3200K-6500K-Smartphone/dp/B0G1T2V1B1/ref=sr_1_39?tag=nira6studio-21"
     },
     "description": "LED Pocket Video Mobile Light | Selfie, Video, Photography, Meeting, Lighting Dimmable & Rechargeable Type C, 3200K-6500K | LED Light for Computer, Tablet, Smartphone, DSLR Camera with Screen Clip. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_38",
@@ -1213,14 +1249,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BowieMall-Adjustable-Comfortable-Shoulder-Photography/dp/B0GN5K48Q2/ref=sr_1_40?tag=nira6studio-21"
     },
     "description": "BowieMall Camera Strap, Adjustable Camera Belt, Comfortable Camera Neck Strap with Quick Release Buckle, Camera Shoulder Strap for Travel & Outdoor Photography (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_39",
@@ -1245,14 +1282,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Amazon-Basics-Studio-Photography-Recording/dp/B0CCXVLJ64/ref=sr_1_41?tag=nira6studio-21"
     },
     "description": "Amazon Basics Studio Light with Stand | Studio Photography and Video Recording | 3000K - 6500K | Remote Control | 7ft Tripod Stand. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_40",
@@ -1277,14 +1315,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/DS-220-Stainless-Multifunction-Construction/dp/B0D9W6ZTPX/ref=sr_1_42?tag=nira6studio-21"
     },
     "description": "Digitek (DS 220) Bowens Mount Optical Snoot Kit with 20 Stainless Steel GOBOs & 4X Color Gels (Red/Yellow/Green/Blue), Multifunction Focus Ring, Premium Metal Construction. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_41",
@@ -1309,14 +1348,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Smiledrive-Professional-60x60x60cm-Portable-Photography/dp/B082Q366WF/ref=sr_1_45?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Professional Photo Studio Light Box 60x60x60cm Portable Product Photography Tent Booth Lighting Kit- 2 LED Light, Adapter & 6 Backdrops - Made in India. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_42",
@@ -1341,14 +1381,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Photography-Rechargeable-2500-9000K-Attraction/dp/B08MDQ3CJY/ref=sr_1_46?tag=nira6studio-21"
     },
     "description": "ULANZI VL49 RGB Video, LED Camera Light 360° Full Color Portable Photography Lighting with 3 Cold Shoe, 2000mAh Rechargeable CRI 95+ 2500-9000K Dimmable Panel Lamp Support, Black, (ULANZI-2287). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_43",
@@ -1373,14 +1414,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Rechargeable-Conference-Compatible-Cellphone/dp/B0B3JDWTNJ/ref=sr_1_47?tag=nira6studio-21"
     },
     "description": "Mobilife LED Video Light Camera Light Laptop Light for Zoom Meeting Photography Lighting 100 LED Beads with Clip Dimmable and Rechargeable for Camera Selfie Stick Tripod Laptop Cellphone. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_44",
@@ -1405,14 +1447,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/store-Geometric-Photography-Ornament-Backdrop/dp/B0CYM4RGHP/ref=sr_1_48?tag=nira6studio-21"
     },
     "description": "Geometric Acrylic Mirror Styling Props for Product Photography and Backdrop (Pack of 5). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_45",
@@ -1437,14 +1480,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Tygot-P-19-Professional-2800-6800k-Temperature/dp/B0FB8VJT8L/ref=sr_1_49?tag=nira6studio-21"
     },
     "description": "Tygot P-19 Professional Fill Light with Remote, 75W, 700 LEDs, 96+ CRI, 2800k-6800k Color Temperature, Adjustable Brightness, 180 Degree Tilt, Soft Studio Light for Video Shooting YouTube, Photoshoot. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_46",
@@ -1469,14 +1513,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN%C2%AE-Studio-Single-Umbrella-FT/dp/B08DCY368Q/ref=sr_1_50?tag=nira6studio-21"
     },
     "description": "HIFFIN E27 Studio Single Holder Umbrella Lighting Kit for Photography Umbrella White + Light Stand 9Ft and Bulb Holder Kit Set of 2 Daylight Umbrella Continuous & Professional Lighting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_47",
@@ -1501,14 +1546,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Backdrop-Photography-Videography-Portable/dp/B091L6H3BH/ref=sr_1_51?tag=nira6studio-21"
     },
     "description": "HIFFIN® Studio Background Stand Kit (9ft X 9ft) for Backdrop Photography and Videography, Height Adjustable, Portable and Foldable Stand Kit with Carry Bag. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_48",
@@ -1533,14 +1579,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/YUGAM-Adjustable-Photography-Universal-Smartphone/dp/B0GSW7W92V/ref=sr_1_52?tag=nira6studio-21"
     },
     "description": "Adjustable 7ft Aluminum Photography Light Stand with Universal Phone Holder Mount, Portable Tripod Stand for Ring Light, LED Video Light, Softbox, Flash, DSLR Camera & Smartphone. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_49",
@@ -1565,14 +1612,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Store2508-Photography-Blocks-Cosmetics-Products/dp/B0B3XW11MQ/ref=sr_1_51?tag=nira6studio-21"
     },
     "description": "Store2508 Photography Props Photography Blocks Craft Hard Foam Blocks Shapes for Cosmetics, Makeup Tools Flat Lay Photo Shoot for Products Set of 8 (White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_50",
@@ -1597,14 +1645,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Professional-LED-Backdrops-Photography/dp/B0GSZQ46FL/ref=sr_1_52?tag=nira6studio-21"
     },
     "description": "SHOPEE 32cm Portable Photo Studio Light Box,12\"x12\" Professional Dimmable Shooting Tent Kit with 112 LED Lights & 6 Backdrops for Jewelry and Small Items Product Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_51",
@@ -1629,14 +1678,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BIGIMALL-Photography-Background-Photoshoot-Reflective/dp/B0GPKCLXTV/ref=sr_1_53?tag=nira6studio-21"
     },
     "description": "BIGIMALL Acrylic Mirror Product Photography Props Mirror Set Photo Background Photoshoot Props Reflective Display Sheet for Small/mini Items (7Pcs). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_52",
@@ -1661,14 +1711,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/NiceVeedi-2800-6500K-Continuous-Photography-Recording/dp/B0BF976MJY/ref=sr_1_54?tag=nira6studio-21"
     },
     "description": "NiceVeedi 2-Pack Led Video Light Kit,Studio Light,2800-6500K Dimmable Photography Lighting Kit With Tripod Stand&Phone Holder,73\" Stream Light For Video Recording,Game Streaming,Youtube. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_53",
@@ -1693,14 +1744,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SUBTON-Photography-Tripod-Horizontal-Compatible/dp/B09B4G8H5P/ref=sr_1_55?tag=nira6studio-21"
     },
     "description": "SUBTON Photography Mobile Holder Mini Tripod Camera Stand with Horizontal & Vertical Rotation | for Vlogging, Video Shooting, YouTube etc Compatible with All Mobile Phones, Action GoPro Cameras DSLR. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_54",
@@ -1725,14 +1777,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ZIRAK-Pocket-Rechargeable-Video-Light/dp/B0G2RB73LC/ref=sr_1_56?tag=nira6studio-21"
     },
     "description": "RGB Pocket Camp Rechargeable LED Video Light – 40+ RGB Colors, Adjustable Brightness, Portable Camera Light for Photography, Video Shooting, YouTube, Makeup & Laptop Lighting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_55",
@@ -1757,14 +1810,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Kreo-Ring-Light-Tripod-Professional/dp/B0BH98BQKR/ref=sr_1_57?tag=nira6studio-21"
     },
     "description": "Kreo Ring Light 12\" for Video Shooting Professional Studio Light with Stand, Ringlight kit for YouTube Instagram with Accessories (12\" RL W/Tripod). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_56",
@@ -1789,14 +1843,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Royalkart-Photography-Blocks-Cosmetics-Products/dp/B09WK9HBQJ/ref=sr_1_58?tag=nira6studio-21"
     },
     "description": "Royalkart Geometric Cube Photography Props Set, Hard Foam Perfect Setup Background Props for Product, Crafts, Lipstick, Jewellery, Cosmetics, Makeup Tools, Food (Pack of 8 - White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_57",
@@ -1821,14 +1876,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Shooting-Photography-Lighting-Rechargeable-Cellphone/dp/B0FLK2ZXFH/ref=sr_1_61?tag=nira6studio-21"
     },
     "description": "Lapster Luma core LED Video Light for Video Shooting YouTube,Zoom Meeting, Photography Lighting with Clip Dimmable and Rechargeable for Camera Selfie Stick Tripod Laptop Cellphone and Other Gadgets. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_58",
@@ -1853,14 +1909,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VAYOLIN-Rechargeable-Videography-Photography-Multipurpose/dp/B0DVH3T94D/ref=sr_1_62?tag=nira6studio-21"
     },
     "description": "Continuous LED Video Portable Light with 100 Beads, Dimmable & Rechargeable Clip-On Camera Light for Zoom, Light for Video Shooting YouTube, Laptop, Tripod, and Photography Light (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_59",
@@ -1885,14 +1942,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Backdrop-Adjustable-Background-Birthday-Photography/dp/B0CWYX5398/ref=sr_1_63?tag=nira6studio-21"
     },
     "description": "Amazon Basics T-Shape Backdrop Stand Adjustable Background Support | Heavy Duty Photo Backdrop Stand | for Birthday Parties, Photography Studios, Videos | 9 x 6 Feet (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_60",
@@ -1917,14 +1975,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-store-Photography-Background-90x80cm/dp/B089QDM4QZ/ref=sr_1_64?tag=nira6studio-21"
     },
     "description": "Fur Rug for Photography for Baby Background (90x80cm)-White. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_61",
@@ -1949,14 +2008,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Photography-Photoshoot-Streaming-Instagram/dp/B09XFFSNZ7/ref=sr_1_65?tag=nira6studio-21"
     },
     "description": "6x9 Ft Black Photography Backdrop Screen Curtain with Rod Pocket for Product Photography, Photoshoot, Live Streaming, Zoom, YouTube, VFX Editing, Reels & FB Shorts. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_62",
@@ -1981,14 +2041,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BROLAVIYA-Overhead-Mobile-Bracket-Flexible/dp/B0CB5M5M5W/ref=sr_1_66?tag=nira6studio-21"
     },
     "description": "BROLAVIYA Overhead Video Mobile Stand with 10inch Ring Light, Metal Arm,1/4\" Ball Head for Camera,Gopro,with Mobile Bracket and Flexible Clip Arm. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_63",
@@ -2013,14 +2074,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/DIGITEK%C2%AE-DRL-14C-Temperature-Photo-Shoot-Vlogging/dp/B09BN2NPBD/ref=sr_1_67?tag=nira6studio-21"
     },
     "description": "DIGITEK (DRL-14C) LED Ring Light with 5ft Stand & Smartphone Mount - USB Powered, Color Switch Mode, Brightness Control, Dual Temperature - for Photo & Video Shoots, Makeup, Vlogging!. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_64",
@@ -2045,14 +2107,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Portable-3000K-6000K-Charging-Photography-Videoshoots/dp/B0CG3JG373/ref=sr_1_68?tag=nira6studio-21"
     },
     "description": "HIFFIN (VL49 RGB) 7W Portable Mini RGB LED Video Light with inbuild Battery & 360° HSI, 3000K-6000K, 8-Level Control, 9 Special FX Modes, Type-C Charging, 2hr Battery, for Photography & Videoshoots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_65",
@@ -2077,14 +2140,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Budget-Box-Photography-Creative-Lighting/dp/B0GQ4S7DQ2/ref=sr_1_67?tag=nira6studio-21"
     },
     "description": "Photography Shadow Prop Brown Window Light Effect Panel with Stand, Creative Lighting Tool for Product Photography, Portrait Shoots & Content Creation Setup. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_66",
@@ -2109,14 +2173,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/WONDER-HUB-Photography-Backdrop-Wrinkle-Free/dp/B0CKF9P4RB/ref=sr_1_68?tag=nira6studio-21"
     },
     "description": "2 in 1 Double Sided Photography Color Backdrop PVC Wrinkle-Free Sheet for Small Product Shoot Photography Props (Pack of 4 L-30 Inch W-20 inch) 8 Designs. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_67",
@@ -2141,14 +2206,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/COB-150P-3200K-5600K-Temperature-Photography-Videography/dp/B0FWRVVZJL/ref=sr_1_69?tag=nira6studio-21"
     },
     "description": "HIFFIN (COB-150P) 150W Bi Color Continuous LED Light with 18CM Reflector & Infrared Remote, AC Power, 3200K-5600K Color Temperature Control, 13800lx @1m, Ideal for Photography and Videography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_68",
@@ -2173,14 +2239,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Royalkart-Artificial-Photography-Acrylic-Decorative/dp/B0BTLY2MZP/ref=sr_1_70?tag=nira6studio-21"
     },
     "description": "royalkart Crystal Clear Acrylic Ice Cubes – 50 Pcs Square Glass-Like Decorative Cubes for Photography Props, Kitchen Display, Fake Ice Decoration (1.6cm). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_69",
@@ -2205,14 +2272,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BKN-Portable-Photography-Professional-Backdrops/dp/B0FY43L7G5/ref=sr_1_71?tag=nira6studio-21"
     },
     "description": "BKN Portable Light Box Photography, 45 X 45cm Professional Dimmable Photo Box with 3 Light Filter Index LED Lights & 5 Color PVC Backdrops for Jewelry and Small Item Product Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_70",
@@ -2237,14 +2305,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN%C2%AE-White-Screen-Backdrop-Stand/dp/B0991K1NFF/ref=sr_1_72?tag=nira6studio-21"
     },
     "description": "HIFFIN White Screen Backdrop 6x10 ft with 9 ft Stand - 6x9 ft Photography Backdrop with 2 Pcs Spring Clamps, 1PCs Carry Bag (T Shape Kit C2 C1 W & Double Holder Kit M3). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_71",
@@ -2269,14 +2338,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Shooting-Continuous-Videography-Interview/dp/B08HPN335D/ref=sr_1_73?tag=nira6studio-21"
     },
     "description": "HIFFIN PRO HD Mark 2 Point Studio Lights for Photography and Video Shooting, Continuous Softbox Lighting Kit, Product Photography, White Soft LED Light, YouTube, Videography, Interview, Film Making. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_72",
@@ -2301,14 +2371,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/PHOTOOLEX-Photography-Flashlight-Rechargeable-Flashlights/dp/B0D9S8J2JD/ref=sr_1_74?tag=nira6studio-21"
     },
     "description": "PHOTOOLEX 4 Colors Photography Flashlight, 8400mAh Power Portable Spotlight for Photography, LED Flashlight Aluminum Alloy Light for Video Recording & Vlogging, Sunset Light Rechargeable Flashlights. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_73",
@@ -2333,14 +2404,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/squishy-Accessories-Attachment-Lightweight-Photography/dp/B0FMYG91G5/ref=sr_1_77?tag=nira6studio-21"
     },
     "description": "squishy 4-8Pcs Quick Release Camera Strap, Camera Accessories,Secure Camera Attachment, Compatible with DSLR and Mirrorless Cameras, Lightweight for Travel Photography Equipment. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_74",
@@ -2365,14 +2437,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HF-600-RGB-Photography-2500K-9900K-Adjustable/dp/B0CD7LHCDB/ref=sr_1_78?tag=nira6studio-21"
     },
     "description": "HIFFIN HF-600 RGB LED Light Stick for Photography, Photography Light with RGB CCT HSI Mode, 2500K-9900K Adjustable, 25 Fx Light Effect, Power 25W, Barndoor, 5200mah Battery for YouTube, Photoshoot. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_75",
@@ -2397,14 +2470,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Portable-Photography-LED-Backgrounds/dp/B0GRHB549D/ref=sr_1_79?tag=nira6studio-21"
     },
     "description": "SHOPEE 23cm Mini Photo Studio Light Box,Portable Folding Photography Light Lighting Tent kit with 40pcs LED Light + 6 Kinds Color Backgrounds for Small Size Products. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_76",
@@ -2429,14 +2503,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Kratos-Reinforced-Multi-Functional-Compatible-Smartphones/dp/B0F63BY6LT/ref=sr_1_81?tag=nira6studio-21"
     },
     "description": "Kratos K9 Selfie Stick Tripod With Light, 67 inch /170CM Reinforced Tripod for Mobile Phone, Multi-Functional Bluetooth Long Selfie Stick for Travel,Vlogging,Compatible with iPhone and All Smartphones. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_77",
@@ -2461,14 +2536,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prolite-Background-Backdrop-Photography-Videography/dp/B085F3R5YN/ref=sr_1_82?tag=nira6studio-21"
     },
     "description": "PROLITE Background Support Kit (9ft x 9ft) for Backdrop Photography & Videography with Carry Bag (Portable & Foldable). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_78",
@@ -2493,14 +2569,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Jubilant-Shadowless-Photography-Softbox-Shooting/dp/B0BRX79KWQ/ref=sr_1_83?tag=nira6studio-21"
     },
     "description": "Jubilant Photo Studio LED Shadowless Light Panel 8\" X 8\" / 20 x 20 cm Photography Softbox Bottom Light with USB Power Cable for Food Jewelry Shooting (20 cm Light Panel Pad). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_79",
@@ -2525,14 +2602,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Light-2700K-6400K-Dimmable-Studio-Tattoo/dp/B0GTLVLNBT/ref=sr_1_84?tag=nira6studio-21"
     },
     "description": "Anti-Reflective Phone Lens-Light kit for Photography & Video | Anti-Glare CPL Filter Light | 2700K-6400K Dimmable Studio Light | Portable Rechargeable Light for Tattoo Artists & Content Creators. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_80",
@@ -2557,14 +2635,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-LM01-RGB-Photography-Flashlight/dp/B0FKT3Q5W4/ref=sr_1_83?tag=nira6studio-21"
     },
     "description": "ULANZI LM01 RGB Photography Flashlight - 7500mAh 4 Color Portable LED Video Spotlight with 20 Patterned Light Filters, Handheld Zoomable Fill Light for Video Recording, Photo, Sunset, Content Creation. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_81",
@@ -2589,14 +2668,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/U480-RECHARGEBLE-Professional-Photography-JMARY/dp/B0DJYJTGDJ/ref=sr_1_86?tag=nira6studio-21"
     },
     "description": "PLOKAMA U480 RECHARGEBLE 20W Built-in 5000mAh Stepless Dimmable 2700-5700K LED Professional Photography Fill Light with JMARY MT49 Light Stand Tabletop C Clamp Desk Mount Table Stand for Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_82",
@@ -2621,14 +2701,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-LED-Panal-Light-Rechargeable/dp/B0G1C2ZTFY/ref=sr_1_87?tag=nira6studio-21"
     },
     "description": "FKU 11-inch LED Panal Light 5000mAh Rechargeable Battery | Adjustable Brightness & Color Temperature | with Desk Mount Stand for Streaming, Photography & Video Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_83",
@@ -2653,14 +2734,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-L-3560-INCH-LED-Photography/dp/B0F7J171T8/ref=sr_1_88?tag=nira6studio-21"
     },
     "description": "FKU RL Large 24 INCH Big LED Video Light with Remote for Photography Light Control for Live Stream Video Photo Lamp (24 INCH L-RL). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_84",
@@ -2685,14 +2767,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-3500K-6000K-Dimmable-Ringlight-Streaming/dp/B0DH2ZP4YY/ref=sr_1_90?tag=nira6studio-21"
     },
     "description": "FKU RL-100 Led Panel Light Video Led Light with Remote & 7 FEET Tripod Stand 3500K-6000K Dimmable Selfie Ringlight for YouTube Video Live Streaming Led. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_85",
@@ -2717,14 +2800,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-2025-Selfie-Stick-Tripod/dp/B0G19YZP3Z/ref=sr_1_93?tag=nira6studio-21"
     },
     "description": "FKU 2025 Aluminium Selfie Stick with Tripod Stand & Built-in Screen | Extendable Phone Holder Stand for Mobile Photography & Vlogging. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_86",
@@ -2749,14 +2833,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Photography-100-INCH-LED/dp/B0DSTQVR3V/ref=sr_1_94?tag=nira6studio-21"
     },
     "description": "FKU RL-100 Photography Led Panel Light Video Light with Remote for Control for Live Stream Video Photo Lamp (RL 100 INCH LED Panel Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_87",
@@ -2781,14 +2866,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Photography-2500-7500K-Dimmable-Lighting/dp/B0FY3PJT6J/ref=sr_1_95?tag=nira6studio-21"
     },
     "description": "FKU 2 Pack RL150 LED Photography Video Panel Light, 2500-7500K Dimmable Photography Studio Video Lighting with Tripod Stand for Video Photo Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_88",
@@ -2813,14 +2899,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Studio-Photography-Lights-Camera/dp/B0D7QHDB6T/ref=sr_1_96?tag=nira6studio-21"
     },
     "description": "FKU (Pack 2) 24 inch Studio Photography Lights with Touch Key Controls & Remote, Camera LED Video Soft Light Panel Flash (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_89",
@@ -2845,14 +2932,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Dimmable-3200K-6500K-Rechargeable-Photography-Streaming/dp/B0GZH9NQ8R/ref=sr_1_97?tag=nira6studio-21"
     },
     "description": "RGB LED Pocket Video Light with Clip, Dimmable Bi-Color 3200K–6500K, USB Type-C Rechargeable, Portable Selfie, Video Light for Mobile, Laptop, Tablet, DSLR Camera, for Meetings, Photography, Streaming. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_90",
@@ -2877,14 +2965,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Mini-Selfie-Light-Rechargeable/dp/B0FG4TZZZK/ref=sr_1_98?tag=nira6studio-21"
     },
     "description": "FKU Mini RGB Led Selfie Video Light Rechargeable 1800 mAh Portable Clip for Photography and Content Creation (Mini Rechargeable Led Selfie Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_91",
@@ -2909,14 +2998,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-16-3000K-7000K-Bi-Color-Photography/dp/B0FR9PN8J9/ref=sr_1_99?tag=nira6studio-21"
     },
     "description": "FKU 16 INCH LED Panel Lights with Remote Video 120W 3000K-7000K Bi-Color Dimmable Photography with 7 Feet Tripod Stand for Video Shooting/Live Stream (Pack of 2) (16 INCH PANAL Light with & Tripod). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_92",
@@ -2941,14 +3031,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-NEEPHO-3500K-6000K-Ringlight-Streaming/dp/B0D5K585Q9/ref=sr_1_100?tag=nira6studio-21"
     },
     "description": "FKU NEEPHO NP-26CM Led Round Panel Light with 7 FEET Heavy Duty 800Grm Tripod Stand 3500K-6000K Dimmable Selfie FIill RINGLight for YouTube Live Streaming (NP-26CM Led Round Panel Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_93",
@@ -2973,14 +3064,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Rotator-Photography-Shooting-Lightweight-Traveling/dp/B0G8YPBNG9/ref=sr_1_100?tag=nira6studio-21"
     },
     "description": "Tripod Stand for phone 7 feet I with 360 Degree Ball Head Rotator & Mobile Holder for All Types of Mobile I Photography I Shooting I YouTube I Lightweight I Easy to Carry for Traveling I Metal I Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_94",
@@ -3005,14 +3097,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Inch-LED-Light-Panel/dp/B0D92GSG2N/ref=sr_1_101?tag=nira6studio-21"
     },
     "description": "FKU 19 Inch LED Video Light Panel Light Portable Studio Lights for Photoshoot Lighting for Video Recording with NP-9988 7 FEET Heavy Duty (800 Grm) Tripod Stand and Phone Holder Selfie PANAL Light. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_95",
@@ -3037,14 +3130,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SUBTON-Metal-Heavy-Rotation-Tripod/dp/B08D6Z7ZNK/ref=sr_1_102?tag=nira6studio-21"
     },
     "description": "SUBTON Metal Heavy Duty Ball Head Tilt Pan 360 Rotation for Tripod Stand Mount. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_96",
@@ -3069,14 +3163,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Recording-Adjustable-Brightness-Temperature/dp/B0F9SSV5XV/ref=sr_1_103?tag=nira6studio-21"
     },
     "description": "11-Inch USB LED Panel Light | Dimmable Soft Light for Photography, Video Recording, Live Streaming, Makeup | Adjustable Brightness & Color Temperature (No Tripod). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_97",
@@ -3101,14 +3196,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TechMaven-Photography-Streaming-Rechargeable-Accessories/dp/B0F83KH5WL/ref=sr_1_104?tag=nira6studio-21"
     },
     "description": "LED Video Light for Camera | Rechargeable Photography Lighting | Dimmable Light for YouTube, Live Streaming, Makeup, Vlogging Tripod Mount-3 Color Modes | Portable LED Panel 1500mAh Battery. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_98",
@@ -3133,14 +3229,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Video-Light-Panel-Inch/dp/B0DJTH4VP5/ref=sr_1_105?tag=nira6studio-21"
     },
     "description": "FKU 24inch LED Video Light Panel 2700K-6500K Photo Studio Lamp,Super Clamp + E Brecket Remote and 7FEET Tripod Stand Flash [24 Inch Light + 7 Feet Stand Flash (24 INCH + 7 FEET). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_99",
@@ -3165,14 +3262,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Rechargeable-Portable-Photography-Creation/dp/B0FVS5V84X/ref=sr_1_106?tag=nira6studio-21"
     },
     "description": "FKU Mini RGB Led Clip Selfie Video Light Rechargeable 1800 mAh Portable for Photography and Content Creation (RGB Rechargeable MINI Selfie Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_100",
@@ -3197,14 +3295,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Vlogging-Accessories-Expansion-Adapter/dp/B0D4LX8YMT/ref=sr_1_109?tag=nira6studio-21"
     },
     "description": "ULANZI LM18 Vlogging Light Mini LED Action Camera Video Light Magnetic Photography Fill Lighting for DJI Osmo Action 3/4 Camera Cage Accessories and Ulanzi PK-06 Pocket 3/4 Expansion Adapter. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_101",
@@ -3229,14 +3328,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/WeCool-Bluetooth-Extendable-Multifunctional-Compatible/dp/B08ZN4B121/ref=sr_1_110?tag=nira6studio-21"
     },
     "description": "WeCool S1 Selfie Stick Tripod, 3-in-1 Multifunctional Design with Detachable Wireless Remote, Portable & Lightweight Phone Tripod for Vlogging, Photography, iPhone & Android Smartphones. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_102",
@@ -3261,14 +3361,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/GiftMax%C2%AE-Photography-Recording-Conference-2700K-5700K/dp/B0B31X9BWD/ref=sr_1_111?tag=nira6studio-21"
     },
     "description": "GiftMax® 11\" LED Video Soft Light Panel, for Studio Photography | Video Recording | Conference | YouTube,2700K-5700K CRI95+ | with Remote Control (Camera Light with 7Ft Stand). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_103",
@@ -3293,14 +3394,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Photography-Spring-Aluminum-Supports/dp/B0D8H8L9YG/ref=sr_1_112?tag=nira6studio-21"
     },
     "description": "FKU 7 Feet Photography Light Stand Heavy Duty Spring Loaded Aluminum Stand Tripod (Black, Supports Up to 10000 g). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_104",
@@ -3325,14 +3427,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-2700K-6500K-Studio-Remote-800gram/dp/B0FKPTTN34/ref=sr_1_113?tag=nira6studio-21"
     },
     "description": "FKU 16 inch LED Video Light Panel 2700K-6500K Photo Studio Lamp,Remote and 7FEET Tripod Stand (800gram) Flash (16\" Touch Light+7 FEET+Cross Arm). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_105",
@@ -3357,14 +3460,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Rechargeable-Plug-Powered-3200K-5600K-Conference/dp/B0G49FSXVP/ref=sr_1_114?tag=nira6studio-21"
     },
     "description": "FKU U800 LED Light Kit, Rechargeable and Plug-Powered Camera Light, 3200K-5600K, Video Conference Live Light (LED Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_106",
@@ -3389,14 +3493,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ELEPHANTBOAT%C2%AE-Rechargeable-Photography-2500K-9000K-Recording/dp/B0G6T2Y2J8/ref=sr_1_115?tag=nira6studio-21"
     },
     "description": "ELEPHANTBOAT® RGB Video Stick Light Magnetic Stick Lamp USB Rechargeable Photography LED Light 2000mAh Battery 2500K-9000K, 20 Special Effects, for Video Recording, Streaming & Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_107",
@@ -3421,14 +3526,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Temperatures-3200K-5600K-Adjustable-Brightness-Extendable/dp/B0DNWKVM7P/ref=sr_1_116?tag=nira6studio-21"
     },
     "description": "Cason Slab Key Light for Video Shooting YouTube, Tripod Stand with Light Five Color Temperatures 3200K-5600K, Adjustable Brightness 1455 Lumens, CRI 95+ with Extendable Stand for Content Creation.. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_108",
@@ -3453,14 +3559,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-LM07-Photography-2000K-5500K-8000K-Rechargeable/dp/B0D25V6ZK7/ref=sr_1_116?tag=nira6studio-21"
     },
     "description": "ULANZI LM07 LED Photography Flashlight w 1/4\" Thread, Handheld Videography Light Spotlight 2000K-5500K-8000K Bi-Color Zoomable 2000mAh Rechargeable Portable Video Light for Camera Tripod Stand Cage. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_109",
@@ -3485,14 +3592,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/PULUZ-Photography-Professional-Dimmable-Backdrops/dp/B0774SB68C/ref=sr_1_117?tag=nira6studio-21"
     },
     "description": "PULUZ 30cm Folding High 97 CRI Ring Light Photo Lighting Studio Shooting Tent Box Kit with 6 Colors Backdrops (Black, White, Orange, Red, Green, Blue), Unfold Size: 30cm x 30cm x 30cm. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_110",
@@ -3517,14 +3625,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Kratos-K24-Multifunctional-Lightweight-Photography/dp/B0FXXM1J8B/ref=sr_1_118?tag=nira6studio-21"
     },
     "description": "Kratos K24 Selfie Stick Tripod, 67 CM / 26 Inch, 3-in-1 Multifunctional Design with Detachable Wireless Remote, Portable & Lightweight Selfie Stick for Vlogging, Photography for All Mobiles. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_111",
@@ -3549,14 +3658,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BROLAVIYA-Four-Leaf-Spotlight-Rechargeable-Photography/dp/B0GL7RJ6HY/ref=sr_1_119?tag=nira6studio-21"
     },
     "description": "BROLAVIYA Four-Leaf Baffle Spotlight, 2000mAh Rechargeable, Full Color RGB Video Pocket Light with Portable Clip and 1/4 Screw Hole for Mobile Phones, Cameras, Laptops, iPads, Selfie, Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_112",
@@ -3581,14 +3691,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN%C2%AE-Professional-Umbrella-100cms-Photography/dp/B08FLZK4G6/ref=sr_1_120?tag=nira6studio-21"
     },
     "description": "HIFFIN Professional White Umbrella 100cms 36 inch/91cm for Photography Studio LED Video Light Flash, Camera Flash Video Light Stand, Lighting Diffuser (Pack of 2Pcs). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_113",
@@ -3613,14 +3724,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Jubilant-Portable-Lighting-Shadowless-Backdrops/dp/B0BRVGB66B/ref=sr_1_121?tag=nira6studio-21"
     },
     "description": "Jubilant 25cm Folding Portable High CRI Ring LED Photo Lighting Studio Tent Box + Shadowless Light Lamp Panel Pad with 12 Colors Backdrops. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_114",
@@ -3645,14 +3757,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-3500K-6000K-Dimmable-Ringlight-Streaming/dp/B0DH4WV9H4/ref=sr_1_122?tag=nira6studio-21"
     },
     "description": "FKU [Pack of 2] RL-100 Led Panel Light Video Led Light with Remote & 7 FEET Tripod Stand 3500K-6000K Dimmable Selfie Ringlight for YouTube Video Live Streaming Led. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_115",
@@ -3677,14 +3790,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ZIBUYU%C2%AE-Acrylic-Photography-Director-Clapboard/dp/B0BN3MN57P/ref=sr_1_125?tag=nira6studio-21"
     },
     "description": "ZIBUYU® Movie Clap Board Stage Prop Acrylic Studio Camera Photography Director Film Clapper Board Clapboard Size - 10''x12\". Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_116",
@@ -3709,14 +3823,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TYL-Anti-Reflection-Light-Cone-Professional/dp/B0FCZ576KV/ref=sr_1_126?tag=nira6studio-21"
     },
     "description": "TYL Anti-Reflection Light Cone – Professional Light Diffuser for Jewellery, Watch & Product Photography | Studio Accessory (Medium & Large Variants) (Large). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_117",
@@ -3741,14 +3856,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Flashlight-Spotlight-Patterned-Recording/dp/B0GPQV7BYB/ref=sr_1_127?tag=nira6studio-21"
     },
     "description": "Adofys RGB Photography Flashlight,4 Colors/20 GOBO Filters/CRI95+/7500mAh,10W 6300K Portable LED Video Spotlight Patterned Ambient Aluminum Sunset Light for Recording Studio Lighting, USB. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_118",
@@ -3773,14 +3889,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN%C2%AE-Light-Stand-Kit-Photography/dp/B08D9QN6ZR/ref=sr_1_128?tag=nira6studio-21"
     },
     "description": "HIFFIN® Light Stand Kit - 9 feet (2 Light Stands) Metal Colour Black 9 feet, Portable & Foldable, Indoor & Outdoor Shoot, Heavy Duty, Photography & Videography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_119",
@@ -3805,14 +3922,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Backdrop-Photography-Videography-Adjustable/dp/B0CCHPW24Z/ref=sr_1_129?tag=nira6studio-21"
     },
     "description": "Amazon Basics Studio Background Stand Kit for Backdrop Photography and Videography, Adjustable, Foldable and Portable with Carry Bag (9 x 9 Feet). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_120",
@@ -3837,14 +3955,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-DPLB-6060-Photography-2700K-9900K/dp/B0G2B4XD98/ref=sr_1_130?tag=nira6studio-21"
     },
     "description": "Digitek (DPLB 6060) Portable 40W Photography Light Box, 60cm, 2700K–9900K Color Temperature Bi-Color LED Panels, 0–100% Dimming, 90 CRI, 6 Color PVC Backgrounds, Shadow-Free Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_121",
@@ -3869,14 +3988,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Cam-Backdrop-Photography-Background-Reflector/dp/B097BX6ZFC/ref=sr_1_131?tag=nira6studio-21"
     },
     "description": "Cam cart 6x9 FT Black LEKERA Backdrop Photo Light Studio Photography Background (Stand Not Included) Reflector. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_122",
@@ -3901,14 +4021,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-Smartphone-Multipurpose-Rubberised-Photography/dp/B0FJFTNYFD/ref=sr_1_132?tag=nira6studio-21"
     },
     "description": "Digitek (DTR-425 LW) Portable Tripod Stand with Smartphone Holder, 4.26ft Height, Pan & Multipurpose Quick Release Head, Rubberised Legs, 3kg Load Capacity, Ideal for DSLR Camera & Mobile Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_123",
@@ -3933,14 +4054,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BIGMALL-Tabletop-Photography-Reflective-Reflective-Background/dp/B07NWDDP2B/ref=sr_1_131?tag=nira6studio-21"
     },
     "description": "BIGIMALL Black One Side Glossy One Side Matt Acrylic Display Boards for Tabletop Product Photography-Reflective and Non Reflective Finish Background 12x12 Acrylic Sheet. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_124",
@@ -3965,14 +4087,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Cam-4FTx8FtHeavy-Photography-Backdrop-Recording/dp/B0BPMYJLMF/ref=sr_1_132?tag=nira6studio-21"
     },
     "description": "Cam Cart® 4FTx8FtHeavy White 200 GSM Photography Studio Backdrop for Event Shoot & Vedio Recording.. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_125",
@@ -3997,14 +4120,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-Professional-Photography-2800K-6800K-Backgrounds/dp/B0G265DSQ5/ref=sr_1_133?tag=nira6studio-21"
     },
     "description": "Digitek (DPLB 4040) Professional 40cm Photography LED Light Box, 30W Dual Bi-Color LED Panels, 2800K–6800K, 90 CRI, 0-100% Dimming, 6 Color PVC Backgrounds, Shadow-Free Shooting for Camera & Phone. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_126",
@@ -4029,14 +4153,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Depthlan-Folding-Studio-Photographing-Shooting/dp/B01N7P8CGK/ref=sr_1_134?tag=nira6studio-21"
     },
     "description": "Folding Photo Studio Kit Box with LED Light for Photographing Shooting Tent for Small Size Itemsv. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_127",
@@ -4061,14 +4186,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SMILEDRIVE%C2%AE-Portable-Professional-Product-Photography/dp/B07DVMYMZ1/ref=sr_1_135?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Mini Portable Professional Photo Light Booth Product Photography Booth Studio with 1 LED Strips– 40x40x40 cm - Made in India. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_128",
@@ -4093,14 +4219,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Tygot-Resistant-Photography-Accessories-Compatible/dp/B0CMV96FPM/ref=sr_1_136?tag=nira6studio-21"
     },
     "description": "Tygot Water Resistant Camera Bag/Case Shoulder Strap Space for Photography Lens and Accessories Compatible for Nikon, Canon, Sony, Panasonic, Samsung & Other SLR/DSLR etc (Black & Silver). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_129",
@@ -4125,14 +4252,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Arcnet-Shotting-Adjustable-Vlogging-Meetings/dp/B0FKHFFDWY/ref=sr_1_137?tag=nira6studio-21"
     },
     "description": "Arcnet USB Slab Video Light for Video Shooting with Height Adjustable Desk Stand for Mobile Vlogging with 5 Light Modes Desk Ring Light with Stand for Vlogging,Meetings, Live Stream,Makeup. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_130",
@@ -4157,14 +4285,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/NEWDRU-LumiTripod-Adjustable-Tripod-Lights/dp/B0DVZLZB9R/ref=sr_1_138?tag=nira6studio-21"
     },
     "description": "NEWDRU LumiTripod Adjustable Tripod with LED Lights - 360° Rotation & 8 Telescopic Rods | Bluetooth Remote - Selfie Stick with Tripod Stand for Vlogging, Makeup, Photography & Video. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_131",
@@ -4189,14 +4318,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Universal-Round-Studio-Softbox-Diffuser/dp/B0DJRBQ2HH/ref=sr_1_141?tag=nira6studio-21"
     },
     "description": "Hanumex 4 Inch Universal Soft Round Mini Studio Softbox Flash Diffuser - Speedlight, Strobe, and Flash Gun Light Modifier for Soft Lighting, Photography Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_132",
@@ -4221,14 +4351,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Backdrop-Double-Sided-Background-Cosmetics/dp/B0CZ7F4D7H/ref=sr_1_142?tag=nira6studio-21"
     },
     "description": "HomeArt 3 Sheet 2 in 1 Marble Product Photography Backdrop 3D Flat Lay Tabletop Double-Sided 20x29 Photo Background PVC Wrinkle Free for Small Products Food, Cosmetics Shoot (Pack of 3, Combo 4). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_133",
@@ -4253,14 +4384,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Calyrex-Rechargeable-Portable-Photography-Lighting/dp/B0FT3TMQ3N/ref=sr_1_143?tag=nira6studio-21"
     },
     "description": "RGB Video Light, 360° Full Color Selfie Light LED Camera Light with 3 Cold Shoe Mounts/CRI 97+/20 Scene Modes/3000mAh Rechargeable Portable Phone Light Photography Selfie Lighting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_134",
@@ -4285,14 +4417,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Welborn-Collapsible-Light-Reflector-110cm/dp/B0G4CC97XR/ref=sr_1_144?tag=nira6studio-21"
     },
     "description": "Welborn 5-in-1 Collapsible Light Reflector 43\" (110cm) – Gold, Silver, White, Black & Translucent Photography Diffuser for Studio & Outdoor Shoots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_135",
@@ -4317,14 +4450,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Smartphone-Detachable-Wireless-Shooting/dp/B0B6TNCHCN/ref=sr_1_145?tag=nira6studio-21"
     },
     "description": "ULANZI CG01 Phone Tripod Mount with Remote Control Cell Phone Tripod Adapter Grip Holder, Smartphone Handle Grip with Detachable Wireless Camera Shutter for iPhone Video Photo Shooting, Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_136",
@@ -4349,14 +4483,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Store2508-Tabletop-Photography-Background-Cosmetics/dp/B0GXZW6CR6/ref=sr_1_146?tag=nira6studio-21"
     },
     "description": "Store2508 (Pack of 3) Solid Colour Flat Lay Flatlay Tabletop Photography Backdrop Background for Food, Jewelry, Cosmetics, Small Product, Photo Pros and More, 56 * 88 Cm (Set_O01). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_137",
@@ -4381,14 +4516,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Selfie-Light-Compatible-Photography/dp/B0CRYXTZH8/ref=sr_1_147?tag=nira6studio-21"
     },
     "description": "ULANZI Magnetic Selfie Light, LED Fill Light Compatible with Magsafe, LED Selfie Ring Light Included Sticky Ring for Phones, for Selfies/Photography/TikTok/Zoom Calls/Video Conference Color Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_138",
@@ -4413,14 +4549,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-store-Photography-Background-Photograph/dp/B0FMQBGN21/ref=sr_1_148?tag=nira6studio-21"
     },
     "description": "Photography Folding Reflector, Background & Light Diffuser Board for Product Photography, Food Photography, Jewellery Photography & Cake Photograph. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_139",
@@ -4445,14 +4582,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-16-INCH-Professional-Bi-Colors/dp/B0FPGQJW81/ref=sr_1_147?tag=nira6studio-21"
     },
     "description": "FKU (Pack 2) 16 INCH Touch Pad Key Professional Super Bright LED Bi-Colors Panel Light, Camera LED Video Soft Light Panel Flash (Black) (2 PC 16 INCH Large PANAL Light). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_140",
@@ -4477,14 +4615,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TYROCX-Professional-YouTube-Compatible-Smartphones/dp/B0F9YTY2DR/ref=sr_1_148?tag=nira6studio-21"
     },
     "description": "TYROCX Mobile Camera Lens, 0.45X Super Wide Angle Lens, 15X Macro Lens, Clip-On 2 in 1 Professional Kit for TIK Tok, Vlog, YouTube, Reels Compatible with All Smartphones-(Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_141",
@@ -4509,14 +4648,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-LM07-Photography-2000K-5500K-Temperature/dp/B0CXX4NWNS/ref=sr_1_149?tag=nira6studio-21"
     },
     "description": "ULANZI LM07 Photography Torch LED Video Light 2000K-5500K Bi-Colour Temperature 4 Brightness Levels 2000mAh Battery 187g Portable Zoomable Light for Night Vision Photography Camping Hunting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_142",
@@ -4541,14 +4681,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DK83DC3Y/ref=sr_1_150?tag=nira6studio-21"
     },
     "description": "Yardenfun 1set Photography Lamp Baffle Kit Honeycomb Cover and Color Filters for Flash Lighting Accessories for. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_143",
@@ -4573,14 +4714,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/IMAGIX-PROPHOTOTM-Photoshoot-Photography-Decorations/dp/B0BC3NVXKK/ref=sr_1_151?tag=nira6studio-21"
     },
     "description": "Geometric Cube Foam Photography Props Set of 6 | Jewellery Photoshoot Props | Flatlay Product Photography | Handmade Solid Foam Blocks | Small Business Display Stand | White. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_144",
@@ -4605,14 +4747,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Drumstone-132AID176-Rechargeable-Photography-Decoration/dp/B0GT4NSTJG/ref=sr_1_152?tag=nira6studio-21"
     },
     "description": "Drumstone (1 Year Warranty) 132AID176 Rainbow Tube Light RGB LED Light with Multiple Color Modes, Rechargeable Portable Stick Light for Photography, Video Shooting, Room Decoration & Parties. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_145",
@@ -4637,14 +4780,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SAVIAURA-Double-Sided-Photography-Background-Wrinkle-Free/dp/B09DW11GZ6/ref=sr_1_154?tag=nira6studio-21"
     },
     "description": "1 Sheet 2 in 1 3D Flat Lay Tabletop Double-Sided Photography Backdrop Photo Studio Flatlay Background PVC Wrinkle-Free for Small Product Shoot (Marble & Tiles Pattern). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_146",
@@ -4669,14 +4813,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Neewer-Adjustable-Background-Backdrop-Photography/dp/B07PFS3BBS/ref=sr_1_157?tag=nira6studio-21"
     },
     "description": "Neewer Photo Studio 10ft/3m Wide Cross Bar 6.6ft/2m Tall Adjustable Background Stand Backdrop Support System with 3 Backdrop Clamps, 2 Sandbags and Carry Bag for Portrait Product Video Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_147",
@@ -4701,14 +4846,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Portable-Collapsible-Photography-Reflector-Foldable/dp/B0GMPMBB8R/ref=sr_1_158?tag=nira6studio-21"
     },
     "description": "Portable 5-in-1 Collapsible Photography Reflector | Foldable Light Reflector with Carry Pouch | Studio Lighting Tool for Photo & Video Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_148",
@@ -4733,14 +4879,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/LED-D10W-Photography-Rechargeable-2500-9000K-Attraction/dp/B0BBN6XYTC/ref=sr_1_159?tag=nira6studio-21"
     },
     "description": "DIGITEK® (LED-D10W RGB) 10W Portable Multi Color Mini LED Video Light with 3 Color Modes, 360° Rotation, Magnetic Absorption, 2500-9000K Color Temperature, 2Hrs Battery Life, Camera & Tripod Mountable. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_149",
@@ -4765,14 +4912,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Photography-Photoshoot-Streaming-Instagram/dp/B09XBWZPZT/ref=sr_1_160?tag=nira6studio-21"
     },
     "description": "8x12 Ft Green Screen Backdrop for Photography & Video | Wrinkle-Resistant Chromakey Background Curtain with Rod Pocket | Ideal for YouTube, Live Streaming, Zoom, Reels & VFX Editing. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_150",
@@ -4797,14 +4945,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FND-42-inch-Collapsible-Multi-Disc-Reflector/dp/B08B1RX5RR/ref=sr_1_161?tag=nira6studio-21"
     },
     "description": "FND 42-inch (107 cm) 5 in 1 Collapsible Multi-Disc Light Reflector with Bag - Translucent, Silver, Gold, White and Black Heavy Duty Made in India. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_151",
@@ -4829,14 +4978,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-360-degree-Recording-Photography-Streaming/dp/B0GSRQ8354/ref=sr_1_162?tag=nira6studio-21"
     },
     "description": "SHOPEE Overhead Phone Mount with Tripod Light Stand 2M Stand 70cm Boom Arm for Phone Camera Holder 360-degree Rotating Stand Tripods Video Recording,Cooking,Photography,Live Streaming,YouTube. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_152",
@@ -4861,14 +5011,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VTS-Aluminium-Honeycomb-Monolight-Photography/dp/B0B63TMSXL/ref=sr_1_163?tag=nira6studio-21"
     },
     "description": "VTS Medium Aluminium Alloy Conical Snoot Kit with Honeycomb Grid and 4 Pieces Color Gel Filters for Bowens Mount Studio Strobe Monolight Photography Flash Light. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_153",
@@ -4893,14 +5044,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Store2508-Photography-Reflector-Background-Cardboard/dp/B09HMVXP95/ref=sr_1_164?tag=nira6studio-21"
     },
     "description": "Store2508 3 in 1 Photography Reflector Background Cardboard, 17 x 12 inch Folding Light Diffuser Board for Still Life, Product and Food Photo Shooting (2 Pcs Silver). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_154",
@@ -4925,14 +5077,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Resistant-Photography-Accessories-Compatible-Panasonic/dp/B0BRJLWQ6R/ref=sr_1_163?tag=nira6studio-21"
     },
     "description": "Dyazo Water Resistant Camera Bag/Case Shoulder Strap Space for Photography Lens and Accessories Compatible for Nikon, Canon, Sony, Panasonic, Samsung & Other SLR/DSLR etc (Black & Silver). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_155",
@@ -4957,14 +5110,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Lightweight-Portable-Aluminum-Photography-DLS-9FEET/dp/B088GXTJM3/ref=sr_1_164?tag=nira6studio-21"
     },
     "description": "DIGITEK® (DLS-9FT) Lightweight & Portable Aluminum Alloy Light Stand for Ring Light, Reflector, Flash Units, Diffuser, Portrait, Softbox, Studio Lighting & More Ideal for Outdoor & Indoor Shoots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_156",
@@ -4989,14 +5143,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Babymoon-Designer-Crown-Knited-Headwear/dp/B07BQPJZ59/ref=sr_1_165?tag=nira6studio-21"
     },
     "description": "BabyMoon (SET of 3 Designer Crown Knited Headwear - Beautiful Costume - Photography Props - Best Baby shower Gift. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_157",
@@ -5021,14 +5176,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Reflective-Background-Tabletop-Photography/dp/B09P8S8LNC/ref=sr_1_166?tag=nira6studio-21"
     },
     "description": "SHOPEE Acrylic Reflective Finish Background Display Boards for Tabletop Product Photography, 12 X 12 inch Sheet, Black and White. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_158",
@@ -5053,14 +5209,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Filter-Photography-Compatible-Smartphones-Outdoor/dp/B0G4CXL2BG/ref=sr_1_167?tag=nira6studio-21"
     },
     "description": "Nd Filter for Mobile Set, Mobile Lens for Photography Kit,Nd Filter for Mobile Compatible with Most Smartphones for Outdoor Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_159",
@@ -5085,14 +5242,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SUPERNIC-Light-Portable-Photography-Compatible/dp/B0DC3V76HL/ref=sr_1_168?tag=nira6studio-21"
     },
     "description": "SUPERNIC LC-500R [ Light Holder ] Portable Light Wand Handheld RGB LED Stick Light Stand Swivel Mount Saftey Holder for Photography Compatible for All RGB Stick Light. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_160",
@@ -5117,14 +5275,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Babymoon-Photography-Shoot-Costume-Months/dp/B08JYRFVPM/ref=sr_1_169?tag=nira6studio-21"
     },
     "description": "BabyMoon Spa New Born Baby Photography Shoot Props Costume for 3-6 Months in White. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_161",
@@ -5149,14 +5308,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Portable-Folding-lightbox-Photography-Lighting/dp/B08GJLB389/ref=sr_1_170?tag=nira6studio-21"
     },
     "description": "HIFFIN Photo Bag 30cm Medium Size Portable Folding with 1 led Strips lightbox Photography Photo Studio Softbox Lighting Kit Light Box for Phone Digital Camera. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_162",
@@ -5181,14 +5341,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Accessories-Camera-Reference-Guides/dp/B09D9VFW2Z/ref=sr_1_173?tag=nira6studio-21"
     },
     "description": "DSLR Cheat Sheet Photography Accessories Camera Accessories for Canon Nikon Sony Photography Gifts for Photographer Quick Reference Cards Guides Tips Settings Exposure Modes Composition And More 4×3in. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_163",
@@ -5213,14 +5374,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BabyMoon-Snail-Baby-Photography-Green/dp/B06XD9BJJJ/ref=sr_1_174?tag=nira6studio-21"
     },
     "description": "BabyMoon Snail Crochet New Born Photography Shoot Props Costume (Emerald Green). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_164",
@@ -5245,14 +5407,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Mobile-Camera-Lens-Cleaning-Gel/dp/B0FXHKC6LP/ref=sr_1_175?tag=nira6studio-21"
     },
     "description": "TYROCX 0.45X Wide Angle Mobile Camera Lens and 15X Macro Lens (Wide+Macro) for All Smartphones with Cleaning Gel. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_165",
@@ -5277,14 +5440,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HomeArt-Faux-Fur-Rug-Photography/dp/B0D6RXX81B/ref=sr_1_177?tag=nira6studio-21"
     },
     "description": "HomeArt Faux Fur Rug - A Timeless Baby Photography Background for Fashion Shoots Portrait Sessions Newborn Product and Still Photography (5 x 5 Feet, White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_166",
@@ -5309,14 +5473,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/GIFTMAX-Ceiling-Adjustable-Lighting-Softbox/dp/B0DTQXBP25/ref=sr_1_179?tag=nira6studio-21"
     },
     "description": "PHOTOMAX Wall Mount Boom Arm Tripod (CM-04) 120cm Wall Ceiling Mount Boom Arm Tripod Desk Mount Table Stand Adjustable Height for Photo Studio Video Ring Light Strobe Flash Mobile Lighting Softbox. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_167",
@@ -5341,14 +5506,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-DRL-3W-Magnetic-Smartphones/dp/B0FJ8QHGTR/ref=sr_1_180?tag=nira6studio-21"
     },
     "description": "Digitek (DRL 3W) Magnetic Selfie Ring Light with Makeup Mirror, 3 Color Modes 2700K, 5600K, 7500K, 360° Rotation & 180° Pan, Type-C, Use with Smartphones, Laptops & Tabs for Vlogs, Meetings & Makeup. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_168",
@@ -5373,14 +5539,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPVILLA-Smartphone-Reflection-Photography-Applicable/dp/B0DW3JW6PB/ref=sr_1_180?tag=nira6studio-21"
     },
     "description": "Smartphone Camera Mirror Reflection Clip Kit, Smartphone Reflector for Photography, Travel Mobile Phone Camera Clip, Mirror Reflection for Phone Camera, Applicable to All Phones and Camera. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_169",
@@ -5405,14 +5572,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Universal-Aluminum-Attachments-Compatible-Smartphone/dp/B0GN9DK5BF/ref=sr_1_182?tag=nira6studio-21"
     },
     "description": "Universal HD Camera Lens Kit 180 Degree Fish Eye+0.65X Wide Angle+10X Macro Lens Glass & Aluminum Alloy Shot Clip Attachments Compatible with iPhone iPad Android Smartphone & Tablets. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_170",
@@ -5437,14 +5605,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Professional-Backdrop-Photography-Photoshoot-Streaming/dp/B0CWYVMX71/ref=sr_1_184?tag=nira6studio-21"
     },
     "description": "Amazon Basics Professional Black Screen Backdrop Cloth (8x12 ft) | Suitable for Photography, Photoshoot, Product Photography, Live Streaming, Zoom Meetings, VFX Editing | Pack of 1 (Black). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_171",
@@ -5469,14 +5638,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ITSYYBOO-Reflective-Professional-Photography-Background/dp/B0C99QX8ZD/ref=sr_1_185?tag=nira6studio-21"
     },
     "description": "2 Pieces 12 Inch Reflective Display Table Riser Professional Product Photography Black and White Background Product Display for Product Table Top Photography Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_172",
@@ -5501,14 +5671,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Background-Photography-Backdrops-Backdrop-Birthday/dp/B0GG1V9B3V/ref=sr_1_186?tag=nira6studio-21"
     },
     "description": "Doorway Arch Diwali Background Photography Backdrops Nature Backdrop Curtain Cloth Birthday Background Seamless Photo Booth Prop Backdrop Size 5Feet Height & 8Feet Width(5 * 8). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_173",
@@ -5533,14 +5704,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-store-Photography-Anti-Reflection-Reflective/dp/B0D39XN1Z8/ref=sr_1_189?tag=nira6studio-21"
     },
     "description": "Photo Light and Diffuser Cone for Product Photography, Anti-Reflection Photo Light Cone and Reflective Object Diffuser (Pack of 3). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_174",
@@ -5565,14 +5737,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BIGMALL-Acrylic-Display-Tabletop-Photography/dp/B07G6NYBFS/ref=sr_1_190?tag=nira6studio-21"
     },
     "description": "BIGIMALL Acrylic White & Black Reflective Display Table Riser for Professional Product Photography - White and Black - 12 x 12 inch - Set of 2. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_175",
@@ -5597,14 +5770,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Smiledrive-Background-Photography-Washable-Seamless/dp/B0BBRL7R9S/ref=sr_1_191?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Background Sheet for Photography PVC PP Washable, Seamless Large Size 100x300 cm (White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_176",
@@ -5629,14 +5803,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Professional-Backdrop-Photography-Photoshoot-Streaming/dp/B0CWYTRZFT/ref=sr_1_192?tag=nira6studio-21"
     },
     "description": "Amazon Basics Professional White Screen Backdrop Cloth (8x9 ft) | Suitable for Photography, Photoshoot, Product Photography, Live Streaming, Zoom Meetings, VFX Editing | Pack of 1 (White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_177",
@@ -5661,14 +5836,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-Photography-Diffusion-Diffuser-Lighting/dp/B0DY51Z2LT/ref=sr_1_193?tag=nira6studio-21"
     },
     "description": "Photography Light Diffusion Filter Sheet Roll, White Diffuser for Photo Studio, Video Lighting, 50cm x 40cm (Pack of 2). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_178",
@@ -5693,14 +5869,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/PHOTO-MAX-Universal-Magnetic-Mobile/dp/B0GV3TDQ3F/ref=sr_1_194?tag=nira6studio-21"
     },
     "description": "Universal Magnetic Mobile Phone Holder – 360° Rotation, Strong Magnet, 1/4\" Interface Tripod Mount Stand for Video Recording, Photography & Vlogging (Mobile Magsafe Bracket K815). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_179",
@@ -5725,14 +5902,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HomeArt-Background-Backdrop-Photography-Videography/dp/B0CSG1JCJT/ref=sr_1_196?tag=nira6studio-21"
     },
     "description": "HomeArt 9x9 Feet Background Support Stand, Heavy Duty Backdrop Stand for Photography, Videography | Kit Include Carry Bag (Background Support, Backdrop Stand). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_180",
@@ -5757,14 +5935,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/WildRoar-Camera-Bean-Bag-Waterproof-Prefilled/dp/B07PFXS8C5/ref=sr_1_195?tag=nira6studio-21"
     },
     "description": "Camera Bean Bag-Waterproof- Prefilled. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_181",
@@ -5789,14 +5968,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HIFFIN-60x120cm-PVC-Photography-Backdrop/dp/B0G25JG8B3/ref=sr_1_196?tag=nira6studio-21"
     },
     "description": "HIFFIN 60x120cm Black PVC Photography Backdrop – Matte Vinyl Non-Reflective Background for Product, Food & Studio Shooting | Durable, Waterproof & Perfect for Professional Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_182",
@@ -5821,14 +6001,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BabyMoon-Hairband-Photography-Photoshoot-Suitable/dp/B08HMWNY2Q/ref=sr_1_197?tag=nira6studio-21"
     },
     "description": "Babymoon Set of 2 | Girls Lace Romper with Hairband Born Baby Photography Photoshoot Props Costume | 0-1 Month. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_183",
@@ -5853,14 +6034,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Tygot-Resistant-Photographers-Compatible-Panasonic/dp/B0CMZJF41S/ref=sr_1_198?tag=nira6studio-21"
     },
     "description": "Tygot Water Resistant Camera Backpack with Extra Front Pocket Photographers Bag with Rain Cover Tripod Holder Compatible for Sony Nikon Canon Panasonic DSLR (Black & Orange). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_184",
@@ -5885,14 +6067,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Buildcon-Mirrorless-Release-Photography-Accessory/dp/B0GCD8RR2M/ref=sr_1_199?tag=nira6studio-21"
     },
     "description": "Camera Belt Strap for Mirrorless Camera, Camera Strap, Quick Release Wrist Strap for Photography, Secure Hand Strap for DSLR Cameras, Single Unit Camera Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_185",
@@ -5917,14 +6100,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/NUDFSY-Accessories-Adapter-Photography-Binocular/dp/B0DFWQ3M9G/ref=sr_1_200?tag=nira6studio-21"
     },
     "description": "NUDFSY 3PCS Camera Strap, Accessories Adapter Quick Release, Wrist Strap, Photography Adapter for Binocular, Action, Digital Camera, Laptop Bags. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_186",
@@ -5949,14 +6133,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TELESIN-Magnetic-Shutter-Detachable-Wireless/dp/B0F84F2NC8/ref=sr_1_201?tag=nira6studio-21"
     },
     "description": "TELESIN Fun Shot Magnetic Phone Camera DSLR Style Shutter Grip for iPhone & Android with Detachable Wireless Shutter Button - MFI Certified - 1/4\" Screw (Magentic Grip). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_187",
@@ -5981,14 +6166,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ZODUCT-Invisible-Stick-Extendable-Lightweight/dp/B0FYRLXS5F/ref=sr_1_202?tag=nira6studio-21"
     },
     "description": "Invisible Carbon Fiber Selfie Stick 9.8ft for Insta 360, GoPro & DJI Osmo | 3 Meter Extra Long Extendable Action Camera Stick | Lightweight Tripod Mount Pole for Vlogging, & Travel. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_188",
@@ -6013,14 +6199,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Versatile-Photography-Accessories-Compatible/dp/B0BP15HPMP/ref=sr_1_205?tag=nira6studio-21"
     },
     "description": "ULANZI Versatile Camera Shoulder Bag Photography Travel Messenger Portable Travel Bag Accessories Stylish Crossbody DSLR Sling Bag Compatible with Sony Canon etc -BLACK. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_189",
@@ -6045,14 +6232,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Monkway-Shoulder-Waterproof-Photography-Accessories/dp/B0GTW8CPZB/ref=sr_1_206?tag=nira6studio-21"
     },
     "description": "Monkway Camera Tripod Carry Bag with Shoulder Strap, Waterproof Padded Tripod Case, Heavy Duty Storage Bag for Light Stand, Monopod & Photography Accessories, Portable Travel Tripod Holder Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_190",
@@ -6077,14 +6265,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SNOWIE-Newborn-Headband-Photoshoot-Photography/dp/B0GK9DLCBT/ref=sr_1_207?tag=nira6studio-21"
     },
     "description": "SNOWIE SOFT® Newborn Lace Dress & Headband Set for Infant Girls 0-1 Month, Vintage Tulle Baby Photoshoot Outfit, Soft Lace Romper Dress with Flower Headband, Elegant Newborn Photography Prop.. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_191",
@@ -6109,14 +6298,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photoshoot-Photography-Decoration-Backdrop-Costumes/dp/B0FLKCHFMH/ref=sr_1_208?tag=nira6studio-21"
     },
     "description": "White Fur Fabric- Premium Soft Fur Cloth for Photoshoot, Baby Photography Props, Decoration, Wedding Mandap Backdrop, Costumes, DIY Crafts, Soft Toys, Party Decor. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_192",
@@ -6141,14 +6331,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/CALANDISTM-Reflector-Installation-Photography-Accessories/dp/B0F18XKKZW/ref=sr_1_209?tag=nira6studio-21"
     },
     "description": "CALANDIS™ Camera Flash Diffuser Flash Diffuser Reflector Easy Installation Photography | Flash Diffusers | Flashes & Flash Accessories. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_193",
@@ -6173,14 +6364,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Bembika-Photography-Cap-Newborn-Designer/dp/B0FHBF5MM8/ref=sr_1_210?tag=nira6studio-21"
     },
     "description": "Bembika Photography Cap – Newborn Photography Outfits & Baby Photography Props Designer Baby Cap for Newborn Photo Shoot Cap-(Net White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_194",
@@ -6205,14 +6397,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VTS-Standard-Reflector-AD600BM-AD600Pro/dp/B0B53NVWJD/ref=sr_1_211?tag=nira6studio-21"
     },
     "description": "VTS 7\" Standard Bowens Mount Reflector for Godox AD600B AD600BM AD600Pro MS200 MS300 Aputure Amaran 100D 100X 200D 200X. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_195",
@@ -6237,14 +6430,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Tygot-Selfie-Stick-Multi-Functional-Smartphones/dp/B0GDQCJDFJ/ref=sr_1_212?tag=nira6studio-21"
     },
     "description": "Tygot T9 Selfie Stick Tripod, 67 Inch (170CM) Reinforced Tripod for Mobile Phone, Multi-Functional Bluetooth Long Selfie Stick for Travel,Vlogging,Compatible with iPhone and All Smartphones. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_196",
@@ -6269,14 +6463,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/GODOX-SA-05-Scrim-Focusing-Light/dp/B081NKD137/ref=sr_1_212?tag=nira6studio-21"
     },
     "description": "GODOX SA-05 Scrim Set for S30 LED Focusing Light. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_197",
@@ -6301,14 +6496,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Photography-Background-Backgrounds-Woodworking/dp/B0818PC7FY/ref=sr_1_213?tag=nira6studio-21"
     },
     "description": "SHOPEE 6 PCS Photography Backdrop Support Spring Clamp 4.3\"/11cm for Background Muslin, Canvas, Paper, Chromakey Screen, Heavy Duty Clip, Photo Studio, Backdrops Backgrounds Woodworking (ORANGE). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_198",
@@ -6333,14 +6529,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Babymoon-Floral-Hairband-Photoshoot-Costume/dp/B09TSRFM6S/ref=sr_1_214?tag=nira6studio-21"
     },
     "description": "BabyMoon Floral Romper with Hairband Photoshoot Props Costume - White…. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_199",
@@ -6365,14 +6562,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VectByte-Vintage-Compact-Mirrorless-Multicolor/dp/B0CQ2M4HVB/ref=sr_1_215?tag=nira6studio-21"
     },
     "description": "Camera Strap Vintage Camera Neck Strap for Compact Digital Camera, Mirrorless Camera, Small DSLR Camera, Instant Camera.(Multicolor). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_200",
@@ -6397,14 +6595,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Root-Craft-Romper-Baby-Photography/dp/B0DSTBTBZP/ref=sr_1_216?tag=nira6studio-21"
     },
     "description": "The Root and Craft Kids Birthday Photoshoot Outfit Dress Girls Floral Applique Romper with Hairband Born Baby Photography Photoshoot Props(0 to 6 Month) Pink. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_201",
@@ -6429,14 +6628,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BabyMoon-New-Born-Specks-Glasses-Photoshoot/dp/B0D8214KVH/ref=sr_1_217?tag=nira6studio-21"
     },
     "description": "BabyMoon New-Born Baby Specks Glasses | Baby Photoshoot Props | Silver. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_202",
@@ -6461,14 +6661,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Bracket-Speedlite-Reflector-Photography-Videography/dp/B0CZ7LM3QH/ref=sr_1_218?tag=nira6studio-21"
     },
     "description": "Amazon Basics S2 Bracket | Bowens Mount| Precise Tilt Control | for Speedlite Flash, Barn Door Kit, Softbox, Snoot, Reflector, Beauty Box | Camera Photography & Videography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_203",
@@ -6493,14 +6694,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Concept-ND2-400-Adjustable-Neutral-Compatible/dp/B0D14482VF/ref=sr_1_221?tag=nira6studio-21"
     },
     "description": "K&F Concept 52mm Clip-on ND2-400 Phone Camera Lens Filter Kit, Adjustable Neutral Density Filter Compatible with iPhone 15 14 13 12 11. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_204",
@@ -6525,14 +6727,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Zubebe-Christmas-Accessories-Headband-Photography/dp/B0DK4RPQMK/ref=sr_1_222?tag=nira6studio-21"
     },
     "description": "Zubebe 55 Pcs Christmas Photo Booth Props DIY Kit Selfie Props Accessories Christmas Hats Headband Glasses Scarves Paper Photo Booth Props Xmas Theme Photography Backdrop Decor Xmas Party Supplies. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_205",
@@ -6557,14 +6760,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Luxury-Imperial-Flame-Backdrop-Photography/dp/B0GDQYS4F4/ref=sr_1_223?tag=nira6studio-21"
     },
     "description": "Luxury Imperial Flame Red Backdrop for Photography – Wrinkle Free, Washable Fabric Background for Studio, Wedding, Party & Makeup Shoots (Imperial Flame, 5 X 8 FT). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_206",
@@ -6589,14 +6793,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Babymoon-Knitted-Flower-Photography-Babyshower/dp/B07GXD4J6N/ref=sr_1_224?tag=nira6studio-21"
     },
     "description": "BabyMoon Knit Flower Baby Cap Photography Props Photoshoot Costumes Babyshower Gift (Baby Pink). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_207",
@@ -6621,14 +6826,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/POPIO-Bluetooth-Controller-Shutter-Compatible/dp/B0912XTYLZ/ref=sr_1_225?tag=nira6studio-21"
     },
     "description": "POPIO Bluetooth Remote Shutter Button for Selfie Stick Tripod | Wireless Camera Controller Clicker Compatible with Android & iOS Smartphones. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_208",
@@ -6653,14 +6859,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/DGS-001-High-Temperature-Resistance-Transforms/dp/B0CXSR3K7J/ref=sr_1_226?tag=nira6studio-21"
     },
     "description": "Digitek® (DGS 001) Stainless Steel GOBO Pattern Kit, 8 Creative Patterns for Optical Snoot, High-Temperature Resistance, Transforms Spaces with Geometric Shapes, LED Light Creative Effects. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_209",
@@ -6685,14 +6892,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "Yes",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TECHONTO-Adjustable-Adapter-Compatible-Smartphones/dp/B08W1KX225/ref=sr_1_227?tag=nira6studio-21"
     },
     "description": "TECHONTO® 360° Degree Cell Phone Holder with Adjustable Clamp Phone Tripod Mount Adapter Compatible with Smartphones & All Types of Tripods – Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_210",
@@ -6717,14 +6925,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Universal-Transparent-Correction-Photography/dp/B0GW3WB9KX/ref=sr_1_228?tag=nira6studio-21"
     },
     "description": "SHOPEE 12pcs Universal Flash Gels Filter Transparent Coloured Correction Gel Lighting Film Diffuser Filter Sheets for Camera Flash Speedlite Studio Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_211",
@@ -6749,14 +6958,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Adapter-Photography-Reflector-Collapsible/dp/B0933K99ZZ/ref=sr_1_228?tag=nira6studio-21"
     },
     "description": "SHOPEE Holder 56\" with Grip Swivel Head Clamp Stand Mount Adapter for Holing 5 in 1 Photography Camera Reflector Collapsible Multi Disc Reflector 32\" and 42\" Without Light Stand.. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_212",
@@ -6781,14 +6991,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Diffuser-Magnetic-Modifier-Photography-Lighting/dp/B0GHYXX2JG/ref=sr_1_229?tag=nira6studio-21"
     },
     "description": "Boosty® Dome Diffuser Magnetic for H200R Round Flash Head, V1 Flash Series V1-S, V1-N, V1-C | Round Head Flashes Soft Light Modifier for Photography & Studio Lighting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_213",
@@ -6813,14 +7024,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Backdrop-Photography-Background-Backdrops/dp/B08XPF6542/ref=sr_1_230?tag=nira6studio-21"
     },
     "description": "SHOPEE Heavy Duty Spring Clamp, Photo Studio Heavy Duty Metal Spring Clamp Backdrop Clip for Photography Background Backdrops. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_214",
@@ -6845,14 +7057,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SOFROZ-Sandbags-Umbrellas-Photography-Equipment/dp/B0F3P5TD5H/ref=sr_1_231?tag=nira6studio-21"
     },
     "description": "Sandbags | Heavy Duty Weights for Light Stands, Backdrop Stands, Tripods, Canopies, Umbrellas, Fishing Chairs & Picnic Tables – Ideal for Photography & Outdoor Equipment (Set of 4 Pcs). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_215",
@@ -6877,14 +7090,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ZORBES-Universal-Stabilizer-Camcorder-Smartphone/dp/B0BDM8PWNY/ref=sr_1_232?tag=nira6studio-21"
     },
     "description": "ZORBES® Camera Holder,1/4\" Universal Camera Hand Grip Stabilizer Support Mount for DSLR Camcorder Smartphone GoPro Action Led Video Light,Holder for Video Shooting Videography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_216",
@@ -6909,14 +7123,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FLYING-COLLECTION-Photography-Background-Reflector/dp/B0D8JHHLS8/ref=sr_1_233?tag=nira6studio-21"
     },
     "description": "Portable Photography Background and Reflector Disc Holding Clip, Light Reflector Holder Clamp, Mountable on Light Stand Tripod, for Photo and Video Studio (Pack of 1). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_217",
@@ -6941,14 +7156,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Skdkanu-Acrylic-Earring-Necklace-Display/dp/B0FBGRZYBF/ref=sr_1_234?tag=nira6studio-21"
     },
     "description": "Clear Acrylic Earring & Necklace Display Stand – Jewelry Organizer & Retail Photography (Transparent(Earring_display_cards)- 20pcs). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_218",
@@ -6973,14 +7189,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VTS-Extension-Crossbar-Reflector-Photography/dp/B0BBB4WDSM/ref=sr_1_237?tag=nira6studio-21"
     },
     "description": "VTS 49 inch Extension Grip Crossbar Arm with 1/4\" & 3/8\" Screw Thread for C-Stand Reflector Flags and Other Studio Video Photography Devices. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_219",
@@ -7005,14 +7222,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Godox-Bowens-Mount-ML-GB-Adapter/dp/B0DDBDZ1LK/ref=sr_1_238?tag=nira6studio-21"
     },
     "description": "Godox Bowens Mount ML-GB Adapter for ML100Bi, ML60IIBi, ML60Bi, ML60, ML30Bi, ML30 - Mount Adaptor. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_220",
@@ -7037,14 +7255,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SMILEDRIVE-Jewellery-Stand-Perfect-Organize-Necklace/dp/B0DX29N9LN/ref=sr_1_239?tag=nira6studio-21"
     },
     "description": "SMILEDRIVE® Acrylic Jewellery Display Stand-Perfect for Jewellery Shoots and Display, Organize Necklace, rings, ear rings and trinkets. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_221",
@@ -7069,14 +7288,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Plastic-Branded-Photography-Single-Bracket/dp/B0CK5456MN/ref=sr_1_240?tag=nira6studio-21"
     },
     "description": "Plastic Branded Photography Photo Light Lamp Bulb Single Holder E27 Socket Bracket Studio EU Plug, Black, Pack of 1. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_222",
@@ -7101,14 +7321,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Carrying-Softboxes-Shoulder-OM-01/dp/B0CWNB2633/ref=sr_1_241?tag=nira6studio-21"
     },
     "description": "ULANZI Carrying Bag with Movable Foam Padded for Studio Light, Light Stands, Mini Softboxes, Durable Oxford Cloth Transit Bag Travel Case with Shoulder Strap & Handle, 17.13'' x 10.83'' x 8.27'',OM-01. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_223",
@@ -7133,14 +7354,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SHOPEE-Photography-Backdrop-Assorments-Background/dp/B0FK2L1WNH/ref=sr_1_242?tag=nira6studio-21"
     },
     "description": "SHOPEE 22Pcs Photography Backdrop Clips Clamps Assorments Kit, 10Pcs Curtain Rings with Clip, 6Pcs Backdrop Spring Clamps and 6Pcs Leather Background Clips Holder. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_224",
@@ -7165,14 +7387,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Schsteindar%C2%AE-Photography-Bracket-Plastic-Adapter/dp/B0DZPJJ1C8/ref=sr_1_243?tag=nira6studio-21"
     },
     "description": "Photography Photo Light Lamp Bulb Single Holder E27 Socket Bracket Studio EU Plug, Black With E27 to B22 Screw Base Socket Plastic Lamp Holder Light Bulb Adapter. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_225",
@@ -7197,14 +7420,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Yantralay-Reversible-Neoprene-Waterproof-Cameras/dp/B01M4PKVC6/ref=sr_1_244?tag=nira6studio-21"
     },
     "description": "yantralay Reversible Neoprene Waterproof DSLR Camera Liner Pouch, Fits Most DSLR/SLR Cameras, Lightweight Compact Protection with Velcro Closure, Grey. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_226",
@@ -7229,14 +7453,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Prop-store-Steelwool-Photography-0000-superfine/dp/B08FDW4BN1/ref=sr_1_243?tag=nira6studio-21"
     },
     "description": "Steel Wool for Photography, Grade 0000-Superfine, 16 Spins. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_227",
@@ -7261,14 +7486,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/YANTRALAY-SCHOOL-GADGETS-Universal-Adapter/dp/B01MRB7MZV/ref=sr_1_244?tag=nira6studio-21"
     },
     "description": "Yantralay Universal Waist Belt Buckle Quick Mount Clip Adapter for DSLR Camera. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_228",
@@ -7293,14 +7519,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Grey-Blend%C2%AE-Oval-Trinket-Jewellery/dp/B0F2TPY3W9/ref=sr_1_245?tag=nira6studio-21"
     },
     "description": "Oval Trinket Tray for Jewellery, Small White Concrete Jewellery Display Dish for Rings, Earrings & Accessories, Aesthetic Bedside Tray for Styling & Photoshoot Props, 15 x 10.5 cm. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_229",
@@ -7325,14 +7552,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Backdrop-Clamps-Brackets-Backgrounds/dp/B09FYJ7TH4/ref=sr_1_246?tag=nira6studio-21"
     },
     "description": "Photography Backdrop Clips Clamps, Heavy Spring Clamp, Brackets Photo Studio, Backgrounds (4 Clips). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_230",
@@ -7357,14 +7585,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Hanumex%C2%AE-52mm-Lens-Filter-Photography/dp/B0DYK2SLBR/ref=sr_1_247?tag=nira6studio-21"
     },
     "description": "Hanumex® 52mm UV Lens Filter – Premium Protection and Enhanced Clarity for Nikon D3100, D3200, D5000, D3000 Lenses | Essential Accessory for Sharp and Clear Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_231",
@@ -7389,14 +7618,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Compatible-Accessories-Anti-Scratch-Waterproof-Photography/dp/B0FVRH6LCV/ref=sr_1_248?tag=nira6studio-21"
     },
     "description": "ZORBES® Compatible with Osmo Nano Case, Action Camera Accessories Storage Case Bag, Anti-Scratch Waterproof Zipper Case Bag Compact Travel Carrying Case for Outdoor Photography and Vlogging. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_232",
@@ -7421,14 +7651,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Winsumm-Trolley-Photography-Equipment-Lighting/dp/B0GRBK4SP8/ref=sr_1_249?tag=nira6studio-21"
     },
     "description": "Winsumm Light Stand Trolley Bag with Wheels for Photography Equipment | Heavy Duty Tripod & Light Stand Carry Bag | Studio Gear Travel Case for Camera Stands, Tripods & Lighting Kit. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_233",
@@ -7453,14 +7684,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/GREY-BLEND%C2%AE-Starfish-Shaped-Trinket-Tray/dp/B0DZ2PVX8Z/ref=sr_1_250?tag=nira6studio-21"
     },
     "description": "Trinket Tray for Jewellery - Starfish Decorative Display Tray for Rings, Earrings & Accessories | Aesthetic Tray for Jewellery Photography Props & Vanity Decor. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_234",
@@ -7485,14 +7717,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DZRCDKPF/ref=sr_1_253?tag=nira6studio-21"
     },
     "description": "MERRYHAPY Duffle Bag for Tripod Accessories Portable Equipment Storage Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_235",
@@ -7517,14 +7750,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Buildcon-Accessories-Shoulder-Hands-Free-Photography/dp/B0FPG1KX5S/ref=sr_1_254?tag=nira6studio-21"
     },
     "description": "Drone Accessories,Drone Shoulder Strap, Smart RC Neck Strap Lanyard for DJI Air 3S, Air 3, Mini 5 Pro, Mini 4 Pro, Mini 3, 3 Pro, Hands-Free Accessories for Aerial Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_236",
@@ -7549,14 +7783,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/IMAGIX-PROPHOTO-Photoshoot-Photography-Decorations/dp/B0BVN26TB9/ref=sr_1_255?tag=nira6studio-21"
     },
     "description": "Jewellery Photoshoot Set of 6 Geometric Cube Solid Foam for Photography Small Business Decorations. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_237",
@@ -7581,14 +7816,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Portable-2500-9000K-Dimmable-Photography-Clip-Black/dp/B0CM8V3PZQ/ref=sr_1_256?tag=nira6studio-21"
     },
     "description": "Ulanzi U60 RGB Video Light, Portable LED Camera Light with 360° Color CRI≥95 2500-9000K Dimmable Panel Lamp,2500mAh LED Panel Photography Lighting w Quick Release Cold Shoe Adapter and Clip-Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_238",
@@ -7613,14 +7849,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJXH6Y3Q/ref=sr_1_257?tag=nira6studio-21"
     },
     "description": "Collapsible Gold-Silver Dual-Sided Photography Reflector Light Diffuser for Portrait Macro Shooting Portable and Durable Photography Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_239",
@@ -7645,14 +7882,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJHJ37Q8/ref=sr_1_258?tag=nira6studio-21"
     },
     "description": "Reflective Board for Photography Light Reflector for -in-1 Mini Reflector Photo Accessory Photo Camera. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_240",
@@ -7677,14 +7915,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CZ4F7C7M/ref=sr_1_259?tag=nira6studio-21"
     },
     "description": "MERRYHAPY Photography Reflector Oval Light Reflector Double-Sided Diffuser for Indoor and Outdoor Photography Portable and Convenient Reflective Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_241",
@@ -7709,14 +7948,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0F3BSMRY8/ref=sr_1_260?tag=nira6studio-21"
     },
     "description": "Artibetter 2pcs Gold Silver Photography Light Reflector Reflector for Outdoor and Studio Photography and Portable Accessories. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": true,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_242",
@@ -7741,14 +7981,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CVW5RMRT/ref=sr_1_259?tag=nira6studio-21"
     },
     "description": "ARTIBETTER Reflective Board 2-in-1 Photography Reflector Light Diffuser Photo Accessory Portable Disc for Studio Outdoor. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_243",
@@ -7773,14 +8014,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJX54J4S/ref=sr_1_260?tag=nira6studio-21"
     },
     "description": "KICHOUSE Photography Accessory Reflective Board Photo Backdrop Flash Light Modifier for Professional Shots. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_244",
@@ -7805,14 +8047,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Reflector-42-inch-Special-Collapsible-Multi-Disc/dp/B014P7N7AI/ref=sr_1_261?tag=nira6studio-21"
     },
     "description": "SHOPEE Reflector 42-inch / 107 cm 5 in 1 Special Quality Collapsible Multi-Disc Light Reflector with Bag - Translucent, Silver, Gold, White and Black. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_245",
@@ -7837,14 +8080,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/PATPAT%C2%AE-Elegant-Festival-Photography-Accessories/dp/B0FLQ6P943/ref=sr_1_262?tag=nira6studio-21"
     },
     "description": "PATPAT® 1 Pair Lace Gloves for Women, Bridal Elegant Gown Net Gloves for Women with Bow and Lace Cuff, Adult Ladies Elegant Mittens for Wedding Party Festival Photography Formal Gown Accessories. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_246",
@@ -7869,14 +8113,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BACKDROPINDIA-Background-Meditation-Photography-Mahashivratri/dp/B0GKFYP5FP/ref=sr_1_263?tag=nira6studio-21"
     },
     "description": "BACKDROPINDIA Nataraja Fire Dance Backdrop 5x5 ft | Golden Lord Shiva Cosmic Dance Background for Meditation, Temple Decor, Spiritual Photography & Mahashivratri Event Decoration. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_247",
@@ -7901,14 +8146,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ULANZI-Flexible-Universal-Samsung-Cameras/dp/B083QYHX3K/ref=sr_1_264?tag=nira6studio-21"
     },
     "description": "ULANZI Camera Tripod, Mini Flexible Tripod Stand with Hidden Phone Holder w Cold Shoe Mount, 1/4'' Screw for Magic Arm, Universal for iPhone 11 Pro Max XS Max X 8 7 Samsung Canon Nikon Sony Cameras. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_248",
@@ -7933,14 +8179,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Manthan-Accessories-Hands-Free-Controller-Photography/dp/B0G2R3JNZ1/ref=sr_1_265?tag=nira6studio-21"
     },
     "description": "Manthan Accessories, Mini Camera Strap, Camera Shoulder Strap for Hands-Free Operation, Durable Remote Controller Lanyard for Outdoor Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_249",
@@ -7965,14 +8212,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Bohemian-Courtyard-Photography-Backdrops-Background/dp/B0GW2YT9W9/ref=sr_1_266?tag=nira6studio-21"
     },
     "description": "Bohemian Garden Courtyard Wall Mural Photography Backdrops Curtain Cloth Birthday Background Seamless Photo Booth Prop Backdrop Size 8Feet Height & 5Feet Width(8 * 5). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_250",
@@ -7997,14 +8245,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Silicone-Collapsible-Attachment-Adjustable-Reflectors/dp/B0F9YBLZNS/ref=sr_1_269?tag=nira6studio-21"
     },
     "description": "Godox ML-CFL5 Silicone Collapsible Fresnel Attachment, Adjustable Light Modifier for Godox ML100BI ML100R,ML-L15 & ML-L36 Lens Reflectors. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_251",
@@ -8029,14 +8278,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CV3S1JCX/ref=sr_1_270?tag=nira6studio-21"
     },
     "description": "OSALADI 6pcs Male Threaded Screw Adapter for Light Stands and Photography Accessories Electroplated Design Easy to Assemble Precision-Made Spigot for Versatile Use. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_252",
@@ -8061,14 +8311,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Professional-LED-Light-Photography/dp/B0FSL6CJJB/ref=sr_1_271?tag=nira6studio-21"
     },
     "description": "FKU 400W Sun Lamp Professional LED Lantern SoftBox Soft Light Modifier with 9 Feet Stand for Photography, Studio + Lantern Softbox Balloon 85cm + 9ft Tripod (1300Gram) + Remote Control. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_253",
@@ -8093,14 +8344,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CX25Y243/ref=sr_1_272?tag=nira6studio-21"
     },
     "description": "ARTIBETTER Photography Softbox Flash Diffuser for DSLR Cameras Portable Light Modifier for Soft Even Illumination Photography Accessory for Product and Portrait Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_254",
@@ -8125,14 +8377,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Metal-Photography-Umbrella-Professional-Accessory/dp/B0FK4YT5SY/ref=sr_1_273?tag=nira6studio-21"
     },
     "description": "Metal Photography Umbrella, Professional Photography Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_255",
@@ -8157,14 +8410,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJ6WKV6X/ref=sr_1_274?tag=nira6studio-21"
     },
     "description": "ARTIBETTER Photography Accessory: A4 Folding Light Diffuser Board 3 Color Reflective Board for Photos. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_256",
@@ -8189,14 +8443,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0D31PK9XF/ref=sr_1_275?tag=nira6studio-21"
     },
     "description": "Andoer 50cm/20 Inch Photography Light Reflector Umbrella Camera Accessories Flash Diffuser Soft White Studio Photography Lighting Umbrella Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_257",
@@ -8221,14 +8476,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Dazzne-12-9-22inch-Tabletop-Adjustable-Aluminum/dp/B08KSTH7WN/ref=sr_1_276?tag=nira6studio-21"
     },
     "description": "Desk Mount Stand - 12.9-22inch Tabletop C Clamp Mount, Adjustable Aluminum Stand with Standard 1/4 Screw Tip for DSLR, Video & Panel Lights. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_258",
@@ -8253,14 +8509,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/SKYVIK-SIGNI-20x-Macro-Lens/dp/B07MPZJLJ3/ref=sr_1_277?tag=nira6studio-21"
     },
     "description": "SKYVIK SIGNI X Mobile Camera 20x Macro Lens Kit. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_259",
@@ -8285,14 +8542,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FELTECHELECTR-Adapter-Monitor-Photography-Accessory/dp/B0DVLJ86NS/ref=sr_1_278?tag=nira6studio-21"
     },
     "description": "3pcs Dual Layer Hot Shoe Screw Adapter for DSLR Led Light Monitor Durable Photography Accessory Set. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_260",
@@ -8317,14 +8575,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Backdrop-Studioz-Photography-Corrugated-Jewellery/dp/B0BVRF36SY/ref=sr_1_279?tag=nira6studio-21"
     },
     "description": "Flatlay Tabletop Photography Wooden Texture Backdrop with Corrugated Box for Food, Small Product, Jewellery Photography - Canvas (Design 4) (3x2 Feet), Beige. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_261",
@@ -8349,14 +8608,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0F448BQ1M/ref=sr_1_280?tag=nira6studio-21"
     },
     "description": "Artibetter Outdoor Tripod Weight Bag Lightweight Sandbag for Tripod Stability Windproof Design for Photography Accessories Multi-use Balanced Sandbags for Outdoor Activities and Studios. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_262",
@@ -8381,14 +8641,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJFS2BGW/ref=sr_1_281?tag=nira6studio-21"
     },
     "description": "MERRYHAPY Tripod Weight Bag Sturdy Enhance Stability Outdoor Photography Accessory. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_263",
@@ -8413,14 +8674,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJJ8XR1C/ref=sr_1_282?tag=nira6studio-21"
     },
     "description": "OSALADI 1 Set Tube for Speedlight Gels for Lighting Flash Bounce Diffuser Conical for Photography Accessories. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_264",
@@ -8445,14 +8707,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Shikha-Collection-Rods-Set-Photography/dp/B0GD73RMS1/ref=sr_1_285?tag=nira6studio-21"
     },
     "description": "Clear Acrylic Rods Set | Invisible Photography Props for Levitating Product Display and Floating Effects, (Pack of 8). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_265",
@@ -8477,14 +8740,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0DJDZBDHM/ref=sr_1_286?tag=nira6studio-21"
     },
     "description": "jojofuny Photography Light Box Portable Led Light Tent for Items for Jewelry Accessories Toys and More Easy to up and Carry for Product Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_266",
@@ -8509,14 +8773,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CY9HCG5D/ref=sr_1_287?tag=nira6studio-21"
     },
     "description": "Veemoon Portable Folding Led Photography Tent for Objects Includes Backdrops for Jewelry Toys Food Accessories Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_267",
@@ -8541,14 +8806,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CWKTMKZY/ref=sr_1_288?tag=nira6studio-21"
     },
     "description": "ARTIBETTER 5pcs Filter Paper for Photo Headlamp Gel Filters White Dark Red Green Blue Light Temperature Accessories for Photography and Film. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_268",
@@ -8573,14 +8839,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/JEWEDECO-Embroidery-Photography-Decorative-Photoshoot/dp/B0DB2RP4Z7/ref=sr_1_289?tag=nira6studio-21"
     },
     "description": "Bridal Veil Embroidery Parasol Elegant Wedding Umbrella for Photography Special Occasions Radius Decorative Accessory for Bride Photoshoot. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_269",
@@ -8605,14 +8872,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B09J22C32G/ref=sr_1_290?tag=nira6studio-21"
     },
     "description": "Acrylic Mirror Photo Background Props Transparent Water Ripple Photography Backdrops Cosmetic Shooting Accessories Decorations (4Type-Set2). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_270",
@@ -8637,14 +8905,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/HARISON-Speed-lite-Accessory-All-metal-photography/dp/B01MF9T6YE/ref=sr_1_291?tag=nira6studio-21"
     },
     "description": "HARISON Umbrella Clamp/ Lite On / Bracket for Flash / Accepts Hot Shoe / Speed-lite Accessory / All-Metal clamp for Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_271",
@@ -8669,14 +8938,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BACKDROPINDIA-Photography-Background-Decoration-Engagement/dp/B0G2LHRCCK/ref=sr_1_292?tag=nira6studio-21"
     },
     "description": "Royal Hall Backdrop 5x10 ft for Photography | Luxury Wedding Stage Background with Velvet Curtains, Golden Pillars & Floral Decoration | Photo Backdrop for Reception, Engagement & Events. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_272",
@@ -8701,14 +8971,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BKN-Tripod-Camera-Ballhead-Photography/dp/B0D6GNJ4YL/ref=sr_1_291?tag=nira6studio-21"
     },
     "description": "BKN Heavy Duty Tripod Camera Clip Clamp Mount, 360 Degree Swivel Mini Ballhead with 1/4 inch Screw for Video Camera, Photography, DSLR (Type A). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_273",
@@ -8733,14 +9004,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Kratos-Compatible-Smartphones-Adjustable-Photography/dp/B0G13SDQTG/ref=sr_1_292?tag=nira6studio-21"
     },
     "description": "Kratos 2026 Aluminum Tripod Stand 51 Inch/130CM with 360° Rotatable Mobile Holder with Handle, Compatible with All Smartphones, GoPro & DSLR, Adjustable Tripod Stand for Photography & Video Shooting. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_274",
@@ -8765,14 +9037,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VTS-Speedlite-Reflector-Diffuser-Photography/dp/B08T6899VF/ref=sr_1_293?tag=nira6studio-21"
     },
     "description": "VTS Camera Speedlite Flash Softbox and Silver/White Card Reflector Diffuser Kit for All Type DSLR Cameras Flashes Indoor Outdoor Photo Video Studio Shooting Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_275",
@@ -8797,14 +9070,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/BKN-Portable-Photography-Professional-Backdrops/dp/B0GY5X8RKD/ref=sr_1_294?tag=nira6studio-21"
     },
     "description": "BKN Portable Light Box Photography, 30 X 30cm Professional Dimmable Photo Box with 3 Light Filter Index LED Lights & 5 Color PVC Backdrops for Jewelry and Small Item Product Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_276",
@@ -8829,14 +9103,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/VedicBloom-Vintage-Projects-Photography-Decoration/dp/B0GV7Z42PK/ref=sr_1_295?tag=nira6studio-21"
     },
     "description": "Mini Photo Frame, 20 Pieces Random Styles, Golden Vintage Frames for Home Decor, DIY Craft Projects, Photography Props Display, Wall Hanging Decoration, Party Theme Decoration. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_277",
@@ -8861,14 +9136,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Digitek-Reflector-Bracket-Aluminum-Photography/dp/B0G33KZDFV/ref=sr_1_296?tag=nira6studio-21"
     },
     "description": "Digitek (DRCB 420) 4.19ft Reflector Clip Bracket with Swivel Head, Studio Photo Holder Disc Arm Support, Aluminum Boom Arm Clamp, for Photography and Video Studio. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_278",
@@ -8893,14 +9169,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/dp/B0CTZCQNT8/ref=sr_1_297?tag=nira6studio-21"
     },
     "description": "OSALADI 6pcs Filter for Camera Flash Soft Lighting Accessories for Photography and Film. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_279",
@@ -8925,14 +9202,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TELESIN-Compatible-Multi-Coated-Photography-Accessories/dp/B0GK1H69DN/ref=sr_1_298?tag=nira6studio-21"
     },
     "description": "TELESIN 112° Wide Angle Lens Compatible with DJI Osmo Pocket 3, Magnetic Multi-Coated Optical Glass Lens, 0.72x Expanded FOV Wide Lens for Vlogging Travel Photography, Osmo Pocket 3 Accessories. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_280",
@@ -8957,14 +9235,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/FKU-Professional-Photography-Light-Tripod/dp/B0D1QZMNZL/ref=sr_1_301?tag=nira6studio-21"
     },
     "description": "FKU 16 Inch LED Professional Photography Fill Light for Photo and Video with 7 Feet Tripod Stand Flash (White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_281",
@@ -8989,14 +9268,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Extendable-Adjustable-Portable-Photography-Centimeters/dp/B0H21N375Y/ref=sr_1_302?tag=nira6studio-21"
     },
     "description": "Selfie Stick with Tripod Stand, Extendable, Adjustable Phone Holder, Black, Portable for Travel, Video Chat, Photography (71, Centimeters). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": true,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_282",
@@ -9021,14 +9301,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Backdrop-Wedding-Birthday-Graduation-Photography/dp/B0GYB6RHYD/ref=sr_1_303?tag=nira6studio-21"
     },
     "description": "Gold Square Metal Backdrop Frame, 6.6ft x 6.6ft, for Wedding, Birthday, Graduation, Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_283",
@@ -9053,14 +9334,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/IRONFIX-Organiser-Compact-Electronic-Accessories/dp/B0GYX9V17K/ref=sr_1_304?tag=nira6studio-21"
     },
     "description": "IRONFIX Travel Gadget Organiser Case, Black, Compact Zipper Pouch for Cables, USB Drives and Electronic Accessories (Model SM). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_284",
@@ -9085,14 +9367,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/fotokina-Universal-Speedlight-Lightweight-Photography/dp/B0GVDKGCWW/ref=sr_1_305?tag=nira6studio-21"
     },
     "description": "Universal Speedlight Flash Diffuser Softbox Dome for Canon, Nikon, Sony, Godox & Yongnuo | Lightweight External Camera Flash Bounce Cover for Portrait, Event & Studio Photography. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_285",
@@ -9117,14 +9400,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Stand-Posing-Props-Newborn-Photography/dp/B0CHX439P3/ref=sr_1_306?tag=nira6studio-21"
     },
     "description": "Bean Bag Stand Full Kit for Newborn Photography | Stand + Bean Bag (Without Filler) + 5 Backdrop Clips | Professional Baby Photoshoot Posing Aid | Heavy Duty Frame | Studio & Home Use (White). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": true,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_286",
@@ -9149,14 +9433,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Backdropon-Premium-Fabric-Backdrop-High-Resolution/dp/B0GSW5GXNL/ref=sr_1_307?tag=nira6studio-21"
     },
     "description": "Backdropon Premium Fabric Backdrop – Mother & Baby Traditional Art Design, High-Resolution Print for Photography, Events & Decoration Size 8 Feet Height and 8 Feet Width(8 * 8). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": true,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_287",
@@ -9181,14 +9466,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/TRUECANVAS-Cascading-Beautiful-Photography-Background/dp/B0GZW3MWVY/ref=sr_1_308?tag=nira6studio-21"
     },
     "description": "Pink Floral Backdrop Features Cascading Pink Roses And White Flowers, Creating Romantic And Beautiful Floral Wall Effect. It Is Suitable for Weddings, Parties, Or Photography Background Dec. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_288",
@@ -9213,14 +9499,15 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/ALFASIYA%C2%AE-Backdrop-Background-6x10Ft-Studio/dp/B09GG1FXK9/ref=sr_1_307?tag=nira6studio-21"
     },
     "description": "Green Photography Backdrop 6 x 10 ft Studio Background for Photo & Video, Camera Accessory for Photoshoot and Video Shoot. Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   },
   {
     "id": "excel_289",
@@ -9245,13 +9532,14 @@ export const accessoriesMockProducts: Product[] = [
       "source": "amazon_accessories_excel",
       "Sponsored": "No",
       "Bestseller": "No",
-      "Prime Delivery": "No"
+      "Prime Delivery": "No",
+      "Amazon Link": "https://www.amazon.in/Photography-Stretch-Anti-Pilling-Wrap-Pink/dp/B07VM4D5RD/ref=sr_1_308?tag=nira6studio-21"
     },
     "description": "BabyMoon Baby Wrap Photography Props Stretch Without Wrinkle, Anti-Pilling, Breathable Blanket Swaddle Wrap (Pack of 1, Pink). Professional grade creator gear, thoroughly checked and certified by NIRA6 experts.",
     "emiAvailable": false,
     "inStock": true,
     "featured": false,
     "trending": false,
-    "createdAt": "2026-05-22"
+    "createdAt": "2026-05-23"
   }
 ];

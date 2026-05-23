@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Logo from './Logo';
 
 export default function SplashLoader() {
   const [visible, setVisible] = useState(true);
@@ -12,10 +13,10 @@ export default function SplashLoader() {
     img.src = '/assets/logo.png';
     img.onload = () => setLogoLoaded(true);
 
-    // Elegant luxury native app launch transition
+    // Fade out the splash loader after the aperture finishes opening
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 1800);
+    }, 2200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -26,88 +27,142 @@ export default function SplashLoader() {
           initial={{ opacity: 1 }}
           exit={{ 
             opacity: 0,
-            scale: 1.08,
-            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: 'linear-gradient(180deg, #0A0A0A 0%, #111111 50%, #0A0A0A 100%)' }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-neutral-950 select-none overflow-hidden"
         >
-          {/* Ambient glow */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-nira-yellow/5 rounded-full blur-[120px]" />
+          {/* Subtle Ambient Radial Lighting */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-nira-yellow/5 rounded-full blur-[140px]" />
           </div>
 
-          {/* Aperture spinner — always visible until logo loads */}
-          <motion.div
-            initial={{ opacity: 1 }}
-            animate={logoLoaded ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="absolute"
-          >
-            <svg viewBox="0 0 100 100" className="w-12 h-12 animate-spin-slow">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#FFDA03" strokeWidth="3" opacity="0.3" />
-              {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                <path 
-                  key={i}
-                  d="M50,5 L89,27.5 L73.5,60 Z" 
-                  fill="#FFDA03"
-                  opacity="0.7"
-                  transform={`rotate(${angle} 50 50)`}
-                />
-              ))}
+          {/* Aperture Shutter & Logo Container */}
+          <div className="relative w-64 h-64 flex items-center justify-center">
+            
+            {/* 1. Centered Logo (revealed as aperture opens) */}
+            <motion.div
+              initial={{ 
+                opacity: 0, 
+                scale: 0.8,
+                filter: 'blur(16px)'
+              }}
+              animate={logoLoaded ? { 
+                opacity: 1, 
+                scale: 1,
+                filter: 'blur(0px)'
+              } : {}}
+              transition={{ 
+                delay: 0.5, 
+                duration: 1.2, 
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+              className="absolute z-10 flex flex-col items-center justify-center p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800/80 backdrop-blur-md shadow-2xl"
+            >
+              <Logo height={32} theme="dark" />
+              <span className="mt-2 text-[8px] font-semibold tracking-[0.3em] text-neutral-400 uppercase">
+                CREATOR PLATFORM
+              </span>
+            </motion.div>
+
+            {/* 2. Realistic Camera Shutter Aperture (blades layer) */}
+            <svg 
+              viewBox="0 0 100 100" 
+              className="w-full h-full absolute inset-0 z-20 pointer-events-none"
+            >
+              {/* Outer metal lens rim */}
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="46" 
+                fill="none" 
+                stroke="#1c1c1e" 
+                strokeWidth="1.5" 
+                opacity="0.8" 
+              />
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="47.5" 
+                fill="none" 
+                stroke="#2c2c2e" 
+                strokeWidth="0.5" 
+                opacity="0.5" 
+              />
+
+              {/* 6 Camera Aperture Blades */}
+              {[0, 1, 2, 3, 4, 5].map((index) => {
+                const angle = index * 60;
+                // Direction vector for sliding outward (bisector of the 60-degree sector)
+                const moveAngle = angle + 30;
+                const rad = (moveAngle * Math.PI) / 180;
+                
+                // Slide distance
+                const slideDist = 32;
+                const dx = Math.cos(rad) * slideDist;
+                const dy = Math.sin(rad) * slideDist;
+
+                return (
+                  <motion.path
+                    key={index}
+                    d="M 50,50 L 89,27.5 A 45,45 0 0,1 89,72.5 Z"
+                    fill="#151518"
+                    stroke="#222226"
+                    strokeWidth="0.5"
+                    initial={{ 
+                      rotate: angle, 
+                      x: 0, 
+                      y: 0,
+                      opacity: 1
+                    }}
+                    animate={logoLoaded ? { 
+                      rotate: angle + 40,
+                      x: dx,
+                      y: dy,
+                      opacity: 0
+                    } : {}}
+                    transition={{ 
+                      delay: 0.3,
+                      duration: 1.4, 
+                      ease: [0.16, 1, 0.3, 1] 
+                    }}
+                    style={{ transformOrigin: '50px 50px' }}
+                  />
+                );
+              })}
             </svg>
-          </motion.div>
+          </div>
 
-          {/* Logo — fades in once the image is decoded */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={logoLoaded ? { 
-              opacity: [0, 1, 0.7, 1],
-              scale: [0.9, 1.02, 1]
-            } : {}}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-            className="relative overflow-hidden"
-            style={{ width: 200, height: 50 }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/logo.png"
-              alt="NIRA6"
-              onLoad={() => setLogoLoaded(true)}
-              className="w-full h-full object-contain scale-[1.55] brightness-0 invert"
-              style={{ maxWidth: 'none' }}
-            />
-          </motion.div>
-
-          {/* Glowing loading bar */}
+          {/* Glowing Status Loader bar */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={logoLoaded ? { opacity: 1 } : {}}
-            transition={{ delay: 0.3, duration: 0.4 }}
-            className="mt-6 w-20 h-[2px] bg-white/5 rounded-full overflow-hidden relative"
+            transition={{ delay: 0.8, duration: 0.4 }}
+            className="mt-8 w-28 h-[3px] bg-neutral-900 rounded-full overflow-hidden relative"
           >
             <motion.div 
               initial={{ x: '-100%' }}
               animate={{ x: '200%' }}
               transition={{
                 repeat: Infinity,
-                duration: 1.2,
+                duration: 1.4,
                 ease: 'easeInOut'
               }}
-              className="absolute top-0 bottom-0 w-10 rounded-full"
+              className="absolute top-0 bottom-0 w-12 rounded-full"
               style={{ background: 'linear-gradient(90deg, transparent, #FFDA03, transparent)' }}
             />
           </motion.div>
 
-          {/* Subtle tagline */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={logoLoaded ? { opacity: 0.15 } : {}}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="mt-4 text-[9px] font-bold tracking-[0.25em] uppercase text-white"
+          {/* Photography/Cinematic styled Tagline */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={logoLoaded ? { opacity: 0.4, y: 0 } : {}}
+            transition={{ delay: 1.0, duration: 0.8 }}
+            className="mt-4 flex items-center gap-2 text-[9px] font-medium tracking-[0.4em] uppercase text-neutral-400 font-mono"
           >
-            Creator Ecosystem
-          </motion.p>
+            <span>FOCUSING LENS</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-nira-yellow animate-ping" />
+            <span>F/1.8 SEC</span>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Camera, Mail, MapPin, Globe, Video } from 'lucide-react';
+import Logo from './Logo';
 
 const footerLinks = {
   Company: [
@@ -67,9 +68,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-nira-yellow rounded-xl flex items-center justify-center font-heading font-black text-nira-dark text-lg">N6</div>
-              <span className="font-heading font-bold text-xl">NIRA6</span>
+            <Link href="/" className="flex items-center mb-4">
+              <Logo height={32} theme="dark" />
             </Link>
             <p className="text-white/50 text-sm mb-4 leading-relaxed">
               India&apos;s premium AI-powered recommerce platform for creators and tech enthusiasts.

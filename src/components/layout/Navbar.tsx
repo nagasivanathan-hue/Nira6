@@ -122,7 +122,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center group py-2" onClick={() => dispatch(closeMobileMenu())}>
-              <Logo className="group-hover:scale-[1.03] transition-transform duration-300" height={24} width={96} />
+              <Logo className="group-hover:scale-[1.02] transition-transform duration-300" height={28} theme="light" />
             </Link>
 
             {/* Desktop Nav */}
@@ -351,9 +351,9 @@ export default function Navbar() {
               className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl p-6 pt-8 flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-nira-gray-dark">
-                <Logo height={22} width={88} />
-                <button onClick={() => dispatch(closeMobileMenu())} className="p-2 hover:bg-nira-gray rounded-xl">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+                <Logo height={26} theme="light" />
+                <button onClick={() => dispatch(closeMobileMenu())} className="p-2 hover:bg-neutral-100 rounded-xl transition-colors">
                   <X className="w-5 h-5 text-nira-dark" />
                 </button>
               </div>
