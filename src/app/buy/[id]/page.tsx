@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { 
   Star, ShoppingCart, Heart, Shield, Truck, RotateCcw, ChevronRight, 
-  Loader2, Sparkles, CheckCircle2, ArrowRight
+  Loader2, Sparkles, CheckCircle2, ArrowRight, Search
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { CONDITION_GRADES } from '@/lib/constants';
@@ -24,6 +24,50 @@ interface DBReview {
   comment: string;
   createdAt: string;
 }
+
+// Amazon-style dynamic bundle recommendation helper
+const getBundleAccessories = (category: string) => {
+  const cat = category?.toLowerCase() || '';
+  if (cat.includes('camera')) {
+    return [
+      { id: 'acc-sd', name: 'SanDisk Extreme Pro 128GB SDXC Card', price: 2499, image: 'https://images.unsplash.com/photo-1590244921250-d7f589b3c43f?w=150&q=80' },
+      { id: 'acc-bat', name: 'Nira Dual Channel Battery Charger + NP-FZ100 Pack', price: 3899, image: 'https://images.unsplash.com/photo-1624456770275-c54d3cd251df?w=150&q=80' }
+    ];
+  } else if (cat.includes('lens')) {
+    return [
+      { id: 'acc-flt', name: 'K&F Concept 77mm Variable ND Filter ND2-ND400', price: 4200, image: 'https://images.unsplash.com/photo-1617005082133-548c4dd27835?w=150&q=80' },
+      { id: 'acc-kit', name: 'Professional Lens Cleaning Pen & Blower Kit', price: 899, image: 'https://images.unsplash.com/photo-1616423643764-7e57db37dc7b?w=150&q=80' }
+    ];
+  } else {
+    return [
+      { id: 'acc-tri', name: 'Nira Carbon Fiber Lightweight 62" Tripod Monopod', price: 5499, image: 'https://images.unsplash.com/photo-1590608897129-79da98d15969?w=150&q=80' },
+      { id: 'acc-light', name: 'Portable Mini Bi-Color LED Pocket Video Light', price: 1899, image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&q=80' }
+    ];
+  }
+};
+
+// Amazon-style custom Q&As helper
+const getPreFilledQA = (category: string) => {
+  const cat = category?.toLowerCase() || '';
+  if (cat.includes('camera')) {
+    return [
+      { q: "Is the battery charger included in this package?", a: "Yes, all Nira certified cameras include an original or certified OEM battery charger, plus a power cord." },
+      { q: "How many shutter counts does this specific unit have?", a: "Typically, cameras listed as 'Like New' have a shutter count below 8,000, while 'Excellent' is usually under 25,000." },
+      { q: "Does it come in the original factory box?", a: "Original packaging is included if specified by the seller. However, if not available, Nira ships it in our custom eco-friendly protective packaging." }
+    ];
+  } else if (cat.includes('lens')) {
+    return [
+      { q: "Are there any scratches or dust particles inside the elements?", a: "No, all lenses undergo clean-room dust extraction and front/rear element checks. Any micro-imperfections are detailed in the grade diagnostics." },
+      { q: "Is the original lens hood included?", a: "Yes, a protective hood and front/rear lens caps are included with every lens shipment." },
+      { q: "Does the autofocus system work with newer mirrorless adapters?", a: "Yes, we verify firmware compatibility with official adapter mounts (e.g. Sony LA-EA5, Canon EF-EOS R)." }
+    ];
+  } else {
+    return [
+      { q: "Is this item covered under the 6-month warranty?", a: "Yes, all items sold on Nira marketplace are backed by our 6-Month Nira Shield warranty covering hardware defects." },
+      { q: "Is this unit fully compatible with modern smartphones?", a: "Yes, devices that support wireless sync are tested with the latest iOS and Android app releases." }
+    ];
+  }
+};
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -61,6 +105,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     return [];
   });
 
+  // Amazon-style Bundle and Q&A state hooks
+  const [selectedBundleItems, setSelectedBundleItems] = useState<string[]>([]);
+  const [qaList, setQaList] = useState<{ q: string; a: string }[]>([]);
+  const [newQuestion, setNewQuestion] = useState('');
+  const [searchQuestionQuery, setSearchQuestionQuery] = useState('');
+
   // Load product data
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -69,7 +119,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     };
   }, [dispatch, id]);
 
-  // Load reviews and update LocalStorage trackers
+  // Load reviews, update LocalStorage trackers, and initialize Q&A / Bundles
   useEffect(() => {
     if (product) {
       // 1. Fetch backend reviews
@@ -95,6 +145,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       const updatedList = [product, ...filteredList].slice(0, 4);
       localStorage.setItem('nira_recently_viewed', JSON.stringify(updatedList));
       Promise.resolve().then(() => setRecentlyViewed(updatedList));
+
+      // 3. Populate Amazon-style accessories and Q&A lists
+      const accessories = getBundleAccessories(product.category);
+      setSelectedBundleItems([product.id, ...accessories.map(a => a.id)]);
+      setQaList(getPreFilledQA(product.category));
     }
   }, [product]);
 
@@ -165,6 +220,60 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   };
   const mappedGrade = gradeKeyMap[product.grade] || 'A';
   const gradeInfo = CONDITION_GRADES[mappedGrade];
+
+  // Dynamic bundle calculations
+  const bundleAccessories = getBundleAccessories(product.category);
+  
+  const toggleBundleItem = (itemId: string) => {
+    if (itemId === product.id) return;
+    setSelectedBundleItems(prev => 
+      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
+    );
+  };
+
+  const bundleTotal = product.price + bundleAccessories
+    .filter(a => selectedBundleItems.includes(a.id))
+    .reduce((sum, item) => sum + item.price, 0);
+
+  const handleAddBundleToCart = () => {
+    // Add main product
+    dispatch(addToCart(product));
+    
+    // Add selected accessories
+    bundleAccessories
+      .filter(acc => selectedBundleItems.includes(acc.id))
+      .forEach(acc => {
+        dispatch(addToCart({
+          id: acc.id,
+          name: acc.name,
+          price: acc.price,
+          image: acc.image,
+          brand: 'Nira Essentials',
+          category: 'Accessories',
+          grade: 'New',
+          description: 'Essential accessory bundled with your gear.'
+        } as any));
+      });
+
+    window.dispatchEvent(new CustomEvent('nira_notification', {
+      detail: { 
+        type: 'push', 
+        title: '🛒 Bundle Added!', 
+        content: `Main item and ${selectedBundleItems.filter(id => id !== product.id).length} accessories added to your shopping cart.` 
+      }
+    }));
+  };
+
+  const handleAskQuestion = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQuestion.trim()) return;
+    setQaList(prev => [
+      { q: newQuestion.trim(), a: "Hi! Thanks for asking. Our technical team is reviewing this query and will publish a certified response within 2 hours." },
+      ...prev
+    ]);
+    setNewQuestion('');
+  };
+
 
   // Stars progress logic computations
   const totalStarsCount = reviews.length || 1;
@@ -299,6 +408,78 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
+      {/* Amazon-Style Frequently Bought Together */}
+      {bundleAccessories.length > 0 && (
+        <div className="mt-16 border-t border-nira-gray-dark pt-12">
+            <h2 className="font-heading font-black text-lg text-nira-dark uppercase tracking-wider mb-6 flex items-center gap-1.5">
+              📦 Frequently Bought Together
+            </h2>
+            <div className="bg-nira-gray/40 rounded-3xl p-6 border border-nira-gray-dark flex flex-col lg:flex-row items-center gap-8 justify-between">
+              {/* Products Flow */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 lg:gap-6 flex-1">
+                {/* Main Product */}
+                <div className="flex items-center gap-4">
+                  <div className="relative w-24 h-24 bg-white border border-nira-gray-dark rounded-2xl flex items-center justify-center p-3 shadow-inner">
+                    <Image src={product.image} alt={product.name} fill className="object-contain p-2" />
+                    <div className="absolute top-1.5 left-1.5 bg-nira-dark text-white rounded text-[7px] font-black px-1.5 py-0.5 uppercase">This Item</div>
+                  </div>
+                  <div className="max-w-[140px] text-xs">
+                    <p className="font-bold text-nira-dark line-clamp-2 leading-tight">{product.name}</p>
+                    <p className="font-black text-neutral-900 mt-1">{formatPrice(product.price)}</p>
+                  </div>
+                </div>
+
+                {bundleAccessories.map((acc) => (
+                  <div key={acc.id} className="flex items-center gap-4">
+                    <span className="text-xl font-bold text-neutral-400">+</span>
+                    <div 
+                      onClick={() => toggleBundleItem(acc.id)}
+                      className={`relative w-24 h-24 bg-white border rounded-2xl flex items-center justify-center p-3 shadow-inner cursor-pointer select-none transition-all ${
+                        selectedBundleItems.includes(acc.id) ? 'border-nira-yellow ring-2 ring-nira-yellow/20' : 'border-nira-gray-dark opacity-50 hover:opacity-80'
+                      }`}
+                    >
+                      <Image src={acc.image} alt={acc.name} fill className="object-contain p-2" />
+                      <input 
+                        type="checkbox" 
+                        checked={selectedBundleItems.includes(acc.id)}
+                        onChange={() => {}}
+                        className="absolute top-1.5 left-1.5 rounded text-nira-yellow focus:ring-nira-yellow border-neutral-300 w-3 h-3 cursor-pointer"
+                      />
+                    </div>
+                    <div className="max-w-[140px] text-xs">
+                      <p className="font-bold text-neutral-700 line-clamp-2 leading-tight">{acc.name}</p>
+                      <p className="font-black text-neutral-900 mt-1">{formatPrice(acc.price)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Price Bundle Action Box */}
+              <div className="w-full lg:w-72 bg-white border border-nira-gray-dark rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="text-center lg:text-left">
+                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Total Bundle Price</p>
+                  <div className="flex items-baseline justify-center lg:justify-start gap-2 mt-1">
+                    <span className="text-xl font-black text-nira-dark">{formatPrice(bundleTotal)}</span>
+                    {selectedBundleItems.length > 1 && (
+                      <span className="text-[8px] text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-lg uppercase tracking-wider">Save 5%</span>
+                    )}
+                  </div>
+                  <p className="text-[9px] text-neutral-500 mt-1 font-semibold">
+                    For {selectedBundleItems.length} selected items
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleAddBundleToCart}
+                  className="w-full py-3.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-[10px] rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-colors"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" /> Add Bundle to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Dynamic Reviews and Rating Center Panel */}
         <div className="mt-20 border-t border-nira-gray-dark pt-12">
           <div className="grid lg:grid-cols-3 gap-12">
@@ -415,6 +596,84 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               )}
             </div>
 
+          </div>
+        </div>
+
+        {/* Amazon-Style Customer Questions & Answers */}
+        <div className="mt-20 border-t border-nira-gray-dark pt-12">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <h2 className="font-heading font-black text-lg text-nira-dark uppercase tracking-wider flex items-center gap-1.5">
+                💬 Customer Questions & Answers
+              </h2>
+              <p className="text-xs text-nira-text-secondary mt-1">Have a question about this gear? Ask verified sellers and the community.</p>
+            </div>
+            {/* Search Q&A Input */}
+            <div className="relative w-full md:max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <input
+                type="text"
+                placeholder="Search questions..."
+                value={searchQuestionQuery}
+                onChange={(e) => setSearchQuestionQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-nira-gray-dark rounded-xl text-xs focus:outline-none focus:border-nira-yellow bg-nira-gray/20"
+              />
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left form to ask a question */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-2xl p-5 border border-nira-gray-dark shadow-sm">
+                <h4 className="font-heading font-bold text-xs text-nira-dark uppercase tracking-widest mb-3">
+                  Ask the Community
+                </h4>
+                <form onSubmit={handleAskQuestion} className="space-y-3">
+                  <textarea
+                    placeholder="e.g. Does it work with third-party battery grips?"
+                    value={newQuestion}
+                    onChange={(e) => setNewQuestion(e.target.value)}
+                    className="w-full p-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow text-neutral-800"
+                    rows={3}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-black tracking-wider uppercase text-[10px] rounded-xl cursor-pointer transition-colors"
+                  >
+                    Submit Question
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Q&A List */}
+            <div className="lg:col-span-2 space-y-4">
+              {qaList.filter(item => 
+                item.q.toLowerCase().includes(searchQuestionQuery.toLowerCase()) ||
+                item.a.toLowerCase().includes(searchQuestionQuery.toLowerCase())
+              ).length === 0 ? (
+                <div className="p-8 border border-dashed border-nira-gray-dark rounded-2xl text-center text-xs text-nira-text-secondary font-semibold bg-neutral-50/50">
+                  No matching questions found. Be the first to ask!
+                </div>
+              ) : (
+                qaList.filter(item => 
+                  item.q.toLowerCase().includes(searchQuestionQuery.toLowerCase()) ||
+                  item.a.toLowerCase().includes(searchQuestionQuery.toLowerCase())
+                ).map((qa, index) => (
+                  <div key={index} className="p-5 border border-nira-gray-dark bg-white rounded-2xl hover:bg-neutral-50 transition-all shadow-sm">
+                    <div className="flex gap-2">
+                      <span className="text-xs font-black text-nira-yellow bg-nira-dark px-1.5 py-0.5 rounded h-fit">Q</span>
+                      <p className="text-xs font-bold text-nira-dark leading-snug">{qa.q}</p>
+                    </div>
+                    <div className="flex gap-2 mt-3.5 pl-2 border-l-2 border-nira-yellow">
+                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded h-fit">A</span>
+                      <p className="text-xs text-neutral-600 leading-relaxed">{qa.a}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
 
