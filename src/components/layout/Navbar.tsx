@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { selectCartCount } from '@/store/cartSlice';
 import { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery } from '@/store/uiSlice';
 import { NAV_LINKS } from '@/lib/constants';
-import { Search, ShoppingCart, User, Menu, X, Heart, Bell, MessageSquare, Mail, Smartphone, AlertCircle, Sparkles, History, Tag, Award, Package, ArrowRight } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart, Bell, MessageSquare, Mail, Smartphone, AlertCircle, Sparkles, History, Tag, Award, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { mockProducts } from '@/lib/mockData';
@@ -19,6 +19,16 @@ interface NiraNotification {
   content: string;
   timestamp: string;
   read: boolean;
+}
+
+interface SearchSuggestion {
+  text: string;
+  category: string;
+  type: 'brand' | 'category' | 'product';
+  id?: string;
+  price?: number;
+  image?: string;
+  brand?: string;
 }
 
 function HighlightText({ text, highlight }: { text: string; highlight: string }) {
@@ -49,6 +59,12 @@ export default function Navbar() {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const isDarkPage = pathname === '/' || pathname === '/creators/reels' || pathname?.startsWith('/rent');
 
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+  if (searchQuery !== prevSearchQuery) {
+    setPrevSearchQuery(searchQuery);
+    setLocalSearch(searchQuery);
+  }
+
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [keyboardIndex, setKeyboardIndex] = useState(-1);
@@ -61,7 +77,10 @@ export default function Navbar() {
     const saved = localStorage.getItem('nira_recent_searches');
     if (saved) {
       try {
-        setRecentSearches(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setTimeout(() => {
+          setRecentSearches(parsed);
+        }, 0);
       } catch (e) {
         console.error(e);
       }
@@ -92,7 +111,7 @@ export default function Navbar() {
     if (!localSearch.trim()) return [];
     const query = localSearch.toLowerCase().trim();
     const suggestionsSet = new Set<string>();
-    const results: any[] = [];
+    const results: SearchSuggestion[] = [];
 
     // 1. Matches for Brands
     BRANDS.forEach(brand => {
@@ -286,7 +305,7 @@ export default function Navbar() {
                   >
                     <div className="relative w-8 h-8 flex-shrink-0 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center p-1">
                       <Image
-                        src={item.image}
+                        src={item.image || '/assets/placeholder.png'}
                         alt={item.text}
                         width={24}
                         height={24}
@@ -300,7 +319,7 @@ export default function Navbar() {
                       <p className="text-[9px] text-neutral-400 font-semibold uppercase">{item.brand} • {item.category}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xs font-black text-neutral-900">₹{item.price.toLocaleString('en-IN')}</p>
+                      <p className={`text-xs font-black ${isDarkPage ? 'text-white' : 'text-neutral-900'}`}>₹{(item.price || 0).toLocaleString('en-IN')}</p>
                     </div>
                   </a>
                 ) : (
@@ -339,9 +358,7 @@ export default function Navbar() {
     );
   };
 
-  useEffect(() => {
-    setLocalSearch(searchQuery);
-  }, [searchQuery]);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {

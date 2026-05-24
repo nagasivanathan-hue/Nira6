@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowRight, Play, Flame, Sparkles, Shield, TrendingUp, UserCheck, 
-  Search, Cpu, Layers, Tv, MessageSquare, Sliders, Star, Volume2, 
-  Compass, DollarSign, Activity, Eye, Heart, Share2, Grid, Award, Clapperboard
+  ArrowRight, Play, Sparkles, Shield, TrendingUp, 
+  Cpu, Layers, Star, 
+  Compass, DollarSign, Activity, Eye, Heart, Share2, Clapperboard
 } from 'lucide-react';
 
 // Counter component for animated statistics
@@ -41,7 +41,6 @@ function StatCounter({ value, duration = 2 }: { value: number; duration?: number
 export default function HomePage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [demoOpen, setDemoOpen] = useState(false);
-  const [activeFeature, setActiveFeature] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
 
   // Mouse move listener for cinematic parallax radial gradient glow
