@@ -19,7 +19,9 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  // Allow accessing Auth pages without nesting inside AuthGate
+  // Allow accessing Auth pages, homepage, and reels feed without nesting inside AuthGate
+  const isHomePage = pathname === '/';
+  const isReelsPage = pathname === '/creators/reels';
   const isAuthPage = pathname?.startsWith('/auth/');
 
   if (!mounted) {
@@ -35,7 +37,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     return <main className="min-h-screen">{children}</main>;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isHomePage && !isReelsPage) {
     // If not authenticated, force display of the login portal directly, shielding all other content
     return <LoginPage />;
   }

@@ -47,6 +47,7 @@ export default function Navbar() {
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const [scrolled, setScrolled] = useState(false);
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const isDarkPage = pathname === '/' || pathname === '/creators/reels' || pathname?.startsWith('/rent');
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -165,7 +166,11 @@ export default function Navbar() {
   const renderSuggestions = (isMobile: boolean) => {
     if (!showSuggestions) return null;
     return (
-      <div className={`absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-neutral-100 z-50 overflow-hidden animate-fade-in max-h-[380px] overflow-y-auto ${isMobile ? 'relative mt-3' : 'absolute'}`}>
+      <div className={`absolute left-0 right-0 top-full mt-2 rounded-2xl shadow-2xl border z-50 overflow-hidden animate-fade-in max-h-[380px] overflow-y-auto ${isMobile ? 'relative mt-3' : 'absolute'} ${
+        isDarkPage 
+          ? 'bg-neutral-900 border-neutral-800 text-white' 
+          : 'bg-white border-neutral-100 text-neutral-800'
+      }`}>
         {localSearch.trim() === '' ? (
           <div className="p-4 text-neutral-800">
             {/* Recent Searches */}
@@ -415,13 +420,21 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 translate-y-0 ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)]' : 'bg-white/40 backdrop-blur-md border-b border-transparent'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 translate-y-0 ${
+          isDarkPage
+            ? scrolled 
+              ? 'bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.5)] text-white' 
+              : 'bg-transparent border-b border-transparent text-white'
+            : scrolled 
+              ? 'bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)] text-nira-dark' 
+              : 'bg-white/40 backdrop-blur-md border-b border-transparent text-nira-dark'
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center group py-2" onClick={() => dispatch(closeMobileMenu())}>
-              <Logo className="group-hover:scale-[1.02] transition-transform duration-300" height={28} theme="light" />
+              <Logo className="group-hover:scale-[1.02] transition-transform duration-300" height={28} theme={isDarkPage ? 'dark' : 'light'} />
             </Link>
 
             {/* Desktop Nav */}
@@ -433,7 +446,9 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={`relative px-4 py-2 text-sm font-semibold transition-colors ${
-                      isActive ? 'text-nira-dark' : 'text-nira-text-secondary hover:text-nira-dark'
+                      isActive 
+                        ? (isDarkPage ? 'text-white' : 'text-nira-dark') 
+                        : (isDarkPage ? 'text-neutral-400 hover:text-white' : 'text-nira-text-secondary hover:text-nira-dark')
                     }`}
                   >
                     <span>{link.label}</span>
@@ -452,7 +467,7 @@ export default function Navbar() {
             {/* Search Bar - Desktop */}
             <div className={`hidden md:flex flex-1 max-w-md mx-6 relative ${showSuggestions ? 'z-50' : 'z-10'}`}>
               <div className="relative w-full group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-nira-text-secondary group-focus-within:text-nira-yellow transition-colors" />
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 group-focus-within:text-nira-yellow transition-colors ${isDarkPage ? 'text-neutral-400' : 'text-nira-text-secondary'}`} />
                 <input
                   type="text"
                   placeholder="Search cameras, lenses, drones..."
@@ -464,7 +479,11 @@ export default function Navbar() {
                   }}
                   onFocus={() => setShowSuggestions(true)}
                   onKeyDown={(e) => handleKeyDown(e, false)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-nira-gray rounded-xl text-sm border border-transparent focus:border-nira-yellow focus:bg-white focus:outline-none transition-all"
+                  className={`w-full pl-10 pr-10 py-2.5 rounded-xl text-sm border transition-all ${
+                    isDarkPage 
+                      ? 'bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-nira-yellow focus:bg-[#121214] focus:outline-none' 
+                      : 'bg-nira-gray border-transparent focus:border-nira-yellow focus:bg-white focus:outline-none'
+                  }`}
                 />
                 {localSearch && (
                   <button
@@ -489,13 +508,25 @@ export default function Navbar() {
 
             {/* Action Icons */}
             <div className="flex items-center gap-1 sm:gap-2">
-              <button onClick={() => dispatch(toggleSearch())} className="md:hidden p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Search">
+              <button 
+                onClick={() => dispatch(toggleSearch())} 
+                className={`p-3 rounded-lg transition-colors md:hidden ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
+                aria-label="Search"
+              >
                 <Search className="w-5 h-5" />
               </button>
-              <Link href="/dashboard" className="p-3 hover:bg-nira-gray rounded-lg transition-colors hidden sm:flex" aria-label="Wishlist">
+              <Link 
+                href="/dashboard" 
+                className={`p-3 rounded-lg transition-colors hidden sm:flex ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
+                aria-label="Wishlist"
+              >
                 <Heart className="w-5 h-5" />
               </Link>
-              <Link href="/cart" className="relative p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Cart">
+              <Link 
+                href="/cart" 
+                className={`relative p-3 rounded-lg transition-colors ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
+                aria-label="Cart"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-nira-yellow text-nira-dark text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -511,7 +542,11 @@ export default function Navbar() {
                     setNotifOpen(!notifOpen);
                     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
                   }}
-                  className={`p-3 hover:bg-nira-gray rounded-lg transition-colors relative ${notifOpen ? 'text-nira-yellow bg-nira-dark' : 'text-nira-dark'}`}
+                  className={`p-3 rounded-lg transition-colors relative ${
+                    notifOpen 
+                      ? (isDarkPage ? 'text-nira-yellow bg-white/10' : 'text-nira-yellow bg-nira-dark') 
+                      : (isDarkPage ? 'text-white hover:bg-white/10' : 'text-nira-dark hover:bg-nira-gray')
+                  }`}
                   aria-label="Notifications Center"
                 >
                   <Bell className="w-5 h-5" />
