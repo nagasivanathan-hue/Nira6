@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Star, MapPin, Shield, Calendar, Zap } from 'lucide-react';
+import { Star, MapPin, Shield, Calendar } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { RentalItem } from '@/types';
 
@@ -13,7 +13,6 @@ interface RentalCardProps {
 
 export default function RentalCard({ item, index }: RentalCardProps) {
   const score = item.conditionScore || 90;
-  const scoreColor = score >= 90 ? 'text-nira-success' : score >= 70 ? 'text-nira-yellow' : 'text-nira-error';
 
   return (
     <motion.div

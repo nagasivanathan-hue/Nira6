@@ -46,8 +46,6 @@ export default function Navbar() {
   const { mobileMenuOpen, searchOpen, searchQuery } = useAppSelector((s) => s.ui);
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
   const [localSearch, setLocalSearch] = useState(searchQuery);
 
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -409,19 +407,15 @@ export default function Navbar() {
     const handle = () => {
       const y = window.scrollY;
       setScrolled(y > 20);
-      setHidden(y > 100 && y > lastY);
-      setLastY(y);
     };
     window.addEventListener('scroll', handle, { passive: true });
     return () => window.removeEventListener('scroll', handle);
-  }, [lastY]);
+  }, []);
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          hidden ? '-translate-y-full shadow-none' : 'translate-y-0'
-        } ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)]' : 'bg-white/40 backdrop-blur-md border-b border-transparent'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 translate-y-0 ${scrolled ? 'bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.02)]' : 'bg-white/40 backdrop-blur-md border-b border-transparent'}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">

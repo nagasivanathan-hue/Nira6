@@ -66,8 +66,8 @@ export default function BuyPage() {
     if (saved) {
       try {
         setRecentSearches(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse recent searches:', e);
+      } catch {
+        // Ignore malformed localStorage data
       }
     }
   }, []);

@@ -1,10 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Sparkles, Camera, Plus, Trash2, Send, Check, 
-  RefreshCw, Upload, Shield, Sliders, X, 
-  MessageSquare, ArrowRight, Clock, HelpCircle, User, Info, DollarSign
+  Sparkles, Camera, Plus, Send, 
+  RefreshCw, Upload, Sliders, X, 
+  MessageSquare, Clock
 } from 'lucide-react';
 
 const formatPrice = (p: number) => {
@@ -257,18 +258,20 @@ export default function CreatorStudioPage() {
 
         {/* Tab Selection */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10 border-b border-neutral-900 pb-6">
-          {[
-            { id: 'concierge', label: 'AI DP Concierge', icon: Sparkles },
-            { id: 'barter', label: 'Barter Board', icon: RefreshCw },
-            { id: 'grader', label: 'Wear & Tear Grader', icon: Sliders },
-            { id: 'garage', label: 'Creators Garage', icon: Camera },
-          ].map(tab => {
+          {(
+            [
+              { id: 'concierge', label: 'AI DP Concierge', icon: Sparkles },
+              { id: 'barter', label: 'Barter Board', icon: RefreshCw },
+              { id: 'grader', label: 'Wear & Tear Grader', icon: Sliders },
+              { id: 'garage', label: 'Creators Garage', icon: Camera },
+            ] as const
+          ).map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
                   isActive 
                     ? 'bg-[#FFDA03] text-neutral-950 border-[#FFDA03] shadow-lg shadow-[#FFDA03]/10' 
@@ -313,7 +316,7 @@ export default function CreatorStudioPage() {
                         onClick={() => setDpPrompt(p)}
                         className="text-[10px] text-left px-3 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:text-white text-neutral-400 rounded-lg transition-colors cursor-pointer"
                       >
-                        "{p.substring(0, 52)}..."
+                        &ldquo;{p.substring(0, 52)}...&rdquo;
                       </button>
                     ))}
                   </div>
@@ -389,7 +392,7 @@ export default function CreatorStudioPage() {
                           {dpResult.items.map(item => (
                             <div key={item.id} className="flex items-center gap-3 bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
                               <div className="w-10 h-10 relative bg-neutral-900 rounded-lg flex items-center justify-center p-1.5">
-                                <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                                <Image src={item.image} alt={item.name} width={40} height={40} unoptimized className="object-contain max-h-full" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs font-bold text-white truncate">{item.name}</p>
@@ -476,7 +479,7 @@ export default function CreatorStudioPage() {
                       <div>
                         {/* Profile Header */}
                         <div className="flex items-center gap-2.5 mb-4">
-                          <img src={listing.creatorAvatar} alt={listing.creatorName} className="w-8 h-8 rounded-full border border-neutral-800 object-cover" />
+                          <Image src={listing.creatorAvatar} alt={listing.creatorName} width={32} height={32} unoptimized className="w-8 h-8 rounded-full border border-neutral-800 object-cover" />
                           <div>
                             <p className="text-xs font-bold text-white leading-tight">{listing.creatorName}</p>
                             <p className="text-[9px] text-neutral-400">Rating: {listing.creatorRating} ★</p>
@@ -501,7 +504,7 @@ export default function CreatorStudioPage() {
                           {listing.counterProposal && (
                             <div className="bg-[#FFDA03]/5 p-2.5 rounded-xl border border-[#FFDA03]/15">
                               <span className="text-[8px] font-black text-[#FFDA03] uppercase tracking-wider block mb-0.5">Counter Proposal</span>
-                              <p className="text-xs text-neutral-300 font-medium leading-relaxed italic">"{listing.counterProposal}"</p>
+                              <p className="text-xs text-neutral-300 font-medium leading-relaxed italic">&ldquo;{listing.counterProposal}&rdquo;</p>
                             </div>
                           )}
                         </div>
@@ -885,7 +888,7 @@ export default function CreatorStudioPage() {
                         }`}
                       >
                         <div className="w-10 h-10 relative bg-neutral-900 rounded-lg p-1.5 flex items-center justify-center">
-                          <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                          <Image src={item.image} alt={item.name} width={40} height={40} unoptimized className="object-contain max-h-full" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h5 className="text-[10px] font-bold truncate leading-snug">{item.name.replace('Sony ', '')}</h5>
@@ -904,7 +907,7 @@ export default function CreatorStudioPage() {
                   <div className="flex items-center justify-between border-b border-neutral-800 pb-4 mb-6">
                     <div>
                       <h4 className="font-heading font-black text-base text-white uppercase tracking-wider flex items-center gap-2">
-                        <Camera className="w-4 h-4 text-[#FFDA03]" /> Creator's Garage Setup Canvas
+                        <Camera className="w-4 h-4 text-[#FFDA03]" /> Creator&apos;s Garage Setup Canvas
                       </h4>
                       <p className="text-[10px] text-neutral-400 mt-1">
                         Build your custom workspace. Pricing updates instantly below.
@@ -931,7 +934,7 @@ export default function CreatorStudioPage() {
                             ✕
                           </button>
                           <div className="w-14 h-14 relative bg-neutral-950 rounded-lg p-2 mb-2 flex items-center justify-center">
-                            <img src={item.image} alt={item.name} className="object-contain max-h-full" />
+                            <Image src={item.image} alt={item.name} width={56} height={56} unoptimized className="object-contain max-h-full" />
                           </div>
                           <p className="text-[9px] font-bold text-white truncate w-full">{item.name.replace('Sony ', '')}</p>
                           <span className="text-[8px] text-neutral-500 capitalize">{item.category}</span>

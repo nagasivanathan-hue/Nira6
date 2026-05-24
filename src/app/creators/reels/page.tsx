@@ -1,11 +1,12 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, MessageCircle, Share2, Plus, ArrowLeft, Send, X, Loader2, Volume2, VolumeX } from 'lucide-react';
 import { useAppSelector } from '@/store';
 import api from '@/services/api';
+import type { User } from '@/types';
 
 interface Comment {
   _id: string;
@@ -35,6 +36,180 @@ interface Reel {
   tags: string[];
 }
 
+interface ReelItemProps {
+  reel: Reel;
+  isActive: boolean;
+  muted: boolean;
+  onToggleMute: () => void;
+  onLike: () => void;
+  onCommentClick: () => void;
+  currentUser: User | null;
+}
+
+function ReelItem({ reel, isActive, muted, onToggleMute, onLike, onCommentClick, currentUser }: ReelItemProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const playPromiseRef = useRef<Promise<void> | null>(null);
+  const [showVolumeIndicator, setShowVolumeIndicator] = useState(false);
+  const [showHeartAnimation, setShowHeartAnimation] = useState(false);
+  const [lastTap, setLastTap] = useState(0);
+
+  // Auto play/pause when in/out of view
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isActive) {
+      video.currentTime = 0;
+      playPromiseRef.current = video.play();
+      playPromiseRef.current.catch(err => {
+        console.log("Autoplay interrupted or prevented:", err);
+      });
+    } else {
+      if (playPromiseRef.current) {
+        playPromiseRef.current.then(() => {
+          video.pause();
+        }).catch(() => {
+          video.pause();
+        });
+      } else {
+        video.pause();
+      }
+    }
+  }, [isActive]);
+
+  const handleTap = () => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+    if (now - lastTap < DOUBLE_PRESS_DELAY) {
+      // Double tap detected: Like
+      onLike();
+      setShowHeartAnimation(true);
+    } else {
+      // Single tap detected: Mute toggle
+      onToggleMute();
+      setShowVolumeIndicator(true);
+    }
+    setLastTap(now);
+  };
+
+  useEffect(() => {
+    if (showVolumeIndicator) {
+      const timer = setTimeout(() => setShowVolumeIndicator(false), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [showVolumeIndicator]);
+
+  useEffect(() => {
+    if (showHeartAnimation) {
+      const timer = setTimeout(() => setShowHeartAnimation(false), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [showHeartAnimation]);
+
+  return (
+    <div className="w-full h-full snap-start snap-always shrink-0 relative flex items-center justify-center bg-neutral-950">
+      {/* Video Element */}
+      <video
+        ref={videoRef}
+        src={reel.videoUrl}
+        poster={reel.thumbnailUrl}
+        preload="auto"
+        loop
+        muted={muted}
+        playsInline
+        className="w-full h-full object-cover cursor-pointer"
+        onClick={handleTap}
+      />
+
+      {/* Mute/Unmute indicator overlay */}
+      <AnimatePresence>
+        {showVolumeIndicator && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
+          >
+            <div className="p-4 bg-black/60 rounded-full text-white backdrop-blur-sm">
+              {muted ? <VolumeX className="w-8 h-8" /> : <Volume2 className="w-8 h-8" />}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Heart pop-up animation for double tap */}
+      <AnimatePresence>
+        {showHeartAnimation && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.3 }}
+            animate={{ opacity: 1, scale: 1.2 }}
+            exit={{ opacity: 0, scale: 0.3 }}
+            transition={{ type: "spring", stiffness: 300, damping: 15 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-red-500/30 blur-2xl rounded-full scale-150" />
+              <Heart className="w-20 h-20 text-red-500 fill-red-500 relative z-10" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom Details Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-24 flex flex-col justify-end text-left z-20">
+        <div className="flex items-center gap-2.5 mb-2.5">
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20 relative">
+            <Image src={reel.creatorId.avatar} alt={reel.creatorId.name} fill className="object-cover" unoptimized />
+          </div>
+          <div>
+            <h4 className="font-bold text-xs">{reel.creatorId.name}</h4>
+            <p className="text-[9px] text-nira-yellow font-bold uppercase tracking-wider">Creator Partner</p>
+          </div>
+        </div>
+        <p className="text-xs text-white/90 leading-relaxed max-w-[85%]">{reel.caption}</p>
+      </div>
+
+      {/* Right Action Panel */}
+      <div className="absolute right-4 bottom-20 flex flex-col items-center gap-4 z-30">
+        {/* Like */}
+        <button
+          onClick={onLike}
+          className={`p-3 rounded-full backdrop-blur-md border cursor-pointer transition-all ${
+            currentUser && reel.likes.includes(currentUser.id) 
+              ? 'bg-red-500 text-white border-red-500 shadow-lg shadow-red-500/20' 
+              : 'bg-black/40 text-white border-white/10 hover:bg-black/60'
+          }`}
+        >
+          <Heart className="w-5 h-5" />
+        </button>
+        <span className="text-[10px] font-bold -mt-3">{reel.likes.length}</span>
+
+        {/* Comment */}
+        <button
+          onClick={onCommentClick}
+          className="p-3 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/60 transition-all cursor-pointer"
+        >
+          <MessageCircle className="w-5 h-5" />
+        </button>
+        <span className="text-[10px] font-bold -mt-3">{reel.comments.length}</span>
+
+        {/* Share */}
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Reel link copied to clipboard!');
+          }}
+          className="p-3 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/60 transition-all cursor-pointer"
+        >
+          <Share2 className="w-5 h-5" />
+        </button>
+        <span className="text-[10px] font-bold -mt-3">Share</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ReelsPage() {
   const { user: currentUser } = useAppSelector((state) => state.auth);
   const [reels, setReels] = useState<Reel[]>([]);
@@ -55,6 +230,9 @@ export default function ReelsPage() {
 
   // Mute state
   const [muted, setMuted] = useState(true);
+
+  // Scroll Container Ref
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch feed reels
   const fetchReels = useCallback(async () => {
@@ -148,6 +326,7 @@ export default function ReelsPage() {
     if (!commentInput.trim() || !currentUser) return;
 
     const currentReel = reels[activeReelIndex];
+    if (!currentReel) return;
     const text = commentInput;
     setCommentInput('');
 
@@ -194,6 +373,17 @@ export default function ReelsPage() {
     }
   };
 
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const scrollTop = container.scrollTop;
+    const containerHeight = container.clientHeight;
+    const index = Math.round(scrollTop / containerHeight);
+    if (index !== activeReelIndex && index >= 0 && index < reels.length) {
+      setActiveReelIndex(index);
+    }
+  }, [activeReelIndex, reels.length]);
+
+
   if (loading) {
     return (
       <div className="min-h-screen bg-nira-dark flex items-center justify-center">
@@ -202,7 +392,7 @@ export default function ReelsPage() {
     );
   }
 
-  const currentReel = reels[activeReelIndex];
+  const currentReel = reels[activeReelIndex] || null;
 
   return (
     <div className="min-h-screen bg-nira-dark text-white flex flex-col justify-between items-center relative overflow-hidden">
@@ -231,98 +421,37 @@ export default function ReelsPage() {
       </div>
 
       {/* Main Reel Viewport */}
-      <div className="flex-1 w-full max-w-md h-[calc(100vh-60px)] relative bg-black flex items-center justify-center">
-        {currentReel && (
-          <>
-            {/* Video Element */}
-            <video
-              key={currentReel._id}
-              src={currentReel.videoUrl}
-              autoPlay
-              loop
-              muted={muted}
-              playsInline
-              className="w-full h-full object-cover"
-              onClick={() => setMuted(!muted)}
-            />
-
-            {/* Bottom Details Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-20 flex flex-col justify-end text-left z-20">
-              <div className="flex items-center gap-2.5 mb-2.5">
-                <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/20 relative">
-                  <Image src={currentReel.creatorId.avatar} alt={currentReel.creatorId.name} fill className="object-cover" unoptimized />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs">{currentReel.creatorId.name}</h4>
-                  <p className="text-[9px] text-nira-yellow font-bold uppercase tracking-wider">Creator Partner</p>
-                </div>
-              </div>
-              <p className="text-xs text-white/90 leading-relaxed max-w-[85%]">{currentReel.caption}</p>
-            </div>
-
-            {/* Right Action Panel */}
-            <div className="absolute right-4 bottom-20 flex flex-col items-center gap-4 z-30">
-              {/* Like */}
-              <button
-                onClick={() => handleLike(currentReel._id)}
-                className={`p-3 rounded-full backdrop-blur-md border cursor-pointer transition-all ${
-                  currentUser && currentReel.likes.includes(currentUser.id) 
-                    ? 'bg-red-500 text-white border-red-500 shadow-lg shadow-red-500/20' 
-                    : 'bg-black/40 text-white border-white/10 hover:bg-black/60'
-                }`}
-              >
-                <Heart className="w-5 h-5" />
-              </button>
-              <span className="text-[10px] font-bold -mt-3">{currentReel.likes.length}</span>
-
-              {/* Comment */}
-              <button
-                onClick={() => setCommentsOpen(true)}
-                className="p-3 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/60 transition-all cursor-pointer"
-              >
-                <MessageCircle className="w-5 h-5" />
-              </button>
-              <span className="text-[10px] font-bold -mt-3">{currentReel.comments.length}</span>
-
-              {/* Share */}
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert('Reel link copied to clipboard!');
-                }}
-                className="p-3 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/60 transition-all cursor-pointer"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
-              <span className="text-[10px] font-bold -mt-3">Share</span>
-            </div>
-          </>
+      <div className="flex-1 w-full max-w-md h-[calc(100vh-60px)] relative bg-black">
+        {reels.length > 0 ? (
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="w-full h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide touch-scroll"
+          >
+            {reels.map((reel, idx) => (
+              <ReelItem
+                key={reel._id}
+                reel={reel}
+                isActive={idx === activeReelIndex}
+                muted={muted}
+                onToggleMute={() => setMuted(!muted)}
+                onLike={() => handleLike(reel._id)}
+                onCommentClick={() => setCommentsOpen(true)}
+                currentUser={currentUser}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center p-5">
+            <p className="text-sm text-neutral-400">No reels found</p>
+          </div>
         )}
       </div>
 
-      {/* Prev/Next Navigation Overlay */}
-      {reels.length > 1 && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-40">
-          <button
-            onClick={() => setActiveReelIndex(prev => Math.max(0, prev - 1))}
-            disabled={activeReelIndex === 0}
-            className="p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-lg text-white hover:bg-black/60 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            ▲
-          </button>
-          <button
-            onClick={() => setActiveReelIndex(prev => Math.min(reels.length - 1, prev + 1))}
-            disabled={activeReelIndex === reels.length - 1}
-            className="p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-lg text-white hover:bg-black/60 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            ▼
-          </button>
-        </div>
-      )}
 
       {/* Slide-out Comments Sheet */}
       <AnimatePresence>
-        {commentsOpen && (
+        {commentsOpen && currentReel && (
           <>
             {/* Backdrop */}
             <motion.div

@@ -12,8 +12,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "analyze_excel.js",
+    "import_accessories.js",
     "import_amazon_products.js",
+    "import_csv_accessories.js",
+    "inspect_excel.js",
+    "list_db_products.js",
     "seed_creator_ecosystem.js",
+    "test_mongo.js",
   ]),
 ]);
 
