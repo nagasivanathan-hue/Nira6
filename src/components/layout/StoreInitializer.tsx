@@ -23,12 +23,18 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           avatar: session.user.user_metadata.avatar_url || '',
           role: 'customer',
           walletBalance: 0,
-          verified: !!session.user.email_confirmed_at
+          verified: !!session.user.email_confirmed_at,
+          token: session.access_token
         }));
+      } else {
+        const stored = localStorage.getItem('userInfo');
+        if (!stored) {
+          dispatch(setAuth(null));
+        }
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         dispatch(setAuth({
           id: session.user.id,
@@ -38,10 +44,18 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           avatar: session.user.user_metadata.avatar_url || '',
           role: 'customer',
           walletBalance: 0,
-          verified: !!session.user.email_confirmed_at
+          verified: !!session.user.email_confirmed_at,
+          token: session.access_token
         }));
       } else {
-        dispatch(setAuth(null));
+        if (event === 'SIGNED_OUT') {
+          dispatch(setAuth(null));
+        } else {
+          const stored = localStorage.getItem('userInfo');
+          if (!stored) {
+            dispatch(setAuth(null));
+          }
+        }
       }
     });
 

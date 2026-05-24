@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth/auth';
+import mongoose from 'mongoose';
 
 export async function POST(req: Request) {
   try {
@@ -18,9 +19,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    const index = dbUser.wishlist.indexOf(productId);
+    const index = dbUser.wishlist.findIndex((id: any) => id.toString() === productId);
     if (index === -1) {
-      dbUser.wishlist.push(productId);
+      dbUser.wishlist.push(new mongoose.Types.ObjectId(productId) as any);
     } else {
       dbUser.wishlist.splice(index, 1);
     }
