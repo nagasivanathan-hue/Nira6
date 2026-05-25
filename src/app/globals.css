@@ -25,6 +25,8 @@
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
   --animate-spin-slow: spin 8s linear infinite;
   --animate-bounce-gentle: bounce-gentle 2s ease-in-out infinite;
+  --animate-lens-focus: lens-focus 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-shutter: shutter-open 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes fade-in {
@@ -58,6 +60,32 @@
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+@keyframes lens-focus {
+  from {
+    filter: blur(25px);
+    transform: scale(1.08);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0px);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes shutter-open {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(100% at 50% 50%);
+  }
+}
+
+.asset-protected {
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 /* Base styles */

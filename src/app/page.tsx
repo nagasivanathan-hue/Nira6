@@ -177,9 +177,22 @@ export default function HomePage() {
           }}
         />
 
-        {/* Ambient Top Glows */}
-        <div className="absolute top-[-10%] left-[20%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-nira-yellow/5 rounded-full blur-[160px] pointer-events-none" />
+        {/* 85mm f/1.4 Sim: Shallow Depth of Field Background Layer */}
+        <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[20%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-nira-yellow/5 rounded-full blur-[160px] pointer-events-none" />
+          
+          <Image
+            src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1920"
+            alt="Cinematic Background Backdrop"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-25 filter blur-[12px] scale-105 select-none pointer-events-none"
+          />
+          {/* Dark Vignette Overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#07070a_95%)]" />
+        </div>
 
         {/* Camera HUD Grid lines */}
         <div className="absolute inset-x-8 inset-y-16 border border-white/[0.03] pointer-events-none z-10 rounded-3xl">
@@ -624,6 +637,130 @@ export default function HomePage() {
                 <div className="text-right">
                   <span className="text-[9px] text-neutral-500 block uppercase font-mono leading-none">Starting at</span>
                   <span className="text-white font-black text-sm">{formatPrice(service.price)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4.5. NARRATIVE PORTFOLIO SHOWCASE */}
+      <section 
+        onContextMenu={(e) => e.preventDefault()}
+        className="relative py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5 bg-cinema-bg"
+      >
+        <div className="absolute top-[30%] left-[-10%] w-[350px] h-[350px] bg-indigo-500/5 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-[30%] right-[-10%] w-[350px] h-[350px] bg-nira-yellow/5 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
+            <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
+              [ 04.5 / CREATOR PORTFOLIOS ]
+            </span>
+            <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
+              Cinematic Showcase
+            </h2>
+            <p className="text-neutral-400 mt-4 text-sm sm:text-base font-light leading-relaxed">
+              Explore high-bitrate narrative reels and visual experiments framing striking contrast between hyper-realistic settings and next-gen rendering tools.
+            </p>
+          </div>
+          <Link 
+            href="/creators" 
+            className="px-8 py-4 bg-white/5 text-white font-bold text-xs uppercase tracking-widest rounded-xl border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2 group whitespace-nowrap"
+          >
+            Explore All Portfolios
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Responsive Grid with protected visual assets */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              id: "c1",
+              title: "Grounded Narrative: Hyper-realistic lighting scan inside a suburban home.",
+              creator: "Maya Ray",
+              category: "Director of Photography",
+              rating: "5.0",
+              price: "₹15,000/day",
+              image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800"
+            },
+            {
+              id: "c2",
+              title: "Digital Synthesis: Procedural neon landscape styling using HDR render grids.",
+              creator: "Alex Kim",
+              category: "VFX Artist",
+              rating: "4.9",
+              price: "₹12,000/scene",
+              image: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=800"
+            },
+            {
+              id: "c3",
+              title: "Chiaroscuro Studies: Narrative low-light photography under dynamic gels.",
+              creator: "Sara Sen",
+              category: "Colorist",
+              rating: "4.8",
+              price: "₹8,500/day",
+              image: "https://images.unsplash.com/photo-1542204172-e7052809a86e?q=80&w=800"
+            }
+          ].map((project) => (
+            <div 
+              key={project.id}
+              className="bg-white/[0.01] border border-white/5 hover:border-nira-yellow/20 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 group select-none relative"
+            >
+              <div className="relative aspect-[16/10] bg-neutral-950 overflow-hidden">
+                {/* Secure Watermark Overlay */}
+                <div className="absolute inset-0 bg-transparent z-25 pointer-events-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="px-3 py-1 bg-black/80 text-white/50 text-[9px] font-mono rounded border border-white/10 uppercase tracking-widest flex items-center gap-1.5">
+                    <Shield className="w-3 h-3 text-nira-yellow" />
+                    nira6 protected
+                  </span>
+                </div>
+
+                {/* Lazy loaded visual assets */}
+                <Image 
+                  src={project.image} 
+                  alt={project.title} 
+                  fill 
+                  sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-500 select-none pointer-events-none"
+                  loading="lazy"
+                />
+
+                {/* Cover blocking click-drags */}
+                <div className="absolute inset-0 bg-transparent z-20 select-none pointer-events-none" />
+
+                <span className="absolute top-4 left-4 z-20 px-2.5 py-1 bg-black/60 border border-white/10 text-white text-[8px] font-bold uppercase tracking-wider rounded backdrop-blur">
+                  {project.category}
+                </span>
+              </div>
+
+              <div className="p-6">
+                <h3 className="text-white font-bold text-sm leading-snug mb-4 line-clamp-2 group-hover:text-nira-yellow transition-colors duration-200">
+                  {project.title}
+                </h3>
+
+                <div className="flex items-center gap-3 mb-4 p-3 bg-neutral-900/40 rounded-xl border border-white/[0.02]">
+                  <div className="w-7 h-7 bg-nira-yellow text-cinema-bg rounded-full flex items-center justify-center font-black text-xs text-nira-dark">
+                    {project.creator.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-xs text-white truncate">{project.creator}</p>
+                    <span className="text-[9px] text-nira-yellow font-mono flex items-center gap-1">
+                      <Shield className="w-2.5 h-2.5" /> Verified Collective
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-white/[0.03] pt-4 mt-2">
+                  <div className="flex items-center gap-1 text-[10px] font-mono text-neutral-500">
+                    <Star className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow" />
+                    <span className="text-white font-bold">{project.rating}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[8px] text-neutral-500 block uppercase font-mono leading-none">Rate</span>
+                    <span className="text-white font-black text-xs">{project.price}</span>
+                  </div>
                 </div>
               </div>
             </div>
