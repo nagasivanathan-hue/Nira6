@@ -336,15 +336,22 @@ export default function CreatorStudioPage() {
                   {/* Advanced Drag-and-Drop Image Upload */}
                   <div className="mb-5">
                     <ImageDropzone 
-                      onUploadComplete={(url) => {
+                      onUploadComplete={(url, meta) => {
                         setUploadedImageUrl(url);
-                        setDpPrompt(prev => prev ? `${prev}\n\n[Reference Image]: ${url}` : `[Reference Image]: ${url}`);
+                        let promptSuffix = `\n\n[Reference Image]: ${url}`;
+                        if (meta) {
+                          promptSuffix += `\n[Camera Metadata]: ${meta.cameraModel} with ${meta.lensModel} optics (ISO: ${meta.iso}, Aperture: ${meta.aperture}, Shutter: ${meta.shutterSpeed}, Focal: ${meta.focalLength})`;
+                        }
+                        setDpPrompt(prev => prev ? `${prev}${promptSuffix}` : promptSuffix.trim());
                       }}
                       onClear={() => {
                         setUploadedImageUrl(null);
                         setDpPrompt(prev => {
-                          // Clean the reference image URL from the prompt if it exists
-                          return prev.replace(/\[Reference Image\]:\s*\S+/g, '').trim();
+                          // Clean both reference image URL and camera metadata from the prompt
+                          return prev
+                            .replace(/\[Reference Image\]:\s*\S+/g, '')
+                            .replace(/\[Camera Metadata\]:[^\n]*/g, '')
+                            .trim();
                         });
                       }}
                     />
