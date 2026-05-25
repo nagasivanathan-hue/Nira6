@@ -2,8 +2,9 @@
 'use client';
 
 import { useState, useRef, DragEvent } from 'react';
-import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks, HelpCircle } from 'lucide-react';
+import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks, HelpCircle, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import ExifReader from 'exifreader';
 
 interface EstimatedValue {
@@ -543,6 +544,15 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
                 {visionAnalysis.explanations.beginner_friendly_tips}
               </p>
             </div>
+
+            {publicUrl && (
+              <Link
+                href={`/studio/analysis?url=${encodeURIComponent(publicUrl)}`}
+                className="mt-2 w-full py-2.5 bg-gradient-to-r from-[#FFDA03] to-amber-500 hover:from-white hover:to-neutral-100 text-black font-semibold text-[10px] uppercase font-mono tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              >
+                <Maximize2 className="w-3.5 h-3.5" /> Open Full Cinematic Report
+              </Link>
+            )}
           </div>
         </div>
       )}
