@@ -6,35 +6,71 @@ import { NextRequest, NextResponse } from 'next/server';
    structured photography telemetry as JSON.
    ═══════════════════════════════════════════════════════════ */
 
+interface EstimatedValue {
+  value: string;
+  confidence: string;
+}
+
 interface AnalysisResult {
-  aperture: string;
-  iso: string;
-  shutter_speed: string;
-  focal_length: string;
-  lighting_type: string;
-  editing_style: string;
-  photography_style: string;
-  recreation_tips: string[];
-  confidence_score: number;
+  aperture: EstimatedValue;
+  iso: EstimatedValue;
+  shutter_speed: EstimatedValue;
+  focal_length: EstimatedValue;
+  lens_type: EstimatedValue;
+  lighting_setup: EstimatedValue;
+  time_of_day: EstimatedValue;
+  editing_style: EstimatedValue;
+  photography_category: EstimatedValue;
+  difficulty_to_recreate: EstimatedValue;
+  explanations: {
+    why_settings_used: string;
+    how_to_recreate: string;
+    beginner_friendly_tips: string;
+  };
 }
 
-const SYSTEM_PROMPT = `You are an expert photography analyst and Director of Photography. Given an image, analyze its visual characteristics and estimate the camera settings and artistic choices used to create it.
+const SYSTEM_PROMPT = `You are a professional photography analyst AI.
 
-You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no explanation. The JSON must have exactly these fields:
+Analyze this uploaded image and estimate:
 
+1. Aperture
+2. ISO
+3. Shutter speed
+4. Focal length
+5. Lens type
+6. Lighting setup
+7. Time of day
+8. Editing/color grading style
+9. Photography category
+10. Difficulty to recreate
+
+Then explain:
+- Why these settings were likely used
+- How to recreate this image
+- Beginner-friendly tips
+
+Return ONLY valid JSON.
+
+Add confidence percentages for every estimate.
+
+Format your output exactly like this:
 {
-  "aperture": "estimated f-stop (e.g. f/2.8)",
-  "iso": "estimated ISO value (e.g. 400)",
-  "shutter_speed": "estimated shutter speed (e.g. 1/125s)",
-  "focal_length": "estimated focal length (e.g. 85mm)",
-  "lighting_type": "type of lighting (e.g. Natural golden hour, Studio three-point, Mixed ambient)",
-  "editing_style": "post-processing style (e.g. Film emulation, HDR, Minimal grading)",
-  "photography_style": "genre/style (e.g. Portrait, Street, Cinematic, Product)",
-  "recreation_tips": ["array of 3-5 actionable tips to recreate this shot"],
-  "confidence_score": 0.85
-}
-
-The confidence_score should be between 0.0 and 1.0 reflecting how confident you are in the analysis.`;
+  "aperture": { "value": "f/2.8", "confidence": "90%" },
+  "iso": { "value": "400", "confidence": "85%" },
+  "shutter_speed": { "value": "1/125s", "confidence": "80%" },
+  "focal_length": { "value": "85mm", "confidence": "95%" },
+  "lens_type": { "value": "Prime / Zoom", "confidence": "85%" },
+  "lighting_setup": { "value": "Three-point / Natural light", "confidence": "90%" },
+  "time_of_day": { "value": "Golden Hour / Studio", "confidence": "95%" },
+  "editing_style": { "value": "Cinematic warm / Vintage film", "confidence": "85%" },
+  "photography_category": { "value": "Portrait / Landscape", "confidence": "95%" },
+  "difficulty_to_recreate": { "value": "Medium / Easy / Hard", "confidence": "80%" },
+  "explanations": {
+    "why_settings_used": "Detailed explanation of why these settings were selected.",
+    "how_to_recreate": "Step-by-step description of how to recreate this image.",
+    "beginner_friendly_tips": "Beginner-friendly tips to get started."
+  }
+}`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -99,7 +135,7 @@ export async function POST(request: NextRequest) {
             ],
           },
         ],
-        max_tokens: 800,
+        max_tokens: 1200,
         temperature: 0.3,
       }),
     });
@@ -124,13 +160,12 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 4. Parse the JSON response from GPT ──────────────────
-    // Strip any markdown fences if GPT wraps them despite instructions
     const cleaned = rawContent
       .replace(/```json\s*/gi, '')
       .replace(/```\s*/g, '')
       .trim();
 
-    let analysis: AnalysisResult;
+    let analysis: any;
     try {
       analysis = JSON.parse(cleaned);
     } catch {
@@ -142,20 +177,47 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 5. Validate and normalize the response ───────────────
+    const normalizeEstimatedValue = (val: any, defaultVal: string): EstimatedValue => {
+      if (val && typeof val === 'object') {
+        return {
+          value: String(val.value || defaultVal),
+          confidence: String(val.confidence || '50%'),
+        };
+      }
+      return {
+        value: String(val || defaultVal),
+        confidence: '50%',
+      };
+    };
+
     const result: AnalysisResult = {
-      aperture: String(analysis.aperture || 'Unknown'),
-      iso: String(analysis.iso || 'Unknown'),
-      shutter_speed: String(analysis.shutter_speed || 'Unknown'),
-      focal_length: String(analysis.focal_length || 'Unknown'),
-      lighting_type: String(analysis.lighting_type || 'Unknown'),
-      editing_style: String(analysis.editing_style || 'Unknown'),
-      photography_style: String(analysis.photography_style || 'Unknown'),
-      recreation_tips: Array.isArray(analysis.recreation_tips)
-        ? analysis.recreation_tips.map(String)
-        : [],
-      confidence_score: typeof analysis.confidence_score === 'number'
-        ? Math.min(1, Math.max(0, analysis.confidence_score))
-        : 0.5,
+      aperture: normalizeEstimatedValue(analysis.aperture, 'f/2.8'),
+      iso: normalizeEstimatedValue(analysis.iso, '400'),
+      shutter_speed: normalizeEstimatedValue(analysis.shutter_speed, '1/125s'),
+      focal_length: normalizeEstimatedValue(analysis.focal_length, '50mm'),
+      lens_type: normalizeEstimatedValue(analysis.lens_type, 'Prime'),
+      lighting_setup: normalizeEstimatedValue(analysis.lighting_setup, 'Soft lighting'),
+      time_of_day: normalizeEstimatedValue(analysis.time_of_day, 'Studio'),
+      editing_style: normalizeEstimatedValue(analysis.editing_style, 'Clean'),
+      photography_category: normalizeEstimatedValue(analysis.photography_category, 'General'),
+      difficulty_to_recreate: normalizeEstimatedValue(analysis.difficulty_to_recreate, 'Medium'),
+      explanations: {
+        why_settings_used: String(
+          analysis.explanations?.why_settings_used || 
+          analysis.why_settings_used || 
+          'No explanation provided.'
+        ),
+        how_to_recreate: String(
+          analysis.explanations?.how_to_recreate || 
+          analysis.how_to_recreate || 
+          'No recreation guide provided.'
+        ),
+        beginner_friendly_tips: String(
+          analysis.explanations?.beginner_friendly_tips || 
+          analysis.beginner_friendly_tips || 
+          'No beginner tips provided.'
+        ),
+      },
     };
 
     return NextResponse.json(result, { status: 200 });

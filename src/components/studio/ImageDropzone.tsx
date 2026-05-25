@@ -2,20 +2,31 @@
 'use client';
 
 import { useState, useRef, DragEvent } from 'react';
-import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks } from 'lucide-react';
+import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks, HelpCircle } from 'lucide-react';
 import Image from 'next/image';
 import ExifReader from 'exifreader';
 
+interface EstimatedValue {
+  value: string;
+  confidence: string;
+}
+
 interface AIVisionAnalysis {
-  aperture: string;
-  iso: string;
-  shutter_speed: string;
-  focal_length: string;
-  lighting_type: string;
-  editing_style: string;
-  photography_style: string;
-  recreation_tips: string[];
-  confidence_score: number;
+  aperture: EstimatedValue;
+  iso: EstimatedValue;
+  shutter_speed: EstimatedValue;
+  focal_length: EstimatedValue;
+  lens_type: EstimatedValue;
+  lighting_setup: EstimatedValue;
+  time_of_day: EstimatedValue;
+  editing_style: EstimatedValue;
+  photography_category: EstimatedValue;
+  difficulty_to_recreate: EstimatedValue;
+  explanations: {
+    why_settings_used: string;
+    how_to_recreate: string;
+    beginner_friendly_tips: string;
+  };
 }
 
 export interface ExifMetadata {
@@ -94,7 +105,6 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
               isSimulated: false
             };
             setMetadata(parsedMeta);
-            // Trigger upload
             uploadToSupabase(selectedFile, parsedMeta);
           } else {
             const simulated = generateAIRecommendations();
@@ -142,10 +152,10 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
           if (prev?.isSimulated && data) {
             return {
               ...prev,
-              aperture: data.aperture || prev.aperture,
-              iso: data.iso || prev.iso,
-              shutterSpeed: data.shutter_speed || prev.shutterSpeed,
-              focalLength: data.focal_length || prev.focalLength,
+              aperture: data.aperture.value || prev.aperture,
+              iso: data.iso.value || prev.iso,
+              shutterSpeed: data.shutter_speed.value || prev.shutterSpeed,
+              focalLength: data.focal_length.value || prev.focalLength,
             };
           }
           return prev;
@@ -447,38 +457,93 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
               </span>
             </div>
             <div className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[8px] font-mono tracking-wider">
-              {Math.round(visionAnalysis.confidence_score * 100)}% CONFIDENCE
+              10-Field Telemetry Active
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
-              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Lightbulb className="w-2.5 h-2.5" /> Lighting</span>
-              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.lighting_type}</span>
+          {/* 10 Estimates Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Aperture</span>
+              <span className="text-white text-[10px] block font-semibold">{visionAnalysis.aperture.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.aperture.confidence} Conf.</span>
             </div>
-            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
-              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Palette className="w-2.5 h-2.5" /> Edit Style</span>
-              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.editing_style}</span>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">ISO</span>
+              <span className="text-white text-[10px] block font-semibold">{visionAnalysis.iso.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.iso.confidence} Conf.</span>
             </div>
-            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
-              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Camera className="w-2.5 h-2.5" /> Genre</span>
-              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.photography_style}</span>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Shutter</span>
+              <span className="text-white text-[10px] block font-semibold">{visionAnalysis.shutter_speed.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.shutter_speed.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Focal Length</span>
+              <span className="text-white text-[10px] block font-semibold">{visionAnalysis.focal_length.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.focal_length.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Lens Type</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.lens_type.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.lens_type.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Lighting</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.lighting_setup.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.lighting_setup.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Time of Day</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.time_of_day.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.time_of_day.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Edit Style</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.editing_style.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.editing_style.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Category</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.photography_category.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.photography_category.confidence} Conf.</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2 font-mono">
+              <span className="text-[8px] text-purple-400 block uppercase">Difficulty</span>
+              <span className="text-white text-[10px] block font-semibold truncate">{visionAnalysis.difficulty_to_recreate.value}</span>
+              <span className="text-purple-400 text-[8px] block font-bold mt-0.5">{visionAnalysis.difficulty_to_recreate.confidence} Conf.</span>
             </div>
           </div>
 
-          {visionAnalysis.recreation_tips.length > 0 && (
-            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-3 font-mono">
-              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1 mb-2"><ListChecks className="w-2.5 h-2.5" /> Recreation Tips</span>
-              <ul className="space-y-1.5">
-                {visionAnalysis.recreation_tips.map((tip, i) => (
-                  <li key={i} className="text-[10px] text-neutral-300 leading-relaxed flex items-start gap-2">
-                    <span className="text-purple-400 font-bold shrink-0">{i + 1}.</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Explanations section */}
+          <div className="space-y-3 font-mono">
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-3">
+              <span className="text-[8px] text-purple-400/80 uppercase flex items-center gap-1 mb-1">
+                <HelpCircle className="w-3 h-3 text-purple-400" /> Why these settings were used
+              </span>
+              <p className="text-[10px] text-neutral-300 leading-relaxed">
+                {visionAnalysis.explanations.why_settings_used}
+              </p>
             </div>
-          )}
+
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-3">
+              <span className="text-[8px] text-purple-400/80 uppercase flex items-center gap-1 mb-1">
+                <Palette className="w-3 h-3 text-purple-400" /> How to recreate this image
+              </span>
+              <p className="text-[10px] text-neutral-300 leading-relaxed">
+                {visionAnalysis.explanations.how_to_recreate}
+              </p>
+            </div>
+
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-3">
+              <span className="text-[8px] text-purple-400/80 uppercase flex items-center gap-1 mb-1">
+                <ListChecks className="w-3 h-3 text-purple-400" /> Beginner-friendly tips
+              </span>
+              <p className="text-[10px] text-neutral-300 leading-relaxed">
+                {visionAnalysis.explanations.beginner_friendly_tips}
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </div>
