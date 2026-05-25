@@ -2,9 +2,21 @@
 'use client';
 
 import { useState, useRef, DragEvent } from 'react';
-import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap } from 'lucide-react';
+import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks } from 'lucide-react';
 import Image from 'next/image';
 import ExifReader from 'exifreader';
+
+interface AIVisionAnalysis {
+  aperture: string;
+  iso: string;
+  shutter_speed: string;
+  focal_length: string;
+  lighting_type: string;
+  editing_style: string;
+  photography_style: string;
+  recreation_tips: string[];
+  confidence_score: number;
+}
 
 export interface ExifMetadata {
   cameraModel: string;
@@ -30,6 +42,8 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
   const [error, setError] = useState<string | null>(null);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<ExifMetadata | null>(null);
+  const [visionAnalysis, setVisionAnalysis] = useState<AIVisionAnalysis | null>(null);
+  const [analyzingVision, setAnalyzingVision] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -109,6 +123,39 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
       dateTaken: new Date().toLocaleDateString('en-IN'),
       isSimulated: true
     };
+  };
+
+  // Call GPT-4o Vision API for deep analysis once we have a public URL
+  const runVisionAnalysis = async (imageUrl: string) => {
+    setAnalyzingVision(true);
+    try {
+      const res = await fetch('/api/analyze-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl }),
+      });
+      if (res.ok) {
+        const data: AIVisionAnalysis = await res.json();
+        setVisionAnalysis(data);
+        // If we had simulated EXIF, enrich it with GPT-4o results
+        setMetadata(prev => {
+          if (prev?.isSimulated && data) {
+            return {
+              ...prev,
+              aperture: data.aperture || prev.aperture,
+              iso: data.iso || prev.iso,
+              shutterSpeed: data.shutter_speed || prev.shutterSpeed,
+              focalLength: data.focal_length || prev.focalLength,
+            };
+          }
+          return prev;
+        });
+      }
+    } catch (err) {
+      console.warn('Vision analysis failed (non-blocking):', err);
+    } finally {
+      setAnalyzingVision(false);
+    }
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -200,6 +247,8 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
     setProgress(0);
     setPublicUrl(null);
     setMetadata(null);
+    setVisionAnalysis(null);
+    setAnalyzingVision(false);
     setError(null);
     onClear();
   };
@@ -365,6 +414,71 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
             <span className="flex items-center gap-1"><Calendar className="w-3 h-3 text-neutral-600" /> {metadata.dateTaken}</span>
             <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-neutral-600" /> 100% telemetry synced</span>
           </div>
+
+          {/* Analyze with GPT-4o Vision button */}
+          {publicUrl && !visionAnalysis && !analyzingVision && (
+            <button
+              onClick={() => runVisionAnalysis(publicUrl)}
+              className="mt-3 w-full py-2.5 bg-gradient-to-r from-purple-600/80 to-violet-500/80 hover:from-purple-500 hover:to-violet-400 text-white text-[10px] uppercase font-mono tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-purple-500/20"
+            >
+              <Eye className="w-3.5 h-3.5" /> Analyze with AI Vision (GPT-4o)
+            </button>
+          )}
+
+          {analyzingVision && (
+            <div className="mt-3 flex items-center justify-center gap-2 py-3 text-[10px] text-purple-300 font-mono">
+              <Aperture className="w-4 h-4 animate-spin text-purple-400" style={{ animationDuration: '2s' }} />
+              <span className="uppercase tracking-widest">AI Vision analyzing composition...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 5. AI Vision Analysis Results Panel */}
+      {visionAnalysis && !uploading && (
+        <div className="w-full bg-purple-950/30 border border-purple-900/30 rounded-2xl p-4 backdrop-blur-xl relative overflow-hidden select-none">
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex items-center justify-between border-b border-purple-900/30 pb-2.5 mb-3">
+            <div className="flex items-center gap-2">
+              <Eye className="w-3.5 h-3.5 text-purple-400" />
+              <span className="text-[10px] uppercase font-mono tracking-widest text-purple-200">
+                GPT-4o Vision Analysis
+              </span>
+            </div>
+            <div className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[8px] font-mono tracking-wider">
+              {Math.round(visionAnalysis.confidence_score * 100)}% CONFIDENCE
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
+              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Lightbulb className="w-2.5 h-2.5" /> Lighting</span>
+              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.lighting_type}</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
+              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Palette className="w-2.5 h-2.5" /> Edit Style</span>
+              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.editing_style}</span>
+            </div>
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-2.5 font-mono">
+              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1"><Camera className="w-2.5 h-2.5" /> Genre</span>
+              <span className="text-white text-[11px] block font-semibold mt-0.5">{visionAnalysis.photography_style}</span>
+            </div>
+          </div>
+
+          {visionAnalysis.recreation_tips.length > 0 && (
+            <div className="bg-white/[0.01] border border-purple-900/20 rounded-lg p-3 font-mono">
+              <span className="text-[8px] text-purple-400/60 block uppercase flex items-center gap-1 mb-2"><ListChecks className="w-2.5 h-2.5" /> Recreation Tips</span>
+              <ul className="space-y-1.5">
+                {visionAnalysis.recreation_tips.map((tip, i) => (
+                  <li key={i} className="text-[10px] text-neutral-300 leading-relaxed flex items-start gap-2">
+                    <span className="text-purple-400 font-bold shrink-0">{i + 1}.</span>
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
