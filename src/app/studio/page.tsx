@@ -7,6 +7,7 @@ import {
   RefreshCw, Upload, Sliders, X, 
   MessageSquare, Clock
 } from 'lucide-react';
+import ImageDropzone from '@/components/studio/ImageDropzone';
 
 const formatPrice = (p: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -96,6 +97,7 @@ export default function CreatorStudioPage() {
   const [dpPrompt, setDpPrompt] = useState('');
   const [dpLoading, setDpLoading] = useState(false);
   const [dpLogs, setDpLogs] = useState<string[]>([]);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [dpResult, setDpResult] = useState<{
     packageName: string;
     items: GearItem[];
@@ -150,18 +152,26 @@ export default function CreatorStudioPage() {
 
   // Run DP Concierge simulation
   const handleDpConcierge = () => {
-    if (!dpPrompt.trim()) return;
+    if (!dpPrompt.trim() && !uploadedImageUrl) return;
     setDpLoading(true);
     setDpResult(null);
     setDpLogs([]);
 
-    const logSequence = [
-      'Tokenizing scene description parameters...',
-      'Matching composition requirements with high-contrast chiaroscuro optics...',
-      'Filtering for 8K-ready low-light sensors...',
-      'Optimizing three-point lighting rig luminance levels...',
-      'Finalizing tailored director bundle packages...'
-    ];
+    const logSequence = uploadedImageUrl 
+      ? [
+          'Analyzing uploaded reference storyboard visual composition...',
+          'Extracting exposure and luminance vectors from image pixels...',
+          'Detecting lighting key, fill, and backlight distribution curves...',
+          'Matching optical aperture simulation for shallow depth-of-field f/1.4 GM setup...',
+          'Finalizing cinematic recommendation setup package...'
+        ]
+      : [
+          'Tokenizing scene description parameters...',
+          'Matching composition requirements with high-contrast chiaroscuro optics...',
+          'Filtering for 8K-ready low-light sensors...',
+          'Optimizing three-point lighting rig luminance levels...',
+          'Finalizing tailored director bundle packages...'
+        ];
 
     logSequence.forEach((log, index) => {
       setTimeout(() => {
@@ -171,10 +181,12 @@ export default function CreatorStudioPage() {
           let matched: GearItem[] = [];
           let pkg = 'Cinematic Masterclass Bundle';
           
-          if (dpPrompt.toLowerCase().includes('light') || dpPrompt.toLowerCase().includes('lighting') || dpPrompt.toLowerCase().includes('chiaroscuro')) {
+          const combinedSearch = (dpPrompt + (uploadedImageUrl ? ' chiaroscuro light' : '')).toLowerCase();
+          
+          if (combinedSearch.includes('light') || combinedSearch.includes('lighting') || combinedSearch.includes('chiaroscuro')) {
             matched = [INVENTORY[0], INVENTORY[2], INVENTORY[5]];
             pkg = 'Chiaroscuro Dark Cinema Kit';
-          } else if (dpPrompt.toLowerCase().includes('audio') || dpPrompt.toLowerCase().includes('interview') || dpPrompt.toLowerCase().includes('film')) {
+          } else if (combinedSearch.includes('audio') || combinedSearch.includes('interview') || combinedSearch.includes('film')) {
             matched = [INVENTORY[1], INVENTORY[3], INVENTORY[6]];
             pkg = 'Documentary & Dialogue Kit';
           } else {
@@ -321,6 +333,23 @@ export default function CreatorStudioPage() {
                     ))}
                   </div>
 
+                  {/* Advanced Drag-and-Drop Image Upload */}
+                  <div className="mb-5">
+                    <ImageDropzone 
+                      onUploadComplete={(url) => {
+                        setUploadedImageUrl(url);
+                        setDpPrompt(prev => prev ? `${prev}\n\n[Reference Image]: ${url}` : `[Reference Image]: ${url}`);
+                      }}
+                      onClear={() => {
+                        setUploadedImageUrl(null);
+                        setDpPrompt(prev => {
+                          // Clean the reference image URL from the prompt if it exists
+                          return prev.replace(/\[Reference Image\]:\s*\S+/g, '').trim();
+                        });
+                      }}
+                    />
+                  </div>
+
                   <div className="relative mb-5">
                     <textarea
                       value={dpPrompt}
@@ -332,7 +361,7 @@ export default function CreatorStudioPage() {
                   </div>
 
                   <button
-                    disabled={dpLoading || !dpPrompt.trim()}
+                    disabled={dpLoading || (!dpPrompt.trim() && !uploadedImageUrl)}
                     onClick={handleDpConcierge}
                     className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
