@@ -468,20 +468,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Description details */}
             <p className="text-nira-text-secondary text-xs leading-relaxed mb-6 bg-nira-gray/20 p-4 rounded-2xl border border-nira-gray-dark/50">{product.description}</p>
 
-            {/* Specifications grids */}
-            {product.specs && Object.keys(product.specs).length > 0 && (
-              <div className="bg-nira-gray rounded-2xl p-5 mb-6 border border-nira-gray-dark">
-                <h3 className="font-bold text-xs mb-3 uppercase tracking-wider text-nira-dark">Core Diagnostics Specifications</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                  {Object.entries(product.specs).map(([key, val]) => (
-                    <div key={key} className="flex justify-between text-xs py-1.5 border-b border-nira-gray-dark/60 last:border-0">
-                      <span className="text-nira-text-secondary capitalize font-semibold">{key.replace(/([A-Z])/g, ' $1')}</span>
-                      <span className="font-bold text-nira-dark">{String(val)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Color Variant Swatches */}
             {product.colors && product.colors.length > 0 && (
