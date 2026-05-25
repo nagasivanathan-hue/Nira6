@@ -40,9 +40,21 @@ export default function ProductCard({ product }: { product: Product }) {
             alt={product.name} 
             fill 
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-contain p-4 group-hover:scale-105 transition-transform duration-500 ease-out" 
+            className={`object-contain p-4 transition-all duration-500 ease-out ${
+              product.secondaryImage ? 'group-hover:opacity-0 group-hover:scale-95' : 'group-hover:scale-105'
+            }`} 
             priority={false}
           />
+          {product.secondaryImage && (
+            <Image 
+              src={product.secondaryImage} 
+              alt={`${product.name} alternate view`} 
+              fill 
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-contain p-4 scale-95 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out" 
+              priority={false}
+            />
+          )}
         </div>
 
         {/* Quality Grade Pill Badges */}

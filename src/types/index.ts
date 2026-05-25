@@ -27,6 +27,8 @@ export interface Product {
   featured: boolean;
   trending: boolean;
   createdAt: string;
+  secondaryImage?: string;
+  colors?: { name: string; hex: string; inStock: boolean }[];
 }
 
 export interface CartItem {

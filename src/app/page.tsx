@@ -7,8 +7,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, Play, Sparkles, Shield, TrendingUp, 
   Cpu, Layers, Star, 
-  Compass, DollarSign, Activity, Eye, Heart, Share2, Clapperboard
+  Compass, DollarSign, Activity, Eye, Heart, Share2, Clapperboard,
+  Briefcase, RefreshCw, Sliders, Camera
 } from 'lucide-react';
+
+const formatPrice = (p: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(p);
+};
 
 // Counter component for animated statistics
 function StatCounter({ value, duration = 2 }: { value: number; duration?: number }) {
@@ -224,24 +233,26 @@ export default function HomePage() {
             {/* Buttons Row */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-20 w-full justify-center">
               <Link 
-                href="/auth/signup"
+                href="/studio"
                 className="w-full sm:w-auto px-8 py-4 bg-nira-yellow text-nira-dark font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-nira-yellow-dark transition-all duration-300 flex items-center justify-center gap-2 group shadow-[0_4px_20px_rgba(255,218,3,0.15)] hover:shadow-[0_4px_30px_rgba(255,218,3,0.3)]"
               >
-                Get Started
+                <Sparkles className="w-4 h-4 text-nira-dark" />
+                Enter Creator Studio
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </Link>
-              <button 
-                onClick={() => setDemoOpen(true)}
+              <Link 
+                href="/services"
                 className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white font-bold text-xs uppercase tracking-widest rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                Watch Demo
-              </button>
+                <Briefcase className="w-4 h-4 text-[#FFDA03]" />
+                Hire Creator Services
+              </Link>
               <Link
                 href="/creators/reels"
-                className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white font-bold text-xs uppercase tracking-widest rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-white/5 text-neutral-400 font-bold text-xs uppercase tracking-widest rounded-xl border border-white/5 hover:bg-white/10 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Browse Reels
+                <Play className="w-3.5 h-3.5 fill-current text-white/50" />
+                Watch Creator Reels
               </Link>
             </div>
 
@@ -397,7 +408,230 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. CINEMATIC REELS PREVIEW */}
+      {/* 3.5. CREATOR STUDIO SHOWCASE */}
+      <section className="relative py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
+        <div className="absolute top-[20%] left-[-10%] w-[350px] h-[350px] bg-[#FFDA03]/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-[20%] right-[-10%] w-[350px] h-[350px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
+            <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
+              [ 03 / CREATOR STUDIO ]
+            </span>
+            <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
+              The AI-Powered Creator Sandbox
+            </h2>
+            <p className="text-neutral-400 mt-4 text-sm sm:text-base font-light leading-relaxed">
+              Design productions faster, swap professional editing for cinema gear rentals, and get instant machine-vision diagnostic quotes for your equipment.
+            </p>
+          </div>
+          <Link 
+            href="/studio" 
+            className="px-8 py-4 bg-nira-yellow text-nira-dark font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-nira-yellow-dark transition-all flex items-center gap-2 group whitespace-nowrap shadow-[0_4px_25px_rgba(255,218,3,0.15)]"
+          >
+            <Sparkles className="w-4 h-4 text-nira-dark" />
+            Launch Creator Studio
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Studio Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              icon: Sparkles,
+              title: "AI DP Concierge",
+              badge: "Natural Language",
+              desc: "Describe your scene vision or composition settings in plain English. The AI analyzes requirements to curate the exact matching camera bodies, lenses, and lighting packages.",
+              color: "text-[#FFDA03]"
+            },
+            {
+              icon: Sliders,
+              title: "Wear & Tear Grader",
+              badge: "Machine Vision",
+              desc: "Upload photos of your camera body or lenses. Our neural network detects cosmetic abrasions, counts sensor pixel errors, and provides instant cash buyout rates.",
+              color: "text-indigo-400"
+            },
+            {
+              icon: RefreshCw,
+              title: "Barter Marketplace",
+              badge: "Peer-to-Peer Trades",
+              desc: "Don't spend cash on rentals. Post editing, coloring, or sound design services on the board to trade directly with other creators in exchange for active gear reservations.",
+              color: "text-emerald-400"
+            },
+            {
+              icon: Camera,
+              title: "Creators Garage",
+              badge: "Workspace Editor",
+              desc: "A modular, interactive workspace simulator canvas. Drag and drop high-end gear blocks into your slots to visually design, customize, and checkout production packages.",
+              color: "text-blue-400"
+            }
+          ].map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div 
+                key={index}
+                className="bg-white/[0.01] border border-white/5 rounded-2xl p-6 flex flex-col justify-between hover:border-nira-yellow/20 transition-all group hover:bg-white/[0.02]"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors">
+                      <Icon className={`w-5 h-5 ${item.color}`} />
+                    </div>
+                    <span className="text-[9px] font-mono text-neutral-500 uppercase font-black bg-white/5 px-2.5 py-1 rounded-md">
+                      {item.badge}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2.5 group-hover:text-nira-yellow transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-neutral-400 text-xs leading-relaxed font-light">
+                    {item.desc}
+                  </p>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/[0.03] flex items-center justify-between text-[10px] font-mono text-neutral-500 group-hover:text-white transition-colors">
+                  <span>SANDBOX PREVIEW</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 3.6. CREATOR SERVICES SHOWCASE */}
+      <section className="relative py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5 bg-[#09090c]/50">
+        <div className="absolute top-[20%] right-[-10%] w-[350px] h-[350px] bg-purple-500/5 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-16 gap-8">
+          <div className="max-w-2xl">
+            <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
+              [ 04 / CREATOR SERVICES ]
+            </span>
+            <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
+              Hire Top Creative Specialists
+            </h2>
+            <p className="text-neutral-400 mt-4 text-sm sm:text-base font-light leading-relaxed">
+              Skip traditional hiring. Directly engage certified photographers, high-end editors, color grading experts, and drone operators with verified portfolios.
+            </p>
+          </div>
+          <Link 
+            href="/services" 
+            className="px-8 py-4 bg-white/5 text-white font-bold text-xs uppercase tracking-widest rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center gap-2 group whitespace-nowrap"
+          >
+            <Briefcase className="w-4 h-4 text-nira-yellow" />
+            Explore Services Marketplace
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Services Cards Showcase */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            {
+              title: "Cinematic YouTube Video Editing & DaVinci Storytelling",
+              category: "Video Editing",
+              price: 4500,
+              delivery: 3,
+              rating: "4.9",
+              reviews: "124",
+              freelancer: "Arun Kumar",
+              verified: true,
+              level: "Pro",
+              levelColor: "#3B82F6",
+              tags: ["YouTube", "DaVinci Resolve", "Flow Cut"],
+              image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80"
+            },
+            {
+              title: "Premium Commercial Color Grading for Ads & Music Videos",
+              category: "Color Grading",
+              price: 8000,
+              delivery: 2,
+              rating: "5.0",
+              reviews: "82",
+              freelancer: "Riya Sen",
+              verified: true,
+              level: "Elite",
+              levelColor: "#FFDA03",
+              tags: ["DaVinci Resolve Studio", "HDR 4K", "LUTs Design"],
+              image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80"
+            },
+            {
+              title: "8K Cinematic Drone Videography & Real Estate Aerial Shoots",
+              category: "Drone Piloting",
+              price: 12000,
+              delivery: 4,
+              rating: "4.8",
+              reviews: "64",
+              freelancer: "Vikram Singh",
+              verified: true,
+              level: "Top Rated",
+              levelColor: "#A855F7",
+              tags: ["DJI Inspire 3", "DGCA Licensed", "8K ProRes"],
+              image: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400&q=80"
+            }
+          ].map((service, index) => (
+            <div 
+              key={index}
+              className="bg-white/[0.01] rounded-2xl overflow-hidden border border-white/5 hover:border-nira-yellow/20 hover:bg-white/[0.02] flex flex-col justify-between transition-all group"
+            >
+              <div>
+                <div className="relative aspect-[16/10] bg-neutral-900 overflow-hidden">
+                  <Image src={service.image} alt={service.title} fill className="object-cover group-hover:scale-[1.03] transition-transform duration-500" />
+                  <span className="absolute top-3 left-3 px-3 py-1 bg-black/60 border border-white/10 text-white text-[9px] font-bold uppercase tracking-wider rounded-lg backdrop-blur">
+                    {service.category}
+                  </span>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-white font-bold text-sm leading-snug mb-4 line-clamp-2 hover:text-[#FFDA03] transition-colors">
+                    {service.title}
+                  </h3>
+
+                  {/* Freelancer details */}
+                  <div className="flex items-center gap-3 mb-4 p-3 bg-neutral-950/60 rounded-xl border border-white/[0.02]">
+                    <div className="w-8 h-8 bg-nira-yellow text-nira-dark rounded-full flex items-center justify-center font-black text-xs">
+                      {service.freelancer.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-bold text-xs text-white truncate">{service.freelancer}</p>
+                        {service.verified && <span className="w-1.5 h-1.5 bg-nira-yellow rounded-full animate-pulse" />}
+                      </div>
+                      <p style={{ color: service.levelColor }} className="text-[9px] font-mono uppercase tracking-wider font-bold">
+                        {service.level} Freelancer
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {service.tags.map((tag, i) => (
+                      <span key={i} className="px-2 py-0.5 bg-white/5 border border-white/5 text-[9px] font-mono text-neutral-400 rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer */}
+              <div className="p-6 pt-0 mt-4 border-t border-white/[0.03] pt-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-xs font-mono text-neutral-500">
+                  <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow" />{service.rating}</span>
+                  <span>•</span>
+                  <span>{service.delivery}d</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] text-neutral-500 block uppercase font-mono leading-none">Starting at</span>
+                  <span className="text-white font-black text-sm">{formatPrice(service.price)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. CINEMATIC REELS PREVIEW */}
       <section className="relative py-28 overflow-hidden border-b border-white/5 bg-[#07070a]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-purple-500/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -405,7 +639,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
             <div className="max-w-2xl">
               <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
-                [ 03 / LENS ]
+                [ 05 / LENS ]
               </span>
               <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
                 Immersive Reels Stream
@@ -491,7 +725,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
           <div className="max-w-2xl">
             <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
-              [ 04 / STORE ]
+              [ 06 / STORE ]
             </span>
             <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
               Flagship Gear Marketplace
@@ -579,7 +813,7 @@ export default function HomePage() {
 
         <div className="text-center max-w-3xl mx-auto mb-20">
           <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-4">
-            [ 05 / CIRCLE ]
+            [ 07 / CIRCLE ]
           </span>
           <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight leading-tight">
             Fueled By A Pro Community

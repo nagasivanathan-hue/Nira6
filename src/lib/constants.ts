@@ -7,12 +7,12 @@ export const TAGLINE = 'EVERYTHING FOR A CREATOR IN ONE PLACE.';
 export const SUB_TAGLINE = 'Buy. Sell. Rent. Repair. Create.';
 
 export const NAV_LINKS = [
-  { label: 'Buy', href: '/buy' },
-  { label: 'Sell', href: '/sell' },
-  { label: 'Rent', href: '/rent' },
-  { label: 'Studio', href: '/studio' },
-  { label: 'Creators', href: '/creators' },
-  { label: 'Services', href: '/services' },
+  { label: 'Creator Studio', href: '/studio' },
+  { label: 'Creator Services', href: '/services' },
+  { label: 'Buy Gear', href: '/buy' },
+  { label: 'Rent Gear', href: '/rent' },
+  { label: 'Sell Gear', href: '/sell' },
+  { label: 'Creator Hub', href: '/creators' },
 ] as const;
 
 export const CREATOR_CATEGORIES = [

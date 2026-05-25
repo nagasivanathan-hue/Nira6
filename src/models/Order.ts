@@ -21,6 +21,15 @@ const orderSchema = new mongoose.Schema({
     city: String,
     pincode: String
   },
+  billingAddress: {
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    pincode: String
+  },
+  shippingMethod: { type: String, default: 'Standard' },
+  shippingCost: { type: Number, default: 0 },
   paymentMethod: { type: String, enum: ['razorpay', 'cod', 'emi', 'wallet'], default: 'razorpay' },
   paymentStatus: { type: String, enum: ['pending', 'completed', 'failed', 'refunded'], default: 'pending' },
   orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered', 'cancelled', 'return_requested', 'returned'], default: 'processing' },

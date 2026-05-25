@@ -6,6 +6,7 @@ interface UIState {
   searchQuery: string;
   activeModal: string | null;
   toasts: { id: string; message: string; type: 'success' | 'error' | 'info' }[];
+  cartDrawerOpen: boolean;
 }
 
 const initialState: UIState = {
@@ -14,6 +15,7 @@ const initialState: UIState = {
   searchQuery: '',
   activeModal: null,
   toasts: [],
+  cartDrawerOpen: false,
 };
 
 const uiSlice = createSlice({
@@ -26,6 +28,9 @@ const uiSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => { state.searchQuery = action.payload; },
     openModal: (state, action: PayloadAction<string>) => { state.activeModal = action.payload; },
     closeModal: (state) => { state.activeModal = null; },
+    toggleCartDrawer: (state) => { state.cartDrawerOpen = !state.cartDrawerOpen; },
+    openCartDrawer: (state) => { state.cartDrawerOpen = true; },
+    closeCartDrawer: (state) => { state.cartDrawerOpen = false; },
     addToast: (state, action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' }>) => {
       state.toasts.push({ id: Date.now().toString(), ...action.payload });
     },
@@ -35,5 +40,5 @@ const uiSlice = createSlice({
   },
 });
 
-export const { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery, openModal, closeModal, addToast, removeToast } = uiSlice.actions;
+export const { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery, openModal, closeModal, toggleCartDrawer, openCartDrawer, closeCartDrawer, addToast, removeToast } = uiSlice.actions;
 export default uiSlice.reducer;

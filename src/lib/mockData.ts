@@ -15,6 +15,12 @@ export const mockProducts: Product[] = [
     sellerRating: 4.9, emiAvailable: true, inStock: true, featured: true, trending: true,
     createdAt: '2026-05-10', description: 'Full-frame mirrorless camera with 24.2MP sensor, 4K HDR video, and 693 phase-detection AF points. Perfect for professional photography and videography.',
     specs: { 'Sensor': '24.2MP Full Frame', 'Video': '4K HDR', 'ISO': '100-51200', 'AF Points': '693', 'Battery': '710 shots', 'Weight': '650g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1619946794135-5bc917a27793?w=600&q=80',
+    colors: [
+      { name: 'Carbon Black', hex: '#1c1c1c', inStock: true },
+      { name: 'Steel Gray', hex: '#708090', inStock: true },
+      { name: 'Crimson Red', hex: '#9b111e', inStock: false }
+    ]
   },
   {
     id: 'p2', name: 'Canon EOS R6 Mark II', brand: 'Canon', category: 'cameras',
@@ -24,6 +30,12 @@ export const mockProducts: Product[] = [
     sellerRating: 4.8, emiAvailable: true, inStock: true, featured: true, trending: true,
     createdAt: '2026-05-08', description: 'Advanced full-frame mirrorless with 24.2MP CMOS sensor, up to 40fps continuous shooting, and 6K RAW video. A versatile powerhouse for creators.',
     specs: { 'Sensor': '24.2MP Full Frame', 'Video': '6K RAW', 'ISO': '100-102400', 'AF Points': '1053', 'FPS': '40fps', 'Weight': '670g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&q=80',
+    colors: [
+      { name: 'Classic Black', hex: '#000000', inStock: true },
+      { name: 'Silver Gray', hex: '#c0c0c0', inStock: true },
+      { name: 'Crimson Red', hex: '#9b111e', inStock: false }
+    ]
   },
   {
     id: 'p3', name: 'DJI Mavic 3 Pro', brand: 'DJI', category: 'drones',
@@ -33,6 +45,12 @@ export const mockProducts: Product[] = [
     sellerRating: 4.6, emiAvailable: true, inStock: true, featured: true, trending: false,
     createdAt: '2026-05-05', description: 'Triple-camera drone with Hasselblad main camera, 43-min flight time, and omnidirectional obstacle sensing.',
     specs: { 'Camera': 'Hasselblad 20MP', 'Video': '5.1K', 'Flight Time': '43 min', 'Range': '15km', 'Weight': '958g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600&q=80',
+    colors: [
+      { name: 'Matte Black', hex: '#1c1c1c', inStock: true },
+      { name: 'Slate Gray', hex: '#708090', inStock: true },
+      { name: 'Crimson Red', hex: '#9b111e', inStock: false }
+    ]
   },
   {
     id: 'p4', name: 'Canon RF 70-200mm f/2.8L', brand: 'Canon', category: 'lenses',
@@ -42,6 +60,7 @@ export const mockProducts: Product[] = [
     sellerRating: 5.0, emiAvailable: true, inStock: true, featured: false, trending: true,
     createdAt: '2026-05-12', description: 'Professional zoom lens with constant f/2.8 aperture, Nano USM motor, and image stabilization up to 5 stops.',
     specs: { 'Mount': 'Canon RF', 'Aperture': 'f/2.8', 'Focal Length': '70-200mm', 'IS': '5 stops', 'Weight': '1070g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1616423643764-7e57db37dc7b?w=600&q=80',
   },
   {
     id: 'p5', name: 'Godox SL-200W II', brand: 'Godox', category: 'lighting',
@@ -51,6 +70,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.4, emiAvailable: false, inStock: true, featured: false, trending: true,
     createdAt: '2026-05-01', description: '200W LED continuous light with Bowens mount, silent fan mode, and wireless control via app.',
     specs: { 'Power': '200W', 'CRI': '97+', 'Color Temp': '5600K', 'Mount': 'Bowens', 'Control': 'App + Remote' },
+    secondaryImage: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=600&q=80',
   },
   {
     id: 'p6', name: 'DJI RS 3 Pro', brand: 'DJI', category: 'gimbals',
@@ -60,6 +80,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.7, emiAvailable: true, inStock: true, featured: true, trending: false,
     createdAt: '2026-05-09', description: 'Professional 3-axis gimbal with 4.5kg payload, LiDAR focus, and automated axis locks.',
     specs: { 'Payload': '4.5kg', 'Battery': '12 hrs', 'Focus': 'LiDAR', 'Weight': '1.5kg', 'Axis Lock': 'Automated' },
+    secondaryImage: 'https://images.unsplash.com/photo-1620288627223-53302f4e8c74?w=600&q=80',
   },
   {
     id: 'p7', name: 'Rode NTG5', brand: 'Rode', category: 'microphones',
@@ -69,6 +90,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.9, emiAvailable: false, inStock: true, featured: false, trending: true,
     createdAt: '2026-05-11', description: 'Broadcast-quality shotgun microphone with ultra-low noise and natural, transparent audio capture.',
     specs: { 'Pattern': 'Supercardioid', 'Freq Range': '20Hz-20kHz', 'Noise': '10dB', 'Phantom': '24/48V', 'Weight': '76g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1590608897129-79da98d15969?w=600&q=80',
   },
   {
     id: 'p8', name: 'Sony FX30', brand: 'Sony', category: 'cameras',
@@ -78,6 +100,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.5, emiAvailable: true, inStock: true, featured: true, trending: true,
     createdAt: '2026-05-07', description: 'Cinema Line camera with APS-C sensor, 4K 120fps, S-Cinetone color science, and advanced AF system.',
     specs: { 'Sensor': '26MP APS-C', 'Video': '4K 120fps', 'ISO': '100-32000', 'Color': 'S-Cinetone', 'Weight': '562g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80',
   },
   {
     id: 'p9', name: 'Nikon Z6 III', brand: 'Nikon', category: 'cameras',
@@ -87,6 +110,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.8, emiAvailable: true, inStock: true, featured: false, trending: true,
     createdAt: '2026-05-06', description: 'Full-frame mirrorless with partially stacked CMOS sensor, 6K RAW, and real-time subject detection.',
     specs: { 'Sensor': '24.5MP Full Frame', 'Video': '6K RAW', 'ISO': '100-64000', 'EVF': '5.76M dots', 'Weight': '760g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1502920917128-1aa34b774306?w=600&q=80',
   },
   {
     id: 'p10', name: 'Sigma 35mm f/1.4 DG DN', brand: 'Sigma', category: 'lenses',
@@ -96,6 +120,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.6, emiAvailable: true, inStock: true, featured: false, trending: false,
     createdAt: '2026-05-03', description: 'Premium Art series prime lens with exceptional sharpness and beautiful bokeh.',
     specs: { 'Mount': 'Sony E / L-Mount', 'Aperture': 'f/1.4', 'Focal Length': '35mm', 'Weight': '645g', 'Elements': '15' },
+    secondaryImage: 'https://images.unsplash.com/photo-1617005082133-548c4dd27835?w=600&q=80',
   },
   {
     id: 'p11', name: 'GoPro HERO12 Black', brand: 'GoPro', category: 'cameras',
@@ -105,6 +130,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.3, emiAvailable: false, inStock: true, featured: false, trending: true,
     createdAt: '2026-05-02', description: 'Waterproof action camera with HyperSmooth 6.0, 5.3K video, and HDR photo.',
     specs: { 'Video': '5.3K 60fps', 'Stabilization': 'HyperSmooth 6.0', 'Waterproof': '10m', 'Battery': '1720mAh', 'Weight': '154g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1565849906461-09a2fa5000af?w=600&q=80',
   },
   {
     id: 'p12', name: 'Fujifilm X-T5', brand: 'Fujifilm', category: 'cameras',
@@ -114,6 +140,7 @@ export const mockProducts: Product[] = [
     sellerRating: 4.9, emiAvailable: true, inStock: true, featured: true, trending: false,
     createdAt: '2026-05-04', description: '40.2MP APS-C mirrorless with classic design, in-body stabilization, and stunning color science.',
     specs: { 'Sensor': '40.2MP APS-C', 'Video': '6.2K', 'IBIS': '7 stops', 'Film Sim': '19 modes', 'Weight': '557g' },
+    secondaryImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80',
   },
   ...accessoriesMockProducts,
 ];

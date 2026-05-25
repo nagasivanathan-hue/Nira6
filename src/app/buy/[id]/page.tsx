@@ -1,15 +1,16 @@
 'use client';
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
   Star, ShoppingCart, Heart, Shield, Truck, RotateCcw, ChevronRight, 
-  Loader2, Sparkles, CheckCircle2, ArrowRight, Search
+  Loader2, Sparkles, CheckCircle2, ArrowRight, Search, Eye, Users, Flame, Check, Bell
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { CONDITION_GRADES } from '@/lib/constants';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { addToCart } from '@/store/cartSlice';
+import { openCartDrawer } from '@/store/uiSlice';
 import { fetchProductById, clearCurrentProduct } from '@/store/productSlice';
 import { toggleWishlist } from '@/store/wishlistSlice';
 import ProductCard from '@/components/products/ProductCard';
@@ -111,6 +112,27 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [newQuestion, setNewQuestion] = useState('');
   const [searchQuestionQuery, setSearchQuestionQuery] = useState('');
 
+  // Image Magnifier state
+  const [showMagnifier, setShowMagnifier] = useState(false);
+  const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 });
+  const imgContainerRef = useRef<HTMLDivElement>(null);
+
+  // Color swatch selection
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [notifyColor, setNotifyColor] = useState<string | null>(null);
+
+  // Add to Cart animation state
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
+
+  // Social proof urgency
+  const [viewerCount] = useState(() => Math.floor(Math.random() * 18) + 5);
+  const [stockCount] = useState(() => Math.floor(Math.random() * 6) + 2);
+
+  // Sticky buy bar visibility
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const buyBoxRef = useRef<HTMLDivElement>(null);
+
   // Load product data
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -149,9 +171,53 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         setRecentlyViewed(updatedList);
         setSelectedBundleItems([product.id, ...accessories.map(a => a.id)]);
         setQaList(getPreFilledQA(product.category));
+        // Auto-select first in-stock color
+        if (product.colors && product.colors.length > 0) {
+          const firstInStock = product.colors.find(c => c.inStock);
+          if (firstInStock) setSelectedColor(firstInStock.name);
+        }
       });
     }
   }, [product]);
+
+  // Sticky buy bar scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowStickyBar(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    const el = buyBoxRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
+  }, [product]);
+
+  // Image magnifier handler
+  const handleMagnifierMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const container = imgContainerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMagnifierPos({ x, y });
+  }, []);
+
+  // Add to cart with animation feedback
+  const handleAddToCartAnimated = useCallback(() => {
+    if (!product || addingToCart) return;
+    setAddingToCart(true);
+    setTimeout(() => {
+      dispatch(addToCart(product));
+      dispatch(openCartDrawer());
+      setAddingToCart(false);
+      setAddedToCart(true);
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: { type: 'push', title: '🛒 Item Added to Cart!', content: `${product.name} was successfully loaded into shopping cart.` }
+      }));
+      setTimeout(() => setAddedToCart(false), 2500);
+    }, 600);
+  }, [product, addingToCart, dispatch]);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -314,9 +380,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           
-          {/* Left Block: Image Showcase */}
+          {/* Left Block: Image Showcase with Magnifier */}
           <div>
-            <div className="relative aspect-square bg-gradient-to-br from-[#FAFCFF] via-[#F4F6FB] to-[#EBEDF2] rounded-3xl overflow-hidden mb-4 shadow-md border border-nira-gray-dark flex items-center justify-center">
+            <div 
+              ref={imgContainerRef}
+              className="relative aspect-square bg-gradient-to-br from-[#FAFCFF] via-[#F4F6FB] to-[#EBEDF2] rounded-3xl overflow-hidden mb-4 shadow-md border border-nira-gray-dark flex items-center justify-center cursor-crosshair group"
+              onMouseEnter={() => setShowMagnifier(true)}
+              onMouseLeave={() => setShowMagnifier(false)}
+              onMouseMove={handleMagnifierMove}
+            >
               <div className="absolute inset-0 p-8 flex items-center justify-center">
                 <Image 
                   src={product.image} 
@@ -329,6 +401,39 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <span className="absolute top-5 left-5 px-3 py-1.5 text-xs font-bold rounded-xl text-white shadow-lg backdrop-blur-sm border border-white/10" style={{ backgroundColor: gradeInfo.color }}>
                 Grade {product.grade} — {gradeInfo.label}
               </span>
+
+              {/* Magnifier Lens */}
+              {showMagnifier && (
+                <div
+                  className="absolute w-40 h-40 border-2 border-nira-yellow/60 rounded-full pointer-events-none z-10 shadow-2xl"
+                  style={{
+                    left: `${magnifierPos.x}%`,
+                    top: `${magnifierPos.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    backgroundImage: `url(${product.image})`,
+                    backgroundSize: '400%',
+                    backgroundPosition: `${magnifierPos.x}% ${magnifierPos.y}%`,
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
+              )}
+
+              {/* Hover hint */}
+              <div className="absolute bottom-4 right-4 bg-black/60 text-white text-[9px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Eye className="w-3 h-3" /> Hover to zoom
+              </div>
+            </div>
+
+            {/* Urgency Triggers */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-lg">
+                <Users className="w-3.5 h-3.5" />
+                <span>{viewerCount} people viewing this right now</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">
+                <Flame className="w-3.5 h-3.5" />
+                <span>Only {stockCount} left in stock!</span>
+              </div>
             </div>
           </div>
 
@@ -378,18 +483,74 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
+            {/* Color Variant Swatches */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-400 mb-2.5">Color Variant</h3>
+                <div className="flex items-center gap-2.5">
+                  {product.colors.map(color => (
+                    <button
+                      key={color.name}
+                      onClick={() => {
+                        if (color.inStock) {
+                          setSelectedColor(color.name);
+                          setNotifyColor(null);
+                        } else {
+                          setNotifyColor(color.name);
+                          setSelectedColor(null);
+                        }
+                      }}
+                      className={`relative w-9 h-9 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center ${
+                        selectedColor === color.name ? 'border-nira-yellow scale-110 ring-2 ring-nira-yellow/30' :
+                        notifyColor === color.name ? 'border-red-400 ring-2 ring-red-200' :
+                        'border-neutral-200 hover:border-neutral-400'
+                      } ${!color.inStock ? 'opacity-50' : ''}`}
+                      style={{ backgroundColor: color.hex }}
+                      title={`${color.name}${!color.inStock ? ' (Out of Stock)' : ''}`}
+                    >
+                      {!color.inStock && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-full h-0.5 bg-red-500 rotate-45 absolute" />
+                        </div>
+                      )}
+                      {selectedColor === color.name && <Check className="w-4 h-4 text-white drop-shadow-md" />}
+                    </button>
+                  ))}
+                </div>
+                {selectedColor && (
+                  <p className="text-[10px] mt-1.5 text-neutral-500 font-semibold">Selected: {selectedColor}</p>
+                )}
+                {notifyColor && (
+                  <div className="mt-2 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    <Bell className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="text-[10px] font-bold text-amber-700">{notifyColor} is out of stock.</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Action buttons triggers */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div ref={buyBoxRef} className="flex flex-col sm:flex-row gap-3 mb-6">
               <button 
-                onClick={() => {
-                  dispatch(addToCart(product));
-                  window.dispatchEvent(new CustomEvent('nira_notification', {
-                    detail: { type: 'push', title: '🛒 Item Added to Cart!', content: `${product.name} was successfully loaded into shopping cart.` }
-                  }));
-                }} 
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-xs rounded-xl shadow-md cursor-pointer transition-colors"
+                onClick={handleAddToCartAnimated}
+                disabled={addingToCart || !!notifyColor}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 font-black tracking-wider uppercase text-xs rounded-xl shadow-md cursor-pointer transition-all ${
+                  addedToCart
+                    ? 'bg-emerald-500 text-white'
+                    : notifyColor
+                    ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
+                    : 'bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark'
+                } disabled:opacity-60`}
               >
-                <ShoppingCart className="w-4 h-4" /> Add to Cart
+                {addingToCart ? (
+                  <span className="w-5 h-5 border-2 border-nira-dark/30 border-t-nira-dark rounded-full animate-spin" />
+                ) : addedToCart ? (
+                  <><Check className="w-4 h-4" /> Added!</>
+                ) : notifyColor ? (
+                  <><Bell className="w-4 h-4" /> Notify Me When Available</>
+                ) : (
+                  <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
+                )}
               </button>
               <Link 
                 href="/checkout"
@@ -732,6 +893,52 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         )}
 
+        {/* Desktop Sticky Buy Bar */}
+        {showStickyBar && (
+          <div className="fixed top-16 lg:top-20 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-b border-neutral-100 shadow-md hidden lg:block animate-fade-in">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-12 h-12 bg-neutral-50 rounded-xl border border-neutral-100 flex items-center justify-center p-1.5 flex-shrink-0">
+                  <Image src={product.image} alt={product.name} width={36} height={36} className="object-contain" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-sm font-bold text-neutral-900 truncate max-w-[300px]">{product.name}</h4>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`w-3 h-3 ${i < Math.floor(avgRatingState) ? 'text-nira-yellow fill-nira-yellow' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="text-[10px] text-neutral-500 font-semibold">{avgRatingState.toFixed(1)} ({reviewCountState})</span>
+                    <span className="text-[9px] font-bold text-nira-success bg-green-50 px-1.5 py-0.5 rounded border border-green-100">Grade {product.grade}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <span className="font-heading font-black text-lg text-neutral-900">{formatPrice(product.price)}</span>
+                  {product.originalPrice && (
+                    <span className="text-xs text-neutral-400 line-through ml-2">{formatPrice(product.originalPrice)}</span>
+                  )}
+                </div>
+                <button
+                  onClick={handleAddToCartAnimated}
+                  disabled={addingToCart}
+                  className="px-5 py-2.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black uppercase text-xs rounded-xl flex items-center gap-2 shadow-sm cursor-pointer transition-all disabled:opacity-60"
+                >
+                  {addingToCart ? (
+                    <span className="w-4 h-4 border-2 border-nira-dark/30 border-t-nira-dark rounded-full animate-spin" />
+                  ) : addedToCart ? (
+                    <><Check className="w-4 h-4" /> Added</>
+                  ) : (
+                    <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Sticky CTA Bar */}
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-100 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-between lg:hidden md:px-6">
           <div className="flex flex-col min-w-0 pr-4">
@@ -743,12 +950,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
           <div className="flex gap-2 flex-shrink-0">
             <button
-              onClick={() => {
-                dispatch(addToCart(product));
-                window.dispatchEvent(new CustomEvent('nira_notification', {
-                  detail: { type: 'push', title: '🛒 Item Added to Cart!', content: `${product.name} was successfully loaded into shopping cart.` }
-                }));
-              }}
+              onClick={handleAddToCartAnimated}
               className="px-3.5 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold rounded-xl text-xs flex items-center justify-center cursor-pointer transition-colors"
               aria-label="Add to cart"
             >

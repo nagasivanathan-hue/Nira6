@@ -1,14 +1,12 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Compass, Film, ShoppingCart, User } from 'lucide-react';
+import { Home, Sparkles, Film, Briefcase, User } from 'lucide-react';
 import { useAppSelector } from '@/store';
-import { selectCartCount } from '@/store/cartSlice';
 import { motion } from 'framer-motion';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
-  const cartCount = useAppSelector(selectCartCount);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   // If we are in an auth page or inside a dynamic view where we want full canvas, we can hide it.
@@ -18,16 +16,16 @@ export default function MobileBottomNav() {
     return null;
   }
 
-  const navItems = [
+  const navItems: { label: string; icon: React.ComponentType<{ className?: string }>; href: string; badge?: number }[] = [
     {
       label: 'Home',
       icon: Home,
       href: '/'
     },
     {
-      label: 'Discover',
-      icon: Compass,
-      href: '/creators/discover'
+      label: 'Studio',
+      icon: Sparkles,
+      href: '/studio'
     },
     {
       label: 'Reels',
@@ -35,10 +33,9 @@ export default function MobileBottomNav() {
       href: '/creators/reels'
     },
     {
-      label: 'Cart',
-      icon: ShoppingCart,
-      href: '/cart',
-      badge: cartCount
+      label: 'Services',
+      icon: Briefcase,
+      href: '/services'
     },
     {
       label: 'Account',
