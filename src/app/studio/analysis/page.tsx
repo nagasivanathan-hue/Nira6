@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, Sliders, Eye, Share2, ArrowLeft, Lightbulb, 
-  Palette, Compass, ShieldAlert, Sparkles, Check,
-  Maximize2, Flame, Layers, Info, X
+  Palette, ShieldAlert, Sparkles, Check,
+  Maximize2, Flame, Layers, Info, X, Download, RefreshCw
 } from 'lucide-react';
 
 interface EstimatedValue {
@@ -16,6 +16,8 @@ interface EstimatedValue {
 }
 
 interface AnalysisResult {
+  camera_model: string;
+  lens_model: string;
   aperture: EstimatedValue;
   iso: EstimatedValue;
   shutter_speed: EstimatedValue;
@@ -26,6 +28,14 @@ interface AnalysisResult {
   editing_style: EstimatedValue;
   photography_category: EstimatedValue;
   difficulty_to_recreate: EstimatedValue;
+  
+  lighting_type: string;
+  photography_style: string;
+  difficulty_level: string;
+  confidence_score: string;
+  recreation_tips: string[];
+  beginner_tips: string[];
+
   explanations: {
     why_settings_used: string;
     how_to_recreate: string;
@@ -37,26 +47,31 @@ export default function AnalysisResultPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const imageUrl = searchParams.get('url');
+  const isSimulated = searchParams.get('isSimulated') === 'true';
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
 
   // Loading logs simulation
   const [loadingLog, setLoadingLog] = useState('Initializing lens calibration...');
   
-  useEffect(() => {
+  const fetchAnalysis = async () => {
     if (!imageUrl) {
       setError('No storyboard image URL provided. Return to the studio and upload a reference image first.');
       setLoading(false);
       return;
     }
 
+    setLoading(true);
+    setError(null);
+
     const logMessages = [
       'Initializing lens calibration...',
-      'Opening aperture blades (f/1.8)...',
+      'Opening aperture blades...',
       'Scanning high-frequency texture fields...',
       'Mapping shadow-to-highlight ratios...',
       'Analyzing color temperature fields...',
@@ -70,43 +85,129 @@ export default function AnalysisResultPage() {
         logIndex++;
         setLoadingLog(logMessages[logIndex]);
       }
-    }, 900);
+    }, 850);
 
-    const fetchAnalysis = async () => {
-      try {
-        const res = await fetch('/api/analyze-photo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageUrl })
-        });
-        
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to analyze the photo.');
-        }
-
-        const json = await res.json();
-        setData(json);
-      } catch (err: any) {
-        setError(err.message || 'An unexpected error occurred during image evaluation.');
-      } finally {
-        clearInterval(logInterval);
-        // Add a slight delay to let the user see the gorgeous aperture animation finish
-        setTimeout(() => {
-          setLoading(false);
-        }, 800);
+    try {
+      const res = await fetch('/api/analyze-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl })
+      });
+      
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to analyze the photo.');
       }
-    };
 
+      const json = await res.json();
+      setData(json);
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred during image evaluation.');
+    } finally {
+      clearInterval(logInterval);
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
+    }
+  };
+
+  useEffect(() => {
     fetchAnalysis();
-
-    return () => clearInterval(logInterval);
   }, [imageUrl]);
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleDownloadCard = async () => {
+    if (!data) return;
+    setDownloading(true);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 620;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Dark theme background
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Gold frame accent
+      ctx.strokeStyle = '#FFDA03';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
+
+      // Subtle glow circle helper
+      ctx.fillStyle = 'rgba(255, 218, 3, 0.04)';
+      ctx.beginPath();
+      ctx.arc(100, 100, 180, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Title & Branding
+      ctx.fillStyle = '#FFDA03';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('NIRA6 CREATOR STUDIO • AI VISION INSIGHTS', 40, 55);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText(isSimulated ? 'AI ESTIMATED PHOTOGRAPHY CARD' : 'ACTUAL CAMERA TELEMETRY CARD', 40, 90);
+
+      // Camera model info
+      ctx.fillStyle = '#a3a3a3';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(`GEAR: ${data.camera_model || 'Sony Alpha 7'} / ${data.lens_model || 'Standard Prime'}`, 40, 125);
+
+      // Card attributes layout
+      const specs = [
+        { label: 'APERTURE', val: data.aperture.value },
+        { label: 'ISO SPEED', val: data.iso.value },
+        { label: 'SHUTTER SPEED', val: data.shutter_speed.value },
+        { label: 'FOCAL LENGTH', val: data.focal_length.value },
+        { label: 'LIGHTING SETUP', val: data.lighting_type || data.lighting_setup?.value },
+        { label: 'EDITING STYLE', val: data.editing_style.value }
+      ];
+
+      specs.forEach((s, idx) => {
+        const x = 40 + (idx % 2) * 370;
+        const y = 160 + Math.floor(idx / 2) * 115;
+
+        // Spec Box
+        ctx.fillStyle = '#121212';
+        ctx.fillRect(x, y, 340, 85);
+        ctx.strokeStyle = '#1e1e1e';
+        ctx.strokeRect(x, y, 340, 85);
+
+        // Spec Title
+        ctx.fillStyle = '#737373';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText(s.label, x + 16, y + 26);
+
+        // Spec Value
+        ctx.fillStyle = s.label === 'APERTURE' ? '#FFDA03' : '#ffffff';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(s.val || 'N/A', x + 16, y + 56);
+      });
+
+      // Bottom Branding details
+      ctx.fillStyle = '#525252';
+      ctx.font = '10px monospace';
+      ctx.fillText('VERIFIED AND EVALUATED ON WWW.NIRA6.IN', 40, 565);
+
+      // Create download trigger
+      const link = document.createElement('a');
+      link.download = `nira6-vision-card-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('[Download card] Error drawing canvas:', err);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -124,7 +225,7 @@ export default function AnalysisResultPage() {
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6, ease: 'easeInOut' } }}
+            exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
             className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-neutral-950"
           >
             <div className="relative flex flex-col items-center gap-6 p-6">
@@ -132,36 +233,25 @@ export default function AnalysisResultPage() {
               <div className="relative w-28 h-28 flex items-center justify-center">
                 <motion.svg
                   animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
+                  transition={{ repeat: Infinity, duration: 7, ease: 'linear' }}
                   viewBox="0 0 100 100"
                   className="w-24 h-24 text-[#FFDA03]"
                 >
-                  {/* Outer Lens Ring */}
                   <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-20" />
-                  
-                  {/* Aperture blades */}
                   <g className="fill-neutral-950 stroke-[#FFDA03] stroke-width-[1.5]">
-                    {/* Blade 1 */}
                     <path d="M 50,10 L 80,40 L 70,60 L 50,10 Z" />
-                    {/* Blade 2 */}
                     <path d="M 80,40 L 90,70 L 60,80 L 80,40 Z" />
-                    {/* Blade 3 */}
                     <path d="M 90,70 L 60,90 L 40,70 L 90,70 Z" />
-                    {/* Blade 4 */}
                     <path d="M 60,90 L 20,80 L 30,50 L 60,90 Z" />
-                    {/* Blade 5 */}
                     <path d="M 20,80 L 10,50 L 40,30 L 20,80 Z" />
-                    {/* Blade 6 */}
                     <path d="M 10,50 L 40,10 L 60,30 L 10,50 Z" />
                   </g>
                 </motion.svg>
-
-                {/* Blinking aperture center sensor */}
                 <span className="absolute w-2 h-2 rounded-full bg-[#FFDA03] animate-ping" />
               </div>
 
               <div className="text-center font-mono">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#FFDA03]">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FFDA03]">
                   Analyzing reference image
                 </h3>
                 <p className="text-[10px] text-neutral-400 mt-2 h-4 animate-pulse uppercase tracking-wider">
@@ -189,12 +279,20 @@ export default function AnalysisResultPage() {
             <p className="text-xs text-neutral-400 leading-relaxed mb-6">
               {error}
             </p>
-            <button
-              onClick={() => router.push('/studio')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs uppercase font-mono tracking-widest text-[#FFDA03] hover:bg-neutral-800 hover:text-white transition-all cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" /> Return to Studio
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={fetchAnalysis}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FFDA03] text-black font-bold rounded-xl text-xs uppercase font-mono tracking-widest hover:bg-white transition-all cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" /> Retry Analysis
+              </button>
+              <button
+                onClick={() => router.push('/studio')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs uppercase font-mono tracking-widest text-neutral-400 hover:text-white transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
+            </div>
           </motion.div>
         )}
 
@@ -226,18 +324,35 @@ export default function AnalysisResultPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleDownloadCard}
+                  disabled={downloading}
+                  className="inline-flex items-center gap-2 px-3.5 py-2.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-850 text-white rounded-xl text-xs uppercase font-mono tracking-wider transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#FFDA03]" /> 
+                  {downloading ? 'Exporting...' : 'Save Card'}
+                </button>
+
+                <button
+                  onClick={fetchAnalysis}
+                  className="p-2.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-850 rounded-xl text-neutral-400 hover:text-white transition-all cursor-pointer"
+                  title="Retry Analysis"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+
                 <button
                   onClick={handleShare}
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#FFDA03] text-black font-semibold rounded-xl text-xs uppercase font-mono tracking-widest hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-md"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3.5 h-3.5" /> Copied Link
+                      <Check className="w-3.5 h-3.5" /> Copied
                     </>
                   ) : (
                     <>
-                      <Share2 className="w-3.5 h-3.5" /> Share Report
+                      <Share2 className="w-3.5 h-3.5" /> Share
                     </>
                   )}
                 </button>
@@ -271,8 +386,7 @@ export default function AnalysisResultPage() {
                     </div>
                   </div>
 
-                  {/* Absolute Badge */}
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 border border-neutral-800 text-[9px] uppercase font-mono tracking-wider">
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 border border-neutral-850 text-[9px] uppercase font-mono tracking-wider">
                     Reference Source
                   </div>
                 </div>
@@ -285,7 +399,7 @@ export default function AnalysisResultPage() {
                   
                   <div className="space-y-3.5">
                     {[
-                      { label: 'Exposure & Lighting', score: data.lighting_setup.confidence },
+                      { label: 'Exposure & Lighting', score: data.aperture.confidence },
                       { label: 'Optical Configuration', score: data.lens_type.confidence },
                       { label: 'Post-Process Emulation', score: data.editing_style.confidence },
                       { label: 'Recreation Feasibility', score: data.difficulty_to_recreate.confidence }
@@ -319,11 +433,23 @@ export default function AnalysisResultPage() {
                 {/* 3. Camera Settings Cards */}
                 <div className="bg-neutral-900/30 border border-neutral-900 rounded-2xl p-5 backdrop-blur-xl">
                   <h3 className="text-xs uppercase font-mono font-semibold tracking-widest text-[#FFDA03] mb-4 flex items-center gap-2">
-                    <Camera className="w-4 h-4" /> Camera Settings Matrix
+                    <Camera className="w-4 h-4" /> {isSimulated ? 'AI Estimated Settings' : 'Actual Camera Settings'}
                   </h3>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     
+                    {/* Camera Model & Lens Model display */}
+                    <div className="col-span-2 sm:col-span-3 bg-neutral-950/40 border border-neutral-850/40 rounded-xl p-3 flex flex-col gap-1.5 mb-1.5">
+                      <div className="flex justify-between text-[10px] font-mono">
+                        <span className="text-neutral-450 uppercase">Camera Model</span>
+                        <span className="text-[#FFDA03] font-bold">{data.camera_model || 'Unknown Camera'}</span>
+                      </div>
+                      <div className="flex justify-between text-[10px] font-mono border-t border-neutral-900 pt-1.5">
+                        <span className="text-neutral-455 uppercase">Optics / Lens</span>
+                        <span className="text-white font-bold">{data.lens_model || 'Unknown Lens'}</span>
+                      </div>
+                    </div>
+
                     {/* Aperture (Gold Highlighted) */}
                     <div className="bg-neutral-950/80 border border-[#FFDA03]/30 rounded-xl p-3 relative group overflow-hidden">
                       <div className="absolute top-0 right-0 w-8 h-8 bg-[#FFDA03]/5 rounded-full blur-md pointer-events-none" />
@@ -372,7 +498,7 @@ export default function AnalysisResultPage() {
                     {/* Lens Type */}
                     <div className="bg-neutral-950/80 border border-neutral-900 rounded-xl p-3">
                       <span className="text-[9px] uppercase font-mono text-neutral-400 block">Lens Configuration</span>
-                      <span className="text-xl font-bold font-mono text-white block mt-1.5 truncate">
+                      <span className="text-xl font-bold font-mono text-white block mt-1.5 truncate text-ellipsis">
                         {data.lens_type.value}
                       </span>
                       <span className="text-[8px] font-mono text-neutral-500 block mt-0.5">
@@ -403,7 +529,7 @@ export default function AnalysisResultPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-neutral-950/70 border border-neutral-900 rounded-xl p-3.5">
                       <span className="text-[8px] font-mono text-purple-400 block uppercase tracking-widest">Setup Configuration</span>
-                      <p className="text-xs text-white font-semibold mt-1 font-mono">{data.lighting_setup.value}</p>
+                      <p className="text-xs text-white font-semibold mt-1 font-mono">{data.lighting_type || data.lighting_setup.value}</p>
                       <span className="text-[8px] font-mono text-neutral-500 mt-1 block">{data.lighting_setup.confidence} confidence rating</span>
                     </div>
 
@@ -430,7 +556,7 @@ export default function AnalysisResultPage() {
 
                     <div className="bg-neutral-950/70 border border-neutral-900 rounded-xl p-3.5">
                       <span className="text-[8px] font-mono text-purple-400 block uppercase tracking-widest">Composition Genre</span>
-                      <p className="text-xs text-white font-semibold mt-1 font-mono">{data.photography_category.value}</p>
+                      <p className="text-xs text-white font-semibold mt-1 font-mono">{data.photography_style || data.photography_category.value}</p>
                       <span className="text-[8px] font-mono text-neutral-500 mt-1 block">{data.photography_category.confidence} confidence rating</span>
                     </div>
                   </div>

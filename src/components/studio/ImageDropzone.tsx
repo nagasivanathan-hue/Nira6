@@ -547,7 +547,7 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
 
             {publicUrl && (
               <Link
-                href={`/studio/analysis?url=${encodeURIComponent(publicUrl)}`}
+                href={`/studio/analysis?url=${encodeURIComponent(publicUrl)}&isSimulated=${metadata?.isSimulated}`}
                 className="mt-2 w-full py-2.5 bg-gradient-to-r from-[#FFDA03] to-amber-500 hover:from-white hover:to-neutral-100 text-black font-semibold text-[10px] uppercase font-mono tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 <Maximize2 className="w-3.5 h-3.5" /> Open Full Cinematic Report
