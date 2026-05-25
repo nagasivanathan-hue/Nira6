@@ -13,6 +13,7 @@ export const NAV_LINKS = [
   { label: 'Rent Gear', href: '/rent' },
   { label: 'Sell Gear', href: '/sell' },
   { label: 'Creator Hub', href: '/creators' },
+  { label: 'About Us', href: '/about' },
 ] as const;
 
 export const CREATOR_CATEGORIES = [
