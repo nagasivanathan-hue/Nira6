@@ -19,6 +19,22 @@ const formatPrice = (p: number) => {
   }).format(p);
 };
 
+interface CapabilityFeature {
+  title: string;
+  desc: string;
+  iconName: string;
+  glow: string;
+}
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Clapperboard,
+  Compass,
+  DollarSign,
+  Cpu,
+  Activity,
+  Layers
+};
+
 // Counter component for animated statistics
 function StatCounter({ value, duration = 2 }: { value: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -67,44 +83,59 @@ export default function HomePage() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const features = [
+  const [features, setFeatures] = useState<CapabilityFeature[]>([
     {
-      icon: Clapperboard,
       title: "Vertical Reels Ecosystem",
       desc: "Full-screen edge-to-edge cinematic short-form media hub customized for visual storytellers and filmmakers.",
+      iconName: "Clapperboard",
       glow: "from-purple-500/20 to-indigo-500/20"
     },
     {
-      icon: Compass,
       title: "Smart Camera Rentals",
       desc: "Instantly reserve cinema rigs, prime glass, or heavy-lift drones near you with real-time slot checking.",
+      iconName: "Compass",
       glow: "from-amber-500/20 to-orange-500/20"
     },
     {
-      icon: DollarSign,
       title: "Refurbished Gear Recommerce",
       desc: "P2P verified marketplace for buying and selling gear with 50+ points inspection certificates.",
+      iconName: "DollarSign",
       glow: "from-emerald-500/20 to-teal-500/20"
     },
     {
-      icon: Cpu,
       title: "Creator AI Matchmaker",
       desc: "Programmatic algorithmic pairing matching brands with top photographers, models, and directors.",
+      iconName: "Cpu",
       glow: "from-blue-500/20 to-cyan-500/20"
     },
     {
-      icon: Activity,
       title: "Creator Studio Analytics",
       desc: "Real-time viewer retention analytics, completion metrics, and earnings telemetry log dashboard.",
+      iconName: "Activity",
       glow: "from-red-500/20 to-pink-500/20"
     },
     {
-      icon: Layers,
       title: "Modular Cloud Portfolios",
       desc: "Host high-bitrate showreels, EXIF data archives, and customized interactive digital portfolios.",
+      iconName: "Layers",
       glow: "from-violet-500/20 to-fuchsia-500/20"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchCapabilities = async () => {
+      try {
+        const res = await fetch('/api/capabilities');
+        if (res.ok) {
+          const data = await res.json();
+          setFeatures(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch capabilities:', err);
+      }
+    };
+    fetchCapabilities();
+  }, []);
 
   const reels = [
     {
@@ -391,8 +422,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, idx) => {
-            const Icon = feature.icon;
+          {features.map((feature: CapabilityFeature, idx) => {
+            const Icon = ICON_MAP[feature.iconName] || Compass;
             return (
               <motion.div 
                 key={idx}
