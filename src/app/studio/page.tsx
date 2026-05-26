@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -23,6 +23,7 @@ const formatPrice = (p: number) => {
 
 interface GearItem {
   id: string;
+  _id?: string;
   name: string;
   category: 'camera' | 'lens' | 'lighting' | 'audio';
   image: string;
@@ -30,7 +31,8 @@ interface GearItem {
   rentRate: number; // per day
 }
 
-const INVENTORY: GearItem[] = [
+// Static fallback used only if API fails before first render
+const FALLBACK_INVENTORY: GearItem[] = [
   { id: 'cam-fx3', name: 'Sony FX3 Cinema Camera', category: 'camera', image: '/assets/product-camera.png', buyPrice: 295000, rentRate: 2500 },
   { id: 'cam-a7iv', name: 'Sony Alpha 7 IV Mirrorless', category: 'camera', image: '/assets/product-camera.png', buyPrice: 198000, rentRate: 1600 },
   { id: 'lens-85gm', name: 'Sony FE 85mm f/1.4 GM', category: 'lens', image: '/assets/product-lens.png', buyPrice: 145000, rentRate: 1100 },
@@ -53,38 +55,7 @@ interface BarterListing {
   counterProposal?: string;
 }
 
-const INITIAL_BARTER_LISTINGS: BarterListing[] = [
-  {
-    id: 'bart-1',
-    creatorName: 'Rahul Mehra',
-    creatorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80',
-    creatorRating: 4.9,
-    offeredService: '10 Hours of Professional Video Color Grading (DaVinci Resolve Studio)',
-    requestedGear: 'Sony FX3 Full-Frame Cinema Camera Body',
-    duration: '3 Days Weekend Rental',
-    status: 'active'
-  },
-  {
-    id: 'bart-2',
-    creatorName: 'Sonia Kapoor',
-    creatorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80',
-    creatorRating: 4.8,
-    offeredService: 'High-End Wedding Album Retouching & Color Grading (50 Photos)',
-    requestedGear: 'DJI Mavic 3 Pro Cine Drone Combo',
-    duration: '2 Days Saturday-Sunday Rental',
-    status: 'active'
-  },
-  {
-    id: 'bart-3',
-    creatorName: 'Karan Parikh',
-    creatorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80',
-    creatorRating: 4.7,
-    offeredService: 'Cinematic Sound Design & Stereo Mixing for Short Films',
-    requestedGear: 'Aputure LS 600d Pro + Light Dome II Kit',
-    duration: '4 Days Shoot Rental',
-    status: 'active'
-  }
-];
+const INITIAL_BARTER_LISTINGS: BarterListing[] = [];
 
 // -------------------------------------------------------------
 // CORE PAGE COMPONENT
@@ -104,6 +75,9 @@ export default function CreatorStudioPage() {
     buyTotal: number;
     rentRateTotal: number;
   } | null>(null);
+
+  // Inventory loaded from API
+  const [INVENTORY, setInventory] = useState<GearItem[]>(FALLBACK_INVENTORY);
 
   // States for Feature 2: Barter Board
   const [barterListings, setBarterListings] = useState<BarterListing[]>(INITIAL_BARTER_LISTINGS);
@@ -127,11 +101,46 @@ export default function CreatorStudioPage() {
   const [selectedPayout, setSelectedPayout] = useState<'quick' | 'max' | null>(null);
 
   // States for Feature 4: Creator's Garage
-  const [garageItems, setGarageItems] = useState<GearItem[]>([
-    INVENTORY[0], // pre-populate with FX3
-    INVENTORY[2], // pre-populate with 85 GM
-  ]);
+  const [garageItems, setGarageItems] = useState<GearItem[]>([]);
   const [rentToggle, setRentToggle] = useState(true); // true = Rent for 1 Week, false = Buy Outright
+
+  // ── Fetch gear inventory and barter listings from API ──
+  useEffect(() => {
+    const loadGear = async () => {
+      try {
+        const res = await fetch('/api/studio/gear');
+        if (res.ok) {
+          const data: GearItem[] = await res.json();
+          if (data.length > 0) {
+            // Normalize _id to id for compatibility
+            const normalized = data.map(g => ({ ...g, id: g.id || g._id || '' }));
+            setInventory(normalized);
+            setGarageItems([normalized[0], normalized[2]].filter(Boolean));
+          }
+        }
+      } catch (err) {
+        console.warn('[Studio] Gear API unavailable, using fallback:', err);
+        setGarageItems([FALLBACK_INVENTORY[0], FALLBACK_INVENTORY[2]]);
+      }
+    };
+
+    const loadBarter = async () => {
+      try {
+        const res = await fetch('/api/studio/barter');
+        if (res.ok) {
+          const data: BarterListing[] = await res.json();
+          if (data.length > 0) {
+            setBarterListings(data.map(b => ({ ...b, id: b.id || (b as any)._id || '' })));
+          }
+        }
+      } catch (err) {
+        console.warn('[Studio] Barter API unavailable:', err);
+      }
+    };
+
+    loadGear();
+    loadBarter();
+  }, []);
 
   // Action to send DP Concierge items into the Garage setup builder
   const handleSendToGarage = (items: GearItem[]) => {
@@ -150,8 +159,8 @@ export default function CreatorStudioPage() {
   // LOGIC & TIMERS SIMULATION
   // -------------------------------------------------------------
 
-  // Run DP Concierge simulation
-  const handleDpConcierge = () => {
+  // Run DP Concierge via backend API
+  const handleDpConcierge = async () => {
     if (!dpPrompt.trim() && !uploadedImageUrl) return;
     setDpLoading(true);
     setDpResult(null);
@@ -173,40 +182,56 @@ export default function CreatorStudioPage() {
           'Finalizing tailored director bundle packages...'
         ];
 
+    // Show animated logs while API runs
     logSequence.forEach((log, index) => {
       setTimeout(() => {
         setDpLogs(prev => [...prev, `[system]: ${log}`]);
-        if (index === logSequence.length - 1) {
-          // Select matched items based on prompt length or random
-          let matched: GearItem[] = [];
-          let pkg = 'Cinematic Masterclass Bundle';
-          
-          const combinedSearch = (dpPrompt + (uploadedImageUrl ? ' chiaroscuro light' : '')).toLowerCase();
-          
-          if (combinedSearch.includes('light') || combinedSearch.includes('lighting') || combinedSearch.includes('chiaroscuro')) {
-            matched = [INVENTORY[0], INVENTORY[2], INVENTORY[5]];
-            pkg = 'Chiaroscuro Dark Cinema Kit';
-          } else if (combinedSearch.includes('audio') || combinedSearch.includes('interview') || combinedSearch.includes('film')) {
-            matched = [INVENTORY[1], INVENTORY[3], INVENTORY[6]];
-            pkg = 'Documentary & Dialogue Kit';
-          } else {
-            matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4], INVENTORY[6]];
-            pkg = 'Run-and-Gun Commercial Pack';
-          }
-
-          const buyTotal = matched.reduce((sum, item) => sum + item.buyPrice, 0);
-          const rentRateTotal = matched.reduce((sum, item) => sum + item.rentRate, 0);
-
-          setDpResult({
-            packageName: pkg,
-            items: matched,
-            buyTotal,
-            rentRateTotal
-          });
-          setDpLoading(false);
-        }
-      }, (index + 1) * 800);
+      }, (index + 1) * 600);
     });
+
+    try {
+      const res = await fetch('/api/studio/concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: dpPrompt, imageUrl: uploadedImageUrl || '' }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Normalize items
+        const items = (data.items || []).map((g: any) => ({
+          ...g,
+          id: g.id || g._id || '',
+        }));
+        setDpResult({
+          packageName: data.packageName || 'Cinematic Bundle',
+          items,
+          buyTotal: data.buyTotal || items.reduce((s: number, i: GearItem) => s + i.buyPrice, 0),
+          rentRateTotal: data.rentRateTotal || items.reduce((s: number, i: GearItem) => s + i.rentRate, 0),
+        });
+      } else {
+        setDpLogs(prev => [...prev, '[error]: Concierge API returned an error. Using local matching...']);
+        // Local fallback
+        const matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4]].filter(Boolean);
+        setDpResult({
+          packageName: 'Run-and-Gun Commercial Pack',
+          items: matched,
+          buyTotal: matched.reduce((s, i) => s + i.buyPrice, 0),
+          rentRateTotal: matched.reduce((s, i) => s + i.rentRate, 0),
+        });
+      }
+    } catch (err) {
+      console.warn('[Studio] Concierge API failed:', err);
+      const matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4]].filter(Boolean);
+      setDpResult({
+        packageName: 'Run-and-Gun Commercial Pack',
+        items: matched,
+        buyTotal: matched.reduce((s, i) => s + i.buyPrice, 0),
+        rentRateTotal: matched.reduce((s, i) => s + i.rentRate, 0),
+      });
+    } finally {
+      setDpLoading(false);
+    }
   };
 
   // Run Grader simulation
