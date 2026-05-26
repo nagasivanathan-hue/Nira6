@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.nira6.in';
 
   // Base landing urls
-  const routes = ['', '/rent', '/creators', '/studio', '/about'].map((route) => ({
+  const routes = ['', '/rent', '/creators', '/studio', '/about', '/pricing'].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
