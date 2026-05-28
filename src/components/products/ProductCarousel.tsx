@@ -58,7 +58,6 @@ export default function ProductCarousel({ title, subtitle, products, theme = 'da
       <div 
         ref={scrollContainerRef}
         className="flex overflow-x-auto gap-4 sm:gap-6 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0 hide-scrollbar snap-x snap-mandatory"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {products.map((product) => (
           <div key={product.id} className="min-w-[280px] max-w-[280px] sm:min-w-[320px] sm:max-w-[320px] shrink-0 snap-start">
@@ -68,6 +67,10 @@ export default function ProductCarousel({ title, subtitle, products, theme = 'da
       </div>
 
       <style jsx global>{`
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }

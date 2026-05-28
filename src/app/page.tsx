@@ -8,7 +8,7 @@ import {
   ArrowRight, Play, Sparkles, Shield, TrendingUp, 
   Cpu, Layers, Star, 
   Compass, DollarSign, Activity, Eye, Heart, Share2, Clapperboard,
-  Briefcase, RefreshCw, Sliders, Camera, Package, Zap
+  Briefcase, RefreshCw, Sliders, Camera, Zap
 } from 'lucide-react';
 import ProductCarousel from '@/components/products/ProductCarousel';
 import { mockProducts } from '@/lib/mockData';
@@ -66,19 +66,16 @@ function StatCounter({ value, duration = 2 }: { value: number; duration?: number
 }
 
 export default function HomePage() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [demoOpen, setDemoOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   // Mouse move listener for cinematic parallax radial gradient glow
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (heroRef.current) {
+      if (heroRef.current && glowRef.current) {
         const rect = heroRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        });
+        glowRef.current.style.left = `${e.clientX - rect.left - 300}px`;
+        glowRef.current.style.top = `${e.clientY - rect.top - 300}px`;
       }
     };
     window.addEventListener('mousemove', handleMouseMove);
@@ -203,11 +200,8 @@ export default function HomePage() {
       >
         {/* Dynamic Glow Spotlight following mouse */}
         <div 
+          ref={glowRef}
           className="absolute w-[600px] h-[600px] bg-nira-yellow/5 rounded-full blur-[160px] pointer-events-none transition-transform duration-100 ease-out z-10 hidden md:block"
-          style={{
-            left: `${mousePosition.x - 300}px`,
-            top: `${mousePosition.y - 300}px`,
-          }}
         />
 
         {/* 85mm f/1.4 Sim: Shallow Depth of Field Background Layer */}
@@ -354,7 +348,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-2 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5" /> TODAY'S LIGHTNING DEALS
+                <Zap className="w-3.5 h-3.5" /> TODAY&apos;S LIGHTNING DEALS
               </span>
               <h2 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
                 Up to 40% Off Premium Gear
@@ -652,7 +646,7 @@ export default function HomePage() {
               freelancer: "Arun Kumar",
               verified: true,
               level: "Pro",
-              levelColor: "#3B82F6",
+              levelClass: "text-blue-500",
               tags: ["YouTube", "DaVinci Resolve", "Flow Cut"],
               image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80"
             },
@@ -666,7 +660,7 @@ export default function HomePage() {
               freelancer: "Riya Sen",
               verified: true,
               level: "Elite",
-              levelColor: "#FFDA03",
+              levelClass: "text-nira-yellow",
               tags: ["DaVinci Resolve Studio", "HDR 4K", "LUTs Design"],
               image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80"
             },
@@ -680,7 +674,7 @@ export default function HomePage() {
               freelancer: "Vikram Singh",
               verified: true,
               level: "Top Rated",
-              levelColor: "#A855F7",
+              levelClass: "text-purple-500",
               tags: ["DJI Inspire 3", "DGCA Licensed", "8K ProRes"],
               image: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400&q=80"
             }
@@ -711,7 +705,7 @@ export default function HomePage() {
                         <p className="font-bold text-xs text-white truncate">{service.freelancer}</p>
                         {service.verified && <span className="w-1.5 h-1.5 bg-nira-yellow rounded-full animate-pulse" />}
                       </div>
-                      <p style={{ color: service.levelColor }} className="text-[9px] font-mono uppercase tracking-wider font-bold">
+                      <p className={`text-[9px] font-mono uppercase tracking-wider font-bold ${service.levelClass}`}>
                         {service.level} Freelancer
                       </p>
                     </div>
