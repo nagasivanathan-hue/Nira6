@@ -31,7 +31,7 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
         if (stored) {
           try {
             dispatch(setAuth(JSON.parse(stored)));
-          } catch (e) {
+          } catch {
             dispatch(setAuth(null));
           }
         } else {
@@ -61,7 +61,7 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           if (stored) {
             try {
               dispatch(setAuth(JSON.parse(stored)));
-            } catch (e) {
+            } catch {
               dispatch(setAuth(null));
             }
           } else {

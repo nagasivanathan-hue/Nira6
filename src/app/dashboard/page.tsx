@@ -38,10 +38,10 @@ const tabs = [
 ];
 
 const statusColors: Record<string, string> = {
-  delivered: '#10B981',
-  shipped: '#3B82F6',
-  processing: '#F59E0B',
-  cancelled: '#EF4444'
+  delivered: 'text-emerald-500',
+  shipped: 'text-blue-500',
+  processing: 'text-amber-500',
+  cancelled: 'text-red-500'
 };
 
 interface ProductImport {
@@ -636,14 +636,13 @@ export default function DashboardPage() {
                     {/* Stats Metrics Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
-                        { label: 'Purchased Gear', value: orders.length.toString(), icon: Package, color: '#FFB800' },
-                        { label: 'Wallet Balance', value: `₹${walletBalance.toLocaleString('en-IN')}`, icon: Wallet, color: '#10B981' },
-                        { label: 'Wishlist items', value: wishlistItems.length.toString(), icon: Heart, color: '#EF4444' },
-                        { label: 'Logged Tickets', value: tickets.length.toString(), icon: AlertCircle, color: '#3B82F6' },
+                        { label: 'Purchased Gear', value: orders.length.toString(), icon: Package, color: 'text-amber-500', bg: 'bg-amber-500/15' },
+                        { label: 'Wallet Balance', value: `₹${walletBalance.toLocaleString('en-IN')}`, icon: Wallet, color: 'text-emerald-500', bg: 'bg-emerald-500/15' },
+                        { label: 'Wishlist items', value: wishlistItems.length.toString(), icon: Heart, color: 'text-red-500', bg: 'bg-red-500/15' },
+                        { label: 'Logged Tickets', value: tickets.length.toString(), icon: AlertCircle, color: 'text-blue-500', bg: 'bg-blue-500/15' },
                       ].map((stat) => (
                         <div key={stat.label} className="bg-white rounded-2xl p-5 shadow-sm border border-nira-gray-dark hover:shadow-md transition-all">
-                          {/* eslint-disable-next-line react/forbid-component-props, react/forbid-dom-props */}
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: stat.color + '15', color: stat.color }}>
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${stat.bg} ${stat.color}`}>
                             <stat.icon className="w-4 h-4" />
                           </div>
                           <p className="font-heading font-black text-xl text-nira-dark">{stat.value}</p>
@@ -685,8 +684,7 @@ export default function DashboardPage() {
                               <div className="flex items-center gap-3 shrink-0">
                                 <div className="text-right">
                                   <p className="font-black text-xs text-nira-dark">{formatPrice(order.totalAmount)}</p>
-                                  {/* eslint-disable-next-line react/forbid-component-props, react/forbid-dom-props */}
-                                  <span className="text-[9px] font-black uppercase" style={{ color: statusColors[order.orderStatus] }}>
+                                  <span className={`text-[9px] font-black uppercase ${statusColors[order.orderStatus] || 'text-amber-500'}`}>
                                     {order.returned ? 'Returned & Refunded' : order.orderStatus}
                                   </span>
                                 </div>
