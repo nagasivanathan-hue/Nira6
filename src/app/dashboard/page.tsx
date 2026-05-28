@@ -610,6 +610,11 @@ export default function DashboardPage() {
                 </button>
               ))}
               <hr className="my-2 border-nira-gray-dark hidden lg:block" />
+              {userInfo.role === 'admin' && (
+                <Link href="/dashboard/admin" className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider text-white bg-nira-dark hover:bg-nira-yellow hover:text-nira-dark transition-colors whitespace-nowrap cursor-pointer mb-1 shadow-sm">
+                  <ShieldCheck className="w-4 h-4" /> Admin Console
+                </Link>
+              )}
               <button onClick={handleLogout} className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-red-500 hover:bg-red-50 whitespace-nowrap cursor-pointer">
                 <LogOut className="w-4 h-4" /> Logout Account
               </button>
