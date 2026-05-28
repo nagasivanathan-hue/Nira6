@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { Product } from '@/types';
+import ProductListingForm from '@/components/seller/ProductListingForm';
 
 // Mock Initial Seller Data for Dashboard Simulation
 const initialProducts: Product[] = [
@@ -188,18 +189,6 @@ export default function SellerPartnerPage() {
   const [services, setServices] = useState<ServiceListing[]>(initialServices);
   const [orders, setOrders] = useState<OrderListing[]>(initialOrders);
 
-  // Forms to add new product / service
-  const [newProd, setNewProd] = useState({
-    name: '',
-    brand: '',
-    price: 0,
-    category: 'Cameras',
-    image: 'https://images.unsplash.com/photo-1495707902641-75cac588d2e9?w=500&auto=format&fit=crop&q=60',
-    description: '',
-    stock: 5,
-    sku: ''
-  });
-
   const [newSrv, setNewSrv] = useState({
     title: '',
     category: 'Video Editor',
@@ -262,50 +251,9 @@ export default function SellerPartnerPage() {
     }
   };
 
-  // Add Product Submit
-  const handleAddProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProd.name || newProd.price <= 0) {
-      alert('Please fill out all product parameters.');
-      return;
-    }
-    const created: Product = {
-      id: `prod-sell-${Date.now()}`,
-      name: newProd.name,
-      brand: newProd.brand || 'Generic',
-      category: newProd.category,
-      price: Number(newProd.price),
-      originalPrice: Number(newProd.price) * 1.1,
-      discount: Number(newProd.price) * 0.1,
-      image: newProd.image,
-      images: [newProd.image],
-      condition: 'Excellent',
-      grade: 'A',
-      warranty: '1 Year NIRA6 Warranty',
-      rating: 5.0,
-      reviewCount: 0,
-      sellerName: regForm.businessName,
-      sellerRating: 5.0,
-      specs: { 'SKU': newProd.sku || 'N/A' },
-      description: newProd.description,
-      emiAvailable: true,
-      inStock: Number(newProd.stock) > 0,
-      featured: false,
-      trending: false,
-      createdAt: new Date().toISOString()
-    };
-
+  // Add Product Complete Handler
+  const handleProductAdded = (created: Product) => {
     setProducts([created, ...products]);
-    setNewProd({
-      name: '',
-      brand: '',
-      price: 0,
-      category: 'Cameras',
-      image: 'https://images.unsplash.com/photo-1495707902641-75cac588d2e9?w=500&auto=format&fit=crop&q=60',
-      description: '',
-      stock: 5,
-      sku: ''
-    });
 
     window.dispatchEvent(new CustomEvent('nira_notification', {
       detail: {
@@ -951,113 +899,8 @@ export default function SellerPartnerPage() {
                     </button>
                   </div>
 
-                  {/* Add Product Form */}
-                  <div className="bg-white rounded-3xl border border-nira-gray-dark p-6 shadow-sm">
-                    <h4 className="font-heading font-black text-xs uppercase tracking-wider text-nira-dark mb-4 pb-2 border-b border-nira-gray-dark flex items-center gap-1.5">
-                      <Plus className="w-4 h-4 text-nira-yellow" /> List A New Product
-                    </h4>
-                    
-                    <form onSubmit={handleAddProduct} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Product Title *</label>
-                          <input 
-                            type="text" 
-                            required
-                            placeholder="dji Pocket 3 Creator Combo"
-                            value={newProd.name}
-                            onChange={(e) => setNewProd({ ...newProd, name: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Brand *</label>
-                          <input 
-                            type="text" 
-                            required
-                            placeholder="DJI"
-                            value={newProd.brand}
-                            onChange={(e) => setNewProd({ ...newProd, brand: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Price (₹ INR) *</label>
-                          <input 
-                            type="number" 
-                            required
-                            placeholder="54000"
-                            value={newProd.price || ''}
-                            onChange={(e) => setNewProd({ ...newProd, price: Number(e.target.value) })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Category</label>
-                          <select
-                            value={newProd.category}
-                            onChange={(e) => setNewProd({ ...newProd, category: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent cursor-pointer"
-                          >
-                            <option>Cameras</option>
-                            <option>Lenses</option>
-                            <option>Audio</option>
-                            <option>Lighting</option>
-                            <option>Accessories</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Stock Count</label>
-                          <input 
-                            type="number" 
-                            placeholder="5"
-                            value={newProd.stock}
-                            onChange={(e) => setNewProd({ ...newProd, stock: Number(e.target.value) })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Stock Keeping Unit (SKU)</label>
-                          <input 
-                            type="text" 
-                            placeholder="SKU-DJI-POCK3"
-                            value={newProd.sku}
-                            onChange={(e) => setNewProd({ ...newProd, sku: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Product Image URL</label>
-                        <input 
-                          type="text" 
-                          value={newProd.image}
-                          onChange={(e) => setNewProd({ ...newProd, image: e.target.value })}
-                          className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Catalog Descriptions *</label>
-                        <textarea 
-                          required
-                          placeholder="Condition specs, items included, original package details..."
-                          value={newProd.description}
-                          onChange={(e) => setNewProd({ ...newProd, description: e.target.value })}
-                          className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent"
-                          rows={2}
-                        />
-                      </div>
-
-                      <button 
-                        type="submit"
-                        className="w-full py-3 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer"
-                      >
-                        Publish Catalog Record
-                      </button>
-                    </form>
-                  </div>
+                  {/* Advanced Product Listing Form Component */}
+                  <ProductListingForm onSuccess={handleProductAdded} sellerName={regForm.businessName} />
 
                   {/* Active Products List */}
                   <div className="bg-white rounded-3xl border border-nira-gray-dark overflow-hidden shadow-sm">
