@@ -21,7 +21,7 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
           phone: session.user.phone || '',
           avatar: session.user.user_metadata.avatar_url || '',
-          role: 'customer',
+          role: session.user.email === 'nira6studio@gmail.com' ? 'admin' : 'customer',
           walletBalance: 0,
           verified: !!session.user.email_confirmed_at,
           token: session.access_token
@@ -48,7 +48,7 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'User',
           phone: session.user.phone || '',
           avatar: session.user.user_metadata.avatar_url || '',
-          role: 'customer',
+          role: session.user.email === 'nira6studio@gmail.com' ? 'admin' : 'customer',
           walletBalance: 0,
           verified: !!session.user.email_confirmed_at,
           token: session.access_token
