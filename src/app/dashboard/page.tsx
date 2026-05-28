@@ -1,10 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  Heart, Package, Wallet, Settings, LogOut, Camera, TrendingUp, 
-  ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet, 
-  FileUp, Download, Printer, ShieldCheck, ChevronRight, CornerDownLeft, 
+import {
+  Heart, Package, Wallet, Settings, LogOut, Camera, TrendingUp,
+  ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet,
+  FileUp, Download, Printer, ShieldCheck, ChevronRight, CornerDownLeft,
   MessageSquare, Sparkles, Plus, Check, Eye
 } from 'lucide-react';
 import Link from 'next/link';
@@ -100,7 +100,7 @@ export default function DashboardPage() {
   const dispatch = useAppDispatch();
   const { user: userInfo, isAuthenticated } = useAppSelector((state) => state.auth);
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
-  
+
   const [activeTab, setActiveTab] = useState('overview');
   const [orders, setOrders] = useState<ExtendedOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -379,7 +379,7 @@ export default function DashboardPage() {
         message: (response.data as { message?: string }).message || 'Import successful!'
       });
       setParsedProducts([]);
-      
+
       // Notify
       window.dispatchEvent(new CustomEvent('nira_notification', {
         detail: {
@@ -412,7 +412,7 @@ export default function DashboardPage() {
       setWalletBalance(res.data.walletBalance);
       setWalletHistory(res.data.walletTransactions || []);
       setTopUpAmount('');
-      
+
       // Trigger Notification
       window.dispatchEvent(new CustomEvent('nira_notification', {
         detail: {
@@ -446,7 +446,7 @@ export default function DashboardPage() {
       setTickets([res.data, ...tickets]);
       setTicketSubject('');
       setTicketDesc('');
-      
+
       // Dispatch alert
       window.dispatchEvent(new CustomEvent('nira_notification', {
         detail: {
@@ -529,10 +529,10 @@ export default function DashboardPage() {
 
     try {
       const res = await api.post(`/orders/${oId}/return`, { reason: returnReasonInput });
-      
+
       // Update order status in frontend array
       setOrders(prev => prev.map(o => o._id === oId ? { ...o, returned: true, returnReason: returnReasonInput } : o));
-      
+
       // Refresh wallet balances
       const walletRes = await api.get('/users/wallet');
       setWalletBalance(walletRes.data.walletBalance || 0);
@@ -550,7 +550,7 @@ export default function DashboardPage() {
           content: `Order returned. Refund amount was instantly credited to your Loyalty Wallet balance.`
         }
       }));
-      
+
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('nira_notification', {
           detail: {
@@ -572,7 +572,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-nira-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         {/* User Header Profile Card */}
         <div className="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 mb-6 shadow-sm border border-nira-gray-dark relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-nira-yellow/10 rounded-full blur-2xl -mr-10 -mt-10" />
@@ -598,12 +598,12 @@ export default function DashboardPage() {
           <aside className="lg:w-60 flex-shrink-0">
             <nav className="bg-white rounded-2xl p-3 flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide shadow-sm border border-nira-gray-dark">
               {tabs.map((tab) => (
-                <button 
-                  key={tab.id} 
+                <button
+                  key={tab.id}
                   onClick={() => {
                     setActiveTab(tab.id);
                     setSelectedTicket(null);
-                  }} 
+                  }}
                   className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${activeTab === tab.id ? 'bg-nira-yellow text-nira-dark' : 'text-nira-text-secondary hover:bg-nira-gray'}`}
                 >
                   <tab.icon className="w-4 h-4" /> {tab.label}
@@ -683,13 +683,13 @@ export default function DashboardPage() {
                                     {order.returned ? 'Returned & Refunded' : order.orderStatus}
                                   </span>
                                 </div>
-                                <button 
-                                  onClick={() => setSelectedOrder(order)}
+                                <Link
+                                  href={`/orders/${order._id}/track`}
                                   className="p-1.5 hover:bg-nira-yellow hover:text-nira-dark bg-nira-dark text-white rounded-lg transition-colors cursor-pointer"
                                   title="View Receipt & Tracking"
                                 >
                                   <Eye className="w-4 h-4" />
-                                </button>
+                                </Link>
                               </div>
                             </div>
                           ))
@@ -728,20 +728,19 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
                               <div className="text-right">
-                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                                  order.returned ? 'bg-red-100 text-red-800' :
-                                  order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-800' :
-                                  'bg-amber-100 text-amber-800'
-                                }`}>
+                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${order.returned ? 'bg-red-100 text-red-800' :
+                                    order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-800' :
+                                      'bg-amber-100 text-amber-800'
+                                  }`}>
                                   {order.returned ? 'Refunded' : order.orderStatus}
                                 </span>
                               </div>
-                              <button 
-                                onClick={() => setSelectedOrder(order)}
+                              <Link
+                                href={`/orders/${order._id}/track`}
                                 className="px-3.5 py-1.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs rounded-xl flex items-center gap-1 transition-all cursor-pointer"
                               >
                                 Inspect &amp; Track <ChevronRight className="w-3.5 h-3.5" />
-                              </button>
+                              </Link>
                             </div>
                           </div>
                         ))
@@ -758,7 +757,7 @@ export default function DashboardPage() {
                 {activeTab === 'wallet' && (
                   <div className="space-y-6">
                     <div className="grid sm:grid-cols-3 gap-6">
-                      
+
                       {/* Balance visual card */}
                       <div className="bg-nira-dark text-white rounded-2xl p-6 border border-nira-yellow/20 relative overflow-hidden flex flex-col justify-between sm:col-span-1 shadow-sm">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-nira-yellow/5 rounded-full blur-xl" />
@@ -846,8 +845,8 @@ export default function DashboardPage() {
                           Looking to list freelance services (video editing, reels cuts, photo grading), manage bulk inventories, track UPI payouts, or configure Madurai studio location KYC?
                         </p>
                       </div>
-                      <Link 
-                        href="/seller" 
+                      <Link
+                        href="/seller"
                         className="px-4 py-2 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow shrink-0 text-center cursor-pointer"
                       >
                         Enter Partner Central
@@ -932,12 +931,12 @@ export default function DashboardPage() {
                         <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Diagnostic Features & Specifications (Specs)</label>
                         <div className="grid sm:grid-cols-2 gap-3">
                           <div className="flex gap-2">
-                            <input type="text" placeholder="Resolution" value={sellForm.specKey1} onChange={(e) => setSellForm({...sellForm, specKey1: e.target.value})} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                            <input type="text" placeholder="24.2 MP" value={sellForm.specVal1} onChange={(e) => setSellForm({...sellForm, specVal1: e.target.value})} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="Resolution" value={sellForm.specKey1} onChange={(e) => setSellForm({ ...sellForm, specKey1: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="24.2 MP" value={sellForm.specVal1} onChange={(e) => setSellForm({ ...sellForm, specVal1: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
                           </div>
                           <div className="flex gap-2">
-                            <input type="text" placeholder="Optical Zoom" value={sellForm.specKey2} onChange={(e) => setSellForm({...sellForm, specKey2: e.target.value})} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                            <input type="text" placeholder="3x Kit Zoom" value={sellForm.specVal2} onChange={(e) => setSellForm({...sellForm, specVal2: e.target.value})} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="Optical Zoom" value={sellForm.specKey2} onChange={(e) => setSellForm({ ...sellForm, specKey2: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            <input type="text" placeholder="3x Kit Zoom" value={sellForm.specVal2} onChange={(e) => setSellForm({ ...sellForm, specVal2: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
                           </div>
                         </div>
                       </div>
@@ -967,7 +966,7 @@ export default function DashboardPage() {
                 {/* 5. CRM Support & Diagnostics Tab */}
                 {activeTab === 'support-tickets' && (
                   <div className="grid lg:grid-cols-3 gap-6">
-                    
+
                     {/* Left Panel: Log new ticket form */}
                     <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark lg:col-span-1 shadow-sm">
                       <h4 className="font-heading font-bold text-sm text-nira-dark uppercase tracking-wider mb-4 border-b border-nira-gray-dark pb-3">Log support ticket</h4>
@@ -1029,9 +1028,8 @@ export default function DashboardPage() {
                               </button>
                               <h4 className="font-heading font-black text-sm text-nira-dark mt-1 truncate max-w-md">{selectedTicket.subject}</h4>
                             </div>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              selectedTicket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800 animate-pulse'
-                            }`}>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${selectedTicket.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800 animate-pulse'
+                              }`}>
                               {selectedTicket.status}
                             </span>
                           </div>
@@ -1045,13 +1043,12 @@ export default function DashboardPage() {
                             </div>
 
                             {selectedTicket.conversations?.map((msg, index) => (
-                              <div 
-                                key={index} 
-                                className={`p-3 rounded-xl border max-w-[85%] ${
-                                  msg.sender === 'agent' 
-                                    ? 'bg-nira-dark text-white border-transparent ml-auto' 
+                              <div
+                                key={index}
+                                className={`p-3 rounded-xl border max-w-[85%] ${msg.sender === 'agent'
+                                    ? 'bg-nira-dark text-white border-transparent ml-auto'
                                     : 'bg-white text-nira-dark border-nira-gray-dark'
-                                }`}
+                                  }`}
                               >
                                 <p className="text-[9px] font-black uppercase tracking-wider text-nira-yellow mb-0.5">{msg.sender === 'agent' ? 'NIRA6 Diagnostics bot' : 'Creator'}</p>
                                 <p className="text-xs leading-relaxed">{msg.message}</p>
@@ -1066,8 +1063,8 @@ export default function DashboardPage() {
                           <div className="space-y-3 flex-1 overflow-y-auto max-h-[360px]">
                             {tickets.length > 0 ? (
                               tickets.map((t) => (
-                                <div 
-                                  key={t._id} 
+                                <div
+                                  key={t._id}
                                   onClick={() => setSelectedTicket(t)}
                                   className="p-4 bg-nira-gray/30 hover:bg-nira-gray/70 border border-nira-gray-dark rounded-xl flex items-center justify-between gap-4 cursor-pointer transition-all"
                                 >
@@ -1080,9 +1077,8 @@ export default function DashboardPage() {
                                     <span className="text-[9px] text-nira-text-secondary block mt-0.5">{new Date(t.createdAt).toLocaleString()}</span>
                                   </div>
                                   <div className="flex items-center gap-2 shrink-0">
-                                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                                      t.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                                    }`}>
+                                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                                      }`}>
                                       {t.status}
                                     </span>
                                     <ChevronRight className="w-4 h-4 text-nira-text-secondary" />
@@ -1209,12 +1205,11 @@ export default function DashboardPage() {
                                   <td className="p-3 text-nira-dark">{p.category || <span className="text-red-500/60 italic">&lt;Missing&gt;</span>}</td>
                                   <td className="p-3 font-semibold text-nira-dark">{isNaN(p.price) ? <span className="text-red-500 font-medium italic">&lt;Invalid&gt;</span> : `₹${p.price.toLocaleString('en-IN')}`}</td>
                                   <td className="p-3">
-                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                      p.grade === 'Like New' ? 'bg-emerald-100 text-emerald-800' :
-                                      p.grade === 'Excellent' ? 'bg-blue-100 text-blue-800' :
-                                      p.grade === 'Good' ? 'bg-amber-100 text-amber-800' :
-                                      p.grade === 'Fair' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'
-                                    }`}>{p.grade || 'Unknown'}</span>
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.grade === 'Like New' ? 'bg-emerald-100 text-emerald-800' :
+                                        p.grade === 'Excellent' ? 'bg-blue-100 text-blue-800' :
+                                          p.grade === 'Good' ? 'bg-amber-100 text-amber-800' :
+                                            p.grade === 'Fair' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'
+                                      }`}>{p.grade || 'Unknown'}</span>
                                   </td>
                                   <td className="p-3">
                                     {p.errors.length === 0 ? (
@@ -1268,7 +1263,7 @@ export default function DashboardPage() {
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative border border-nira-gray-dark">
-            <button 
+            <button
               onClick={() => {
                 setSelectedOrder(null);
                 setReturningOrderId(null);
@@ -1282,7 +1277,7 @@ export default function DashboardPage() {
             {/* Interactive Timeline Progress */}
             <div className="mb-6">
               <h4 className="font-heading font-bold text-xs uppercase tracking-widest text-nira-text-secondary mb-4">Diagnostics Tracking Timeline</h4>
-              
+
               {selectedOrder.returned ? (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800">
                   <CornerDownLeft className="w-5 h-5 text-red-600 animate-pulse shrink-0" />
@@ -1294,18 +1289,17 @@ export default function DashboardPage() {
               ) : (
                 <div className="flex justify-between items-center relative py-4">
                   <div className="absolute left-0 right-0 h-1 bg-nira-gray-dark z-0" />
-                  
+
                   {/* Status Progress lines */}
                   {['processing', 'inspected', 'shipped', 'delivered'].map((step, idx) => {
                     const statusOrder = ['processing', 'inspected', 'shipped', 'delivered'];
                     const currentIdx = statusOrder.indexOf(selectedOrder.orderStatus);
                     const isActive = idx <= currentIdx;
-                    
+
                     return (
                       <div key={step} className="flex flex-col items-center z-10 relative">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black uppercase ${
-                          isActive ? 'bg-nira-yellow text-nira-dark border-2 border-nira-dark' : 'bg-white text-nira-text-secondary border-2 border-nira-gray-dark'
-                        }`}>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black uppercase ${isActive ? 'bg-nira-yellow text-nira-dark border-2 border-nira-dark' : 'bg-white text-nira-text-secondary border-2 border-nira-gray-dark'
+                          }`}>
                           {isActive ? '✓' : idx + 1}
                         </div>
                         <span className="text-[9px] font-black uppercase tracking-wider text-nira-dark mt-1.5">{step}</span>
@@ -1367,7 +1361,7 @@ export default function DashboardPage() {
 
             {/* Modal Controls buttons */}
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <button 
+              <button
                 onClick={() => window.print()}
                 className="flex-1 py-3 bg-nira-gray hover:bg-nira-gray-dark text-nira-dark font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
@@ -1386,13 +1380,13 @@ export default function DashboardPage() {
                       className="px-3 py-2 bg-white rounded-xl text-xs focus:outline-none border border-red-200"
                     />
                     <div className="flex gap-2">
-                      <button 
+                      <button
                         onClick={() => handleInitiateReturn(selectedOrder._id)}
                         className="flex-1 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded-lg cursor-pointer"
                       >
                         Confirm Return &amp; Refund
                       </button>
-                      <button 
+                      <button
                         onClick={() => setReturningOrderId(null)}
                         className="px-3 py-1.5 bg-white text-nira-dark border border-nira-gray-dark font-bold text-[10px] uppercase rounded-lg cursor-pointer"
                       >
@@ -1401,7 +1395,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     onClick={() => setReturningOrderId(selectedOrder._id)}
                     className="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >

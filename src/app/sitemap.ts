@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     await dbConnect();
     
     // Dynamic Creator URLs
-    const creators = await CreatorProfile.find({}, '_id updatedAt').lean() as unknown as { _id: any; updatedAt?: Date }[];
+    const creators = await CreatorProfile.find({}, '_id updatedAt').lean() as unknown as { _id: { toString(): string }; updatedAt?: Date }[];
     const creatorRoutes = creators.map((c) => ({
       url: `${baseUrl}/creators/${c._id.toString()}`,
       lastModified: new Date(c.updatedAt || new Date()),
@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Dynamic Rental Gear URLs
-    const gear = await RentalItem.find({}, '_id updatedAt').lean() as unknown as { _id: any; updatedAt?: Date }[];
+    const gear = await RentalItem.find({}, '_id updatedAt').lean() as unknown as { _id: { toString(): string }; updatedAt?: Date }[];
     const gearRoutes = gear.map((g) => ({
       url: `${baseUrl}/rent/${g._id.toString()}`,
       lastModified: new Date(g.updatedAt || new Date()),

@@ -227,7 +227,6 @@ export default function SellerPartnerPage() {
 
   // Bulk Product Spreadsheet Uploader Simulator
   const [bulkProgress, setBulkProgress] = useState(false);
-  const [bulkFileUploaded, setBulkFileUploaded] = useState(false);
 
   // Auto Onboarding demo bypass
   const handleBypassDemo = () => {
@@ -484,7 +483,6 @@ export default function SellerPartnerPage() {
       ];
       setProducts(prev => [...prev, ...bulkAdd]);
       setBulkProgress(false);
-      setBulkFileUploaded(true);
       alert('Simulated spreadsheet import complete! 2 high-fidelity audio/stabilizer records added.');
     }, 1800);
   };

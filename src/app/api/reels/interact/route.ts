@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
 
     if (action === 'like') {
-      const index = reel.likes.findIndex((id: any) => id.toString() === user._id.toString());
+      const index = reel.likes.findIndex((id: unknown) => String(id) === String(user._id));
       if (index === -1) {
         // Like
         reel.likes.push(user._id);

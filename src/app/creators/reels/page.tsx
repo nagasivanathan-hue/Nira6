@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, MessageCircle, Share2, ArrowLeft, Send, X, Loader2, 
-  Volume2, VolumeX, Camera, Maximize2, Pause, Sliders, Laptop,
+  Volume2, VolumeX, Camera, Maximize2, Sliders, Laptop,
   Award, Compass, BarChart3, UploadCloud, Sparkles, AlertCircle
 } from 'lucide-react';
 import { useAppSelector } from '@/store';
@@ -293,20 +293,22 @@ function EmojiReactionDock({ onSelect, onClose }: EmojiReactionDockProps) {
 // -------------------------------------------------------------
 interface EmojiParticle {
   id: number;
-  emoji: string;
   x: number;
   y: number;
   scale: number;
+  rotation: number;
 }
 function EmojiBurst({ emoji }: { emoji: string; id: number }) {
-  const particles = useMemo(() => {
-    return Array.from({ length: 6 }).map((_, i) => ({
+  const [particles, setParticles] = useState<EmojiParticle[]>([]);
+
+  useEffect(() => {
+    setParticles(Array.from({ length: 6 }).map((_, i) => ({
       id: i,
       x: (Math.random() - 0.5) * 140, 
       y: -300 - Math.random() * 200,   
       scale: 0.6 + Math.random() * 0.8,
       rotation: (Math.random() - 0.5) * 60
-    }));
+    })));
   }, []);
 
   return (
@@ -361,7 +363,6 @@ function ReelItem({
   const [lastTap, setLastTap] = useState(0);
 
   // Advanced video state
-  const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -382,10 +383,8 @@ function ReelItem({
       video.playbackRate = playbackSpeed;
       playPromiseRef.current = video.play();
       playPromiseRef.current
-        .then(() => setPlaying(true))
         .catch(err => console.log('Autoplay prevented:', err));
     } else {
-      setPlaying(false);
       if (playPromiseRef.current) {
         playPromiseRef.current
           .then(() => video.pause())
@@ -1037,8 +1036,9 @@ function CommentsSheet({
     e.preventDefault();
     if (!replyInput.trim() || !currentUser) return;
 
+    const newReplyId = 'rep-' + new Date().getTime();
     const newReply: Comment = {
-      _id: `rep-${Date.now()}`,
+      _id: newReplyId,
       userId: {
         _id: currentUser._id || currentUser.id,
         name: currentUser.name,
@@ -1377,7 +1377,7 @@ export default function ReelsPage() {
   }, []);
 
   useEffect(() => {
-    fetchReels();
+    void fetchReels();
   }, [fetchReels]);
 
   // Feed categorization

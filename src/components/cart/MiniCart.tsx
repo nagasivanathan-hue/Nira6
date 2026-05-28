@@ -2,7 +2,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight, Shield, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { selectCartItems, selectCartTotal, removeFromCart, updateQuantity } from '@/store/cartSlice';

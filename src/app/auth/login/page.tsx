@@ -12,10 +12,11 @@ import { createClient } from '@/lib/supabase/client';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'user' | 'creator'>('user');
   const [emailTouched, setEmailTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
-  const [recaptchaStatus, setRecaptchaStatus] = useState<'idle' | 'scanning' | 'verified'>('idle');
+  const [recaptchaStatus, setRecaptchaStatus] = useState<'idle' | 'scanning' | 'verified'>('scanning');
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -35,7 +36,6 @@ export default function LoginPage() {
       emailInputRef.current.focus();
     }
     // Simulate background reCAPTCHA scanning
-    setRecaptchaStatus('scanning');
     const timer = setTimeout(() => {
       setRecaptchaStatus('verified');
     }, 1200);
@@ -88,6 +88,24 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Role Selection */}
+          <div className="flex bg-nira-gray rounded-xl p-1 mb-4">
+            <button
+              type="button"
+              onClick={() => setRole('user')}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all cursor-pointer ${role === 'user' ? 'bg-white text-nira-dark shadow-sm' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+            >
+              Client / Buyer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole('creator')}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all cursor-pointer ${role === 'creator' ? 'bg-nira-dark text-white shadow-sm' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+            >
+              Creator / Seller
+            </button>
+          </div>
+
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-nira-text-secondary" />
             <input 

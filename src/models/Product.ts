@@ -17,6 +17,20 @@ const productSchema = new mongoose.Schema({
   emiAvailable: { type: Boolean, default: false },
   specs: { type: Map, of: String },
   stock: { type: Number, default: 1 },
+  sku: { type: String, unique: true, sparse: true },
+  variants: [{
+    sku: { type: String, required: true },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    stock: { type: Number, default: 0 },
+    attributes: { type: Map, of: String } // e.g. color: 'Steel Gray', storage: '256GB'
+  }],
+  weight: { type: Number, default: 1000 }, // in grams, for shipping calculation
+  dimensions: {
+    length: { type: Number, default: 10 }, // in cm
+    width: { type: Number, default: 10 },
+    height: { type: Number, default: 10 }
+  },
   description: { type: String },
   seller: { type: String, default: 'NIRA6 Certified' },
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -32,3 +46,4 @@ const productSchema = new mongoose.Schema({
 
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 export default Product;
+

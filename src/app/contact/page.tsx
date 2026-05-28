@@ -76,8 +76,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-xs font-black text-nira-dark uppercase tracking-wider mb-1">Our Base</h3>
-                  <p className="text-xs text-nira-text-secondary font-bold">
-                    Madurai, India
+                  <p className="text-xs text-nira-text-secondary font-bold whitespace-pre-line">
+                    1/32 A-7 TPK,
+                    MDU-5 (Madurai)
                   </p>
                 </div>
               </div>

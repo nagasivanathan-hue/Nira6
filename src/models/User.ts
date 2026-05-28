@@ -3,11 +3,11 @@ import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true, index: true },
   phone: { type: String },
-  password: { type: String, required: true },
+  password: { type: String, required: true, select: false },
   avatar: { type: String },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'creator', 'admin'], default: 'user', index: true },
   walletBalance: { type: Number, default: 0 },
   walletTransactions: [{
     type: { type: String, enum: ['credit', 'debit'] },

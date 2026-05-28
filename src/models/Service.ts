@@ -27,6 +27,11 @@ export interface IService extends Document {
   image: string;
   description: string;
   tags: string[];
+  creatorId: mongoose.Types.ObjectId;
+  pricingType: 'Hourly' | 'Per Project' | 'Per Day';
+  revisionsCount: number;
+  addOns: { title: string; price: number; description: string }[];
+  faq: { question: string; answer: string }[];
   active: boolean;
   createdAt: Date;
 }
@@ -46,14 +51,19 @@ const ServiceSchema = new Schema<IService>({
   title: { type: String, required: true },
   category: { type: String, required: true, index: true },
   freelancer: { type: FreelancerSchema, required: true },
-  price: { type: Number, required: true },
+  price: { type: Number, required: true, index: true },
   deliveryDays: { type: Number, default: 3 },
-  rating: { type: Number, default: 4.5 },
+  rating: { type: Number, default: 4.5, index: true },
   reviewCount: { type: Number, default: 0 },
   image: { type: String, default: '/assets/product-camera.png' },
   description: { type: String, default: '' },
   tags: { type: [String], default: [] },
-  active: { type: Boolean, default: true },
+  creatorId: { type: Schema.Types.ObjectId, ref: 'CreatorProfile', index: true },
+  pricingType: { type: String, enum: ['Hourly', 'Per Project', 'Per Day'], default: 'Per Project' },
+  revisionsCount: { type: Number, default: 0 },
+  addOns: [{ title: String, price: Number, description: String }],
+  faq: [{ question: String, answer: String }],
+  active: { type: Boolean, default: true, index: true },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -130,7 +130,7 @@ export default function CreatorStudioPage() {
         if (res.ok) {
           const data: BarterListing[] = await res.json();
           if (data.length > 0) {
-            setBarterListings(data.map(b => ({ ...b, id: b.id || (b as any)._id || '' })));
+            setBarterListings(data.map(b => ({ ...b, id: b.id || (b as { _id?: string })._id || '' })));
           }
         }
       } catch (err) {
@@ -199,7 +199,7 @@ export default function CreatorStudioPage() {
       if (res.ok) {
         const data = await res.json();
         // Normalize items
-        const items = (data.items || []).map((g: any) => ({
+        const items = (data.items || []).map((g: GearItem & { _id?: string }) => ({
           ...g,
           id: g.id || g._id || '',
         }));

@@ -36,6 +36,7 @@ interface ServiceItem {
 
 export default function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [filters, setFilters] = useState({ location: '', minPrice: '', maxPrice: '', rating: '' });
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,24 +44,39 @@ export default function ServicesPage() {
   const categories = ['All', ...SERVICE_CATEGORIES];
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchServices = async () => {
       setLoading(true);
       setError(null);
       try {
-        const params = activeCategory !== 'All' ? `?category=${encodeURIComponent(activeCategory)}` : '';
-        const res = await fetch(`/api/services${params}`);
+        const queryParams = new URLSearchParams();
+        if (activeCategory !== 'All') queryParams.append('category', activeCategory);
+        if (filters.location) queryParams.append('location', filters.location);
+        if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
+        if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
+        if (filters.rating) queryParams.append('rating', filters.rating);
+
+        const res = await fetch(`/api/services?${queryParams.toString()}`, { signal: abortController.signal });
         if (!res.ok) throw new Error('Failed to load services');
         const data = await res.json();
         setServices(data);
       } catch (err: any) {
-        console.error('[Services] Fetch error:', err);
-        setError(err.message);
+        if (err.name === 'AbortError') return;
+        const error = err as Error;
+        console.error('[Services] Fetch error:', error);
+        setError(error.message);
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
     fetchServices();
-  }, [activeCategory]);
+    
+    return () => {
+      abortController.abort();
+    };
+  }, [activeCategory, filters]);
 
   return (
     <div className="min-h-screen bg-nira-gray">
@@ -71,12 +87,47 @@ export default function ServicesPage() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-8 pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-2" role="tablist" aria-label="Service Categories">
           {categories.map((cat) => (
-            <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-nira-dark text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-gray-dark'}`}>
+            <button 
+              key={cat} 
+              role="tab"
+              aria-selected={activeCategory === cat}
+              aria-controls={`panel-${cat}`}
+              onClick={() => setActiveCategory(cat)} 
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeCategory === cat ? 'bg-nira-dark text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-gray-dark'}`}
+            >
               {cat}
             </button>
           ))}
+        </div>
+
+        {/* Advanced Filters */}
+        <div className="bg-white p-4 rounded-xl border border-nira-gray-dark mb-8 flex flex-wrap gap-4 items-center shadow-sm">
+          <div className="flex-1 min-w-[150px]">
+            <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Location</label>
+            <input type="text" placeholder="e.g. Mumbai" value={filters.location} onChange={e => setFilters({...filters, location: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
+          </div>
+          <div className="flex-1 min-w-[150px]">
+            <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Min Price (₹)</label>
+            <input type="number" placeholder="0" value={filters.minPrice} onChange={e => setFilters({...filters, minPrice: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
+          </div>
+          <div className="flex-1 min-w-[150px]">
+            <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Max Price (₹)</label>
+            <input type="number" placeholder="Max" value={filters.maxPrice} onChange={e => setFilters({...filters, maxPrice: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
+          </div>
+          <div className="flex-1 min-w-[150px]">
+            <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Min Rating</label>
+            <select value={filters.rating} onChange={e => setFilters({...filters, rating: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0">
+              <option value="">Any Rating</option>
+              <option value="4">4.0 & Above</option>
+              <option value="4.5">4.5 & Above</option>
+              <option value="4.8">4.8 & Above</option>
+            </select>
+          </div>
+          <div className="flex items-end">
+            <button onClick={() => setFilters({ location: '', minPrice: '', maxPrice: '', rating: '' })} className="px-4 py-2 text-xs font-bold text-nira-text-secondary hover:text-nira-dark">Clear</button>
+          </div>
         </div>
 
         {/* Loading State */}

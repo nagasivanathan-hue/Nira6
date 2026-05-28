@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Award, Shield, Compass, Sparkles, Building, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Users, Compass, Sparkles, Building, Loader2 } from 'lucide-react';
 
 interface Founder {
   name: string;

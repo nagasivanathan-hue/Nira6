@@ -58,20 +58,30 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
+    const location = searchParams.get('location');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const minRating = searchParams.get('rating');
 
     let services;
     try {
       await dbConnect();
       const filter: Record<string, unknown> = { active: true };
-      if (category && category !== 'All') {
-        filter.category = category;
+      if (category && category !== 'All') filter.category = category;
+      if (location) filter['freelancer.location'] = new RegExp(location, 'i');
+      if (minPrice || maxPrice) {
+        filter.price = {};
+        if (minPrice) (filter.price as any).$gte = Number(minPrice);
+        if (maxPrice) (filter.price as any).$lte = Number(maxPrice);
       }
+      if (minRating) filter.rating = { $gte: Number(minRating) };
+
       services = await Service.find(filter).sort({ rating: -1 }).lean();
     } catch (dbErr) {
       console.warn('[api/services] DB unavailable, using fallback:', dbErr);
-      services = category && category !== 'All'
-        ? FALLBACK_SERVICES.filter(s => s.category === category)
-        : FALLBACK_SERVICES;
+      services = FALLBACK_SERVICES;
+      if (category && category !== 'All') services = services.filter(s => s.category === category);
+      if (location) services = services.filter(s => s.freelancer.location.toLowerCase().includes(location.toLowerCase()));
     }
 
     // If DB returned empty, use fallback

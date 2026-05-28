@@ -9,8 +9,14 @@ import {
 } from 'lucide-react';
 import { mockCreators, mockBookingPackages, mockCreatorReviews } from '@/lib/creatorMockData';
 import { CREATOR_CATEGORIES } from '@/lib/constants';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 
-export default function CreatorProfilePage({ params }: { params: Promise<{ id: string }> }) {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default function CreatorProfilePage({ params }: Props) {
   const { id } = use(params);
   const creator = mockCreators.find(c => c.id === id) || mockCreators[0];
   const catColor = CREATOR_CATEGORIES.find(c => c.id === creator.category)?.color || '#FFDA03';
@@ -48,8 +54,8 @@ export default function CreatorProfilePage({ params }: { params: Promise<{ id: s
         {/* Profile header */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 mb-6">
           <div className="flex flex-col sm:flex-row items-start gap-5">
-            <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg shrink-0 -mt-12 sm:-mt-16">
-              <img src={creator.avatar} alt={creator.name} className="w-full h-full object-cover" />
+            <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg shrink-0 -mt-12 sm:-mt-16 relative">
+              <Image src={creator.avatar} alt={creator.name} fill sizes="96px" className="object-cover" priority />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -106,9 +112,16 @@ export default function CreatorProfilePage({ params }: { params: Promise<{ id: s
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-gray-100 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-gray-100 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Creator Profile Tabs">
           {(['portfolio', 'packages', 'reviews', 'about'] as const).map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${activeTab === tab ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}>
+            <button 
+              key={tab} 
+              role="tab"
+              aria-selected={activeTab === tab}
+              aria-controls={`tabpanel-${tab}`}
+              onClick={() => setActiveTab(tab)} 
+              className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeTab === tab ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+            >
               {tab}
             </button>
           ))}
@@ -116,17 +129,17 @@ export default function CreatorProfilePage({ params }: { params: Promise<{ id: s
 
         {/* Tab Content */}
         {activeTab === 'portfolio' && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div id="tabpanel-portfolio" role="tabpanel" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {creator.portfolio.map((img, i) => (
-              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }} className="aspect-square rounded-xl overflow-hidden bg-nira-gray group cursor-pointer">
-                <img src={img} alt={`Portfolio ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }} className="aspect-square rounded-xl overflow-hidden bg-nira-gray group cursor-pointer relative">
+                <Image src={img} alt={`Portfolio ${i + 1}`} fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
               </motion.div>
             ))}
           </div>
         )}
 
         {activeTab === 'packages' && (
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div id="tabpanel-packages" role="tabpanel" className="grid sm:grid-cols-3 gap-4">
             {packages.map(pkg => (
               <div key={pkg.id} className={`bg-white rounded-2xl p-5 border ${pkg.popular ? 'border-nira-yellow shadow-lg shadow-nira-yellow/10 relative' : 'border-gray-100'}`}>
                 {pkg.popular && <span className="absolute -top-2.5 left-4 px-2.5 py-0.5 bg-nira-yellow text-nira-dark text-[9px] font-black rounded-full uppercase">Most Popular</span>}
@@ -146,7 +159,7 @@ export default function CreatorProfilePage({ params }: { params: Promise<{ id: s
         )}
 
         {activeTab === 'reviews' && (
-          <div className="space-y-4">
+          <div id="tabpanel-reviews" role="tabpanel" className="space-y-4">
             {reviews.map(r => (
               <div key={r.id} className="bg-white rounded-xl p-5 border border-gray-100">
                 <div className="flex items-center justify-between mb-2">
@@ -167,7 +180,7 @@ export default function CreatorProfilePage({ params }: { params: Promise<{ id: s
         )}
 
         {activeTab === 'about' && (
-          <div className="grid sm:grid-cols-2 gap-5">
+          <div id="tabpanel-about" role="tabpanel" className="grid sm:grid-cols-2 gap-5">
             <div className="bg-white rounded-xl p-5 border border-gray-100">
               <h3 className="font-heading font-bold text-sm text-nira-dark mb-3">Skills</h3>
               <div className="flex flex-wrap gap-1.5">{creator.skills.map(s => <span key={s} className="px-2.5 py-1 bg-nira-gray rounded-lg text-[11px] font-semibold text-nira-dark">{s}</span>)}</div>

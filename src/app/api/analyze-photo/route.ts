@@ -202,7 +202,33 @@ export async function POST(request: NextRequest) {
       .replace(/```\s*/g, '')
       .trim();
 
-    let analysis: any;
+    interface RawAnalysis {
+      camera_model?: string;
+      lens_model?: string;
+      aperture?: unknown;
+      iso?: unknown;
+      shutter_speed?: unknown;
+      focal_length?: unknown;
+      lens_type?: unknown;
+      lighting_setup?: unknown;
+      lighting_type?: unknown;
+      time_of_day?: unknown;
+      editing_style?: unknown;
+      photography_category?: unknown;
+      photography_style?: unknown;
+      difficulty_to_recreate?: unknown;
+      difficulty_level?: unknown;
+      confidence_score?: unknown;
+      recreation_tips?: unknown;
+      beginner_tips?: unknown;
+      explanations?: {
+        why_settings_used?: string;
+        how_to_recreate?: string;
+        beginner_friendly_tips?: string;
+      };
+    }
+
+    let analysis: RawAnalysis;
     try {
       analysis = JSON.parse(cleaned);
     } catch {
@@ -214,11 +240,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Normalize utility function
-    const normalizeValue = (val: any, defaultVal: string): EstimatedValue => {
+    const normalizeValue = (val: unknown, defaultVal: string): EstimatedValue => {
       if (val && typeof val === 'object') {
+        const v = val as Record<string, unknown>;
         return {
-          value: String(val.value || defaultVal),
-          confidence: String(val.confidence || '50%'),
+          value: String(v.value || defaultVal),
+          confidence: String(v.confidence || '50%'),
         };
       }
       return {
@@ -241,9 +268,9 @@ export async function POST(request: NextRequest) {
       photography_category: normalizeValue(analysis.photography_category || analysis.photography_style, 'General'),
       difficulty_to_recreate: normalizeValue(analysis.difficulty_to_recreate || analysis.difficulty_level, 'Medium'),
       
-      lighting_type: String(analysis.lighting_type || analysis.lighting_setup?.value || 'Soft lighting'),
-      photography_style: String(analysis.photography_style || analysis.photography_category?.value || 'General'),
-      difficulty_level: String(analysis.difficulty_level || analysis.difficulty_to_recreate?.value || 'Medium'),
+      lighting_type: String(analysis.lighting_type || (analysis.lighting_setup as any)?.value || 'Soft lighting'),
+      photography_style: String(analysis.photography_style || (analysis.photography_category as any)?.value || 'General'),
+      difficulty_level: String(analysis.difficulty_level || (analysis.difficulty_to_recreate as any)?.value || 'Medium'),
       confidence_score: String(analysis.confidence_score || '85%'),
       recreation_tips: Array.isArray(analysis.recreation_tips) ? analysis.recreation_tips : [
         String(analysis.explanations?.why_settings_used || 'No explanation why settings used.'),

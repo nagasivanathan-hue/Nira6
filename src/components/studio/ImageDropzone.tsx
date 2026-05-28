@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, DragEvent } from 'react';
-import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Lightbulb, Palette, Camera, ListChecks, HelpCircle, Maximize2 } from 'lucide-react';
+import { Upload, X, Aperture, CheckCircle2, AlertTriangle, Eye, Calendar, Zap, Palette, ListChecks, HelpCircle, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ExifReader from 'exifreader';

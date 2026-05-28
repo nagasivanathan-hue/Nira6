@@ -12,20 +12,25 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'user' | 'creator'>('user');
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { isLoading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isLoading, error, isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
+    if (isAuthenticated && user) {
+      if (user.role === 'creator') {
+        router.push('/auth/creator/onboarding');
+      } else {
+        router.push('/dashboard');
+      }
     }
     return () => { dispatch(clearError()); };
-  }, [isAuthenticated, router, dispatch]);
+  }, [isAuthenticated, user, router, dispatch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(register({ name, email, password }));
+    dispatch(register({ name, email, password, role }));
   };
 
   return (
@@ -45,6 +50,24 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Role Selection */}
+          <div className="flex bg-nira-gray rounded-xl p-1 mb-4">
+            <button
+              type="button"
+              onClick={() => setRole('user')}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${role === 'user' ? 'bg-white text-nira-dark shadow-sm' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+            >
+              Client / Buyer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole('creator')}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${role === 'creator' ? 'bg-nira-dark text-white shadow-sm' : 'text-nira-text-secondary hover:text-nira-dark'}`}
+            >
+              Creator / Seller
+            </button>
+          </div>
+
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-nira-text-secondary" />
             <input 

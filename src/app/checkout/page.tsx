@@ -188,7 +188,9 @@ export default function CheckoutPage() {
         orderItems: items.map(i => ({
           product: i.product.id,
           quantity: i.quantity,
-          price: i.product.price
+          price: i.product.price,
+          sku: (i.product as any).sku || '',
+          variant: (i.product as any).condition || (i.product as any).grade || ''
         })),
         shippingAddress: address,
         paymentMethod: finalPayable === 0 ? 'wallet' : payMethod,

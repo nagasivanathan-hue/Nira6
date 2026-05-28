@@ -23,8 +23,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "NIRA6 — Everything for a Creator in One Place",
-  description: "India's premium AI-powered recommerce platform for creators. Buy, sell, rent, and repair cameras, drones, lenses, and creator equipment at the best prices.",
+  title: "NIRA6 | India's Premium Creative Marketplace",
+  description: "India's premium recommerce platform for creators. Buy, sell, rent, and repair cameras, drones, lenses, and creator equipment at the best prices.",
   keywords: "buy used cameras, sell cameras india, rent camera equipment, creator marketplace, refurbished cameras, used drones, camera rental",
   icons: {
     icon: '/assets/logo.png',
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     apple: '/assets/logo.png',
   },
   openGraph: {
-    title: "NIRA6 — Everything for a Creator in One Place",
-    description: "India's premium AI-powered recommerce platform for creators.",
+    title: "NIRA6 | Premium Creative Ecosystem",
+    description: "India's premium recommerce platform for creators.",
     type: "website",
     locale: "en_IN",
     siteName: "NIRA6",

@@ -72,7 +72,7 @@ export default function Footer() {
               <Logo height={32} theme="dark" />
             </Link>
             <p className="text-white/50 text-sm mb-4 leading-relaxed">
-              India&apos;s premium AI-powered recommerce platform for creators and tech enthusiasts.
+              India&apos;s premium recommerce platform for creators and tech enthusiasts.
             </p>
             <div className="flex gap-3">
               {socialLinks.map(({ Icon, href, label }) => (

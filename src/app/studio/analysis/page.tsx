@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Camera, Sliders, Eye, Share2, ArrowLeft, Lightbulb, 
-  Palette, ShieldAlert, Sparkles, Check,
+  Camera, Sliders, Share2, ArrowLeft, Lightbulb, 
+  Palette, ShieldAlert, Check,
   Maximize2, Flame, Layers, Info, X, Download, RefreshCw
 } from 'lucide-react';
 
@@ -59,7 +59,7 @@ export default function AnalysisResultPage() {
   // Loading logs simulation
   const [loadingLog, setLoadingLog] = useState('Initializing lens calibration...');
   
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     if (!imageUrl) {
       setError('No storyboard image URL provided. Return to the studio and upload a reference image first.');
       setLoading(false);
@@ -101,19 +101,21 @@ export default function AnalysisResultPage() {
 
       const json = await res.json();
       setData(json);
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred during image evaluation.');
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message || 'An unexpected error occurred during image evaluation.');
     } finally {
       clearInterval(logInterval);
       setTimeout(() => {
         setLoading(false);
       }, 700);
     }
-  };
+  }, [imageUrl]);
 
   useEffect(() => {
-    fetchAnalysis();
-  }, [imageUrl]);
+    const timeout = setTimeout(() => { void fetchAnalysis(); }, 0);
+    return () => clearTimeout(timeout);
+  }, [fetchAnalysis]);
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {

@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const sanitizedEmail = sanitizeEmail(email);
 
     await dbConnect();
-    const user = await User.findOne({ email: sanitizedEmail });
+    const user = await User.findOne({ email: sanitizedEmail }).select('+password');
 
     if (!user || !(await user.comparePassword(password))) {
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id.toString()),
     });
   } catch (err) {

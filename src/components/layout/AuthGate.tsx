@@ -16,7 +16,8 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timeout = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timeout);
   }, []);
 
   // Allow accessing Auth pages, homepage, and reels feed without nesting inside AuthGate
