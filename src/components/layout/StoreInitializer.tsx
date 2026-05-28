@@ -28,7 +28,13 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
         }));
       } else {
         const stored = localStorage.getItem('userInfo');
-        if (!stored) {
+        if (stored) {
+          try {
+            dispatch(setAuth(JSON.parse(stored)));
+          } catch (e) {
+            dispatch(setAuth(null));
+          }
+        } else {
           dispatch(setAuth(null));
         }
       }
@@ -52,7 +58,13 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           dispatch(setAuth(null));
         } else {
           const stored = localStorage.getItem('userInfo');
-          if (!stored) {
+          if (stored) {
+            try {
+              dispatch(setAuth(JSON.parse(stored)));
+            } catch (e) {
+              dispatch(setAuth(null));
+            }
+          } else {
             dispatch(setAuth(null));
           }
         }
