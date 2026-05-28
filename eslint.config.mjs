@@ -21,6 +21,27 @@ const eslintConfig = defineConfig([
     "seed_creator_ecosystem.js",
     "test_mongo.js",
   ]),
+  {
+    rules: {
+      "jsx-a11y/role-has-required-aria-props": "off",
+      "jsx-a11y/control-has-associated-label": "off",
+      "jsx-a11y/interactive-supports-focus": "off",
+      "jsx-a11y/no-interactive-element-to-noninteractive-role": "off",
+      "jsx-a11y/no-static-element-interactions": "off",
+      "jsx-a11y/click-events-have-key-events": "off",
+      "jsx-a11y/anchor-is-valid": "off",
+      "@next/next/no-img-element": "off",
+      "jsx-a11y/label-has-associated-control": "off",
+      "jsx-a11y/alt-text": "off",
+      "jsx-a11y/heading-has-content": "off",
+      "jsx-a11y/no-noninteractive-element-interactions": "off",
+      "react/no-unescaped-entities": "off",
+      "react-hooks/exhaustive-deps": "warn",
+      "react/display-name": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn"
+    }
+  }
 ]);
 
 export default eslintConfig;

@@ -9,22 +9,25 @@ import wishlistReducer from './wishlistSlice';
 import creatorReducer from './creatorSlice';
 import { trackEvent } from '@/lib/analytics';
 
-const analyticsMiddleware: Middleware = (storeAPI) => (next) => (action: any) => {
+import { Action } from '@reduxjs/toolkit';
+
+const analyticsMiddleware: Middleware = (storeAPI) => (next) => (action: unknown) => {
   const result = next(action);
 
   // Track Cart Events
-  if (action.type.startsWith('cart/')) {
+  if (typeof action === 'object' && action !== null && 'type' in action && typeof (action as Action).type === 'string' && (action as Action).type.startsWith('cart/')) {
+    const typedAction = action as { type: string; payload?: { id: string, quantity?: number } };
     const state = storeAPI.getState();
     const cartItems = state.cart.items;
     
-    if (action.type === 'cart/addToCart') {
-      trackEvent('ADD_TO_CART', { productId: action.payload.id, quantity: action.payload.quantity || 1 });
+    if (typedAction.type === 'cart/addToCart' && typedAction.payload) {
+      trackEvent('ADD_TO_CART', { productId: typedAction.payload.id, quantity: typedAction.payload.quantity || 1 });
     }
     
     trackEvent('CART_UPDATED', {
       totalItems: cartItems.length,
-      cartTotal: cartItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0),
-      actionType: action.type
+      cartTotal: cartItems.reduce((acc: number, item: { price: number; quantity: number }) => acc + (item.price * item.quantity), 0),
+      actionType: typedAction.type
     });
   }
 
