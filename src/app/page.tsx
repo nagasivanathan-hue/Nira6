@@ -66,6 +66,7 @@ function StatCounter({ value, duration = 2 }: { value: number; duration?: number
 }
 
 export default function HomePage() {
+  const [demoOpen, setDemoOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
