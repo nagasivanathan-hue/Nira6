@@ -642,6 +642,7 @@ export default function DashboardPage() {
                         { label: 'Logged Tickets', value: tickets.length.toString(), icon: AlertCircle, color: '#3B82F6' },
                       ].map((stat) => (
                         <div key={stat.label} className="bg-white rounded-2xl p-5 shadow-sm border border-nira-gray-dark hover:shadow-md transition-all">
+                          {/* eslint-disable-next-line react/forbid-component-props, react/forbid-dom-props */}
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: stat.color + '15', color: stat.color }}>
                             <stat.icon className="w-4 h-4" />
                           </div>
@@ -684,6 +685,7 @@ export default function DashboardPage() {
                               <div className="flex items-center gap-3 shrink-0">
                                 <div className="text-right">
                                   <p className="font-black text-xs text-nira-dark">{formatPrice(order.totalAmount)}</p>
+                                  {/* eslint-disable-next-line react/forbid-component-props, react/forbid-dom-props */}
                                   <span className="text-[9px] font-black uppercase" style={{ color: statusColors[order.orderStatus] }}>
                                     {order.returned ? 'Returned & Refunded' : order.orderStatus}
                                   </span>
@@ -885,6 +887,8 @@ export default function DashboardPage() {
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Market Category</label>
                           <select
+                            title="Market Category"
+                            aria-label="Market Category"
                             value={sellForm.category}
                             onChange={(e) => setSellForm({ ...sellForm, category: e.target.value })}
                             className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
@@ -899,6 +903,8 @@ export default function DashboardPage() {
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Physical Diagnostics Grade</label>
                           <select
+                            title="Physical Diagnostics Grade"
+                            aria-label="Physical Diagnostics Grade"
                             value={sellForm.grade}
                             onChange={(e) => setSellForm({ ...sellForm, grade: e.target.value })}
                             className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
@@ -979,6 +985,8 @@ export default function DashboardPage() {
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Problem Category</label>
                           <select
+                            title="Problem Category"
+                            aria-label="Problem Category"
                             value={ticketCategory}
                             onChange={(e) => setTicketCategory(e.target.value)}
                             className="px-3.5 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none cursor-pointer"
@@ -1248,11 +1256,11 @@ export default function DashboardPage() {
                     <div className="space-y-4 max-w-md">
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-nira-text-secondary">Full Name</label>
-                        <input type="text" defaultValue={userInfo.name} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" />
+                        <input type="text" title="Full Name" placeholder="Full Name" defaultValue={userInfo.name} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" />
                       </div>
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-nira-text-secondary">Email Address</label>
-                        <input type="email" defaultValue={userInfo.email} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" disabled />
+                        <input type="email" title="Email Address" placeholder="Email Address" defaultValue={userInfo.email} className="px-4 py-3 bg-nira-gray rounded-xl text-sm border-none" disabled />
                       </div>
                       <button className="px-6 py-3 bg-nira-yellow text-nira-dark font-semibold rounded-xl hover:bg-nira-yellow-dark transition-colors cursor-pointer">Save Changes</button>
                     </div>
