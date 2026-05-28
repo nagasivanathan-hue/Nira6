@@ -8,10 +8,10 @@ import {
   ArrowRight, Play, Sparkles, Shield, TrendingUp, 
   Cpu, Layers, Star, 
   Compass, DollarSign, Activity, Eye, Heart, Share2, Clapperboard,
-  Briefcase, RefreshCw, Sliders, Camera, Zap
+  Briefcase, RefreshCw, Sliders, Camera
 } from 'lucide-react';
-import ProductCarousel from '@/components/products/ProductCarousel';
-import { mockProducts } from '@/lib/mockData';
+import TrendingGear from '@/components/home/TrendingGear';
+import FeaturedDeals from '@/components/home/FeaturedDeals';
 
 const formatPrice = (p: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -341,72 +341,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 1.5. E-COMMERCE DISCOVERY SECTION (AMAZON-UX) */}
-      <section className="relative py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-white/5">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFDA03]/5 rounded-full blur-[120px] pointer-events-none" />
-        
-        <div className="mb-20">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-2 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5" /> TODAY&apos;S LIGHTNING DEALS
-              </span>
-              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
-                Up to 40% Off Premium Gear
-              </h2>
-            </div>
-            <Link href="/buy?sort=discount" className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-neutral-400 hover:text-nira-yellow transition-colors group">
-              View All Deals <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-          <ProductCarousel 
-            title=""
-            products={mockProducts.filter(p => p.discount > 20).slice(0, 8)} 
-            theme="dark"
-          />
-        </div>
-
-        <div className="mb-20">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <span className="text-[11px] uppercase font-mono tracking-widest text-emerald-400 block mb-2 flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5" /> TRENDING NOW
-              </span>
-              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
-                Best Selling Creator Tools
-              </h2>
-            </div>
-            <Link href="/buy?sort=popular" className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-neutral-400 hover:text-emerald-400 transition-colors group">
-              Explore Trending <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-          <ProductCarousel 
-            title=""
-            products={mockProducts.filter(p => p.brand === 'Sony' || p.brand === 'DJI').slice(0, 8)} 
-            theme="dark"
-          />
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <span className="text-[11px] uppercase font-mono tracking-widest text-purple-400 block mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> AI CURATED
-              </span>
-              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
-                Recommended For You
-              </h2>
-            </div>
-            <Link href="/buy" className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-neutral-400 hover:text-purple-400 transition-colors group">
-              Update Preferences <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-          <ProductCarousel 
-            title=""
-            products={mockProducts.slice(4, 12)} 
-            theme="dark"
-          />
-        </div>
+      {/* 1.5. NATIVE E-COMMERCE DISCOVERY SECTION */}
+      <section className="relative w-full border-b border-white/5">
+        <FeaturedDeals />
+        <TrendingGear />
       </section>
 
       {/* 2. ABOUT THE PLATFORM SECTION */}
