@@ -86,11 +86,11 @@ export const BRANDS = [
 ] as const;
 
 export const CONDITION_GRADES = {
-  'A+': { label: 'Like New', color: '#10B981', description: 'Pristine condition, no visible wear' },
-  'A': { label: 'Excellent', color: '#22C55E', description: 'Minimal wear, fully functional' },
-  'B+': { label: 'Very Good', color: '#84CC16', description: 'Light wear, all features working' },
-  'B': { label: 'Good', color: '#F59E0B', description: 'Moderate wear, fully operational' },
-  'C': { label: 'Fair', color: '#EF4444', description: 'Visible wear, but functional' },
+  'A+': { label: 'Like New', color: '#10B981', colorClass: 'bg-emerald-500', description: 'Pristine condition, no visible wear' },
+  'A': { label: 'Excellent', color: '#22C55E', colorClass: 'bg-green-500', description: 'Minimal wear, fully functional' },
+  'B+': { label: 'Very Good', color: '#84CC16', colorClass: 'bg-lime-500', description: 'Light wear, all features working' },
+  'B': { label: 'Good', color: '#F59E0B', colorClass: 'bg-amber-500', description: 'Moderate wear, fully operational' },
+  'C': { label: 'Fair', color: '#EF4444', colorClass: 'bg-red-500', description: 'Visible wear, but functional' },
 } as const;
 
 export const SERVICE_CATEGORIES = [

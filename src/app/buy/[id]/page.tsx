@@ -6,6 +6,7 @@ import {
   Star, ShoppingCart, Heart, Shield, Truck, RotateCcw, ChevronRight, 
   Loader2, Sparkles, CheckCircle2, ArrowRight, Search, Eye, Users, Flame, Check, Bell
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { formatPrice } from '@/lib/utils';
 import { CONDITION_GRADES } from '@/lib/constants';
 import { useAppDispatch, useAppSelector } from '@/store';
@@ -398,7 +399,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   priority
                 />
               </div>
-              <span className="absolute top-5 left-5 px-3 py-1.5 text-xs font-bold rounded-xl text-white shadow-lg backdrop-blur-sm border border-white/10" style={{ backgroundColor: gradeInfo.color }}>
+              <span className={`absolute top-5 left-5 px-3 py-1.5 text-xs font-bold rounded-xl text-white shadow-lg backdrop-blur-sm border border-white/10 ${gradeInfo.colorClass}`}>
                 Grade {product.grade} — {gradeInfo.label}
               </span>
 
@@ -406,14 +407,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {showMagnifier && (
                 <div
                   className="absolute w-40 h-40 border-2 border-nira-yellow/60 rounded-full pointer-events-none z-10 shadow-2xl"
-                  style={{
-                    left: `${magnifierPos.x}%`,
-                    top: `${magnifierPos.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                    backgroundImage: `url(${product.image})`,
-                    backgroundSize: '400%',
-                    backgroundPosition: `${magnifierPos.x}% ${magnifierPos.y}%`,
-                    backgroundRepeat: 'no-repeat',
+                  ref={(el) => {
+                    if (el) {
+                      el.style.left = `${magnifierPos.x}%`;
+                      el.style.top = `${magnifierPos.y}%`;
+                      el.style.transform = 'translate(-50%, -50%)';
+                      el.style.backgroundImage = `url(${product.image})`;
+                      el.style.backgroundSize = '400%';
+                      el.style.backgroundPosition = `${magnifierPos.x}% ${magnifierPos.y}%`;
+                      el.style.backgroundRepeat = 'no-repeat';
+                    }
                   }}
                 />
               )}
@@ -459,14 +462,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {product.originalPrice && (
                 <>
                   <span className="text-lg text-nira-text-secondary line-through font-medium">{formatPrice(product.originalPrice)}</span>
-                  <span className="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-black rounded-lg uppercase tracking-wide">{product.discount}% OFF</span>
+                  <span className="px-2.5 py-1 bg-red-50 text-red-600 text-[10px] font-black rounded-lg uppercase tracking-wide">{product.discount}% OFF</span>
                 </>
               )}
             </div>
-            {product.emiAvailable && <p className="text-xs text-teal-600 mb-6 font-bold flex items-center gap-1">✨ Low-Cost EMI available starting from {formatPrice(Math.round(product.price / 12))}/month</p>}
+            {product.emiAvailable && <p className="text-xs text-teal-700 mb-4 font-bold flex items-center gap-1">✨ Low-Cost EMI available starting from {formatPrice(Math.round(product.price / 12))}/month</p>}
+
+            {/* Diagnostics guarantees banner lists - MOVED UP */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {[
+                { icon: Shield, label: product.warranty || '6 Months Warranty' },
+                { icon: Truck, label: 'Free Delivery' },
+                { icon: RotateCcw, label: '7-Day Return Policy' },
+              ].map(({ icon: Icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-1.5 p-3 bg-neutral-50/80 rounded-xl text-center border border-neutral-100">
+                  <Icon className="w-5 h-5 text-nira-yellow-dark" />
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-700 leading-tight">{label}</span>
+                </div>
+              ))}
+            </div>
 
             {/* Description details */}
-            <p className="text-nira-text-secondary text-xs leading-relaxed mb-6 bg-nira-gray/20 p-4 rounded-2xl border border-nira-gray-dark/50">{product.description}</p>
+            <p className="text-neutral-600 text-xs leading-relaxed mb-6 bg-neutral-50 p-4 rounded-xl border border-neutral-100">{product.description}</p>
 
 
             {/* Color Variant Swatches */}
@@ -491,7 +508,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         notifyColor === color.name ? 'border-red-400 ring-2 ring-red-200' :
                         'border-neutral-200 hover:border-neutral-400'
                       } ${!color.inStock ? 'opacity-50' : ''}`}
-                      style={{ backgroundColor: color.hex }}
+                      ref={(el) => { if (el) el.style.backgroundColor = color.hex; }}
                       title={`${color.name}${!color.inStock ? ' (Out of Stock)' : ''}`}
                     >
                       {!color.inStock && (
@@ -516,7 +533,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             )}
 
             {/* Action buttons triggers */}
-            <div ref={buyBoxRef} className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div ref={buyBoxRef} className="flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleAddToCartAnimated}
                 disabled={addingToCart || !!notifyColor}
@@ -525,15 +542,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     ? 'bg-emerald-500 text-white'
                     : notifyColor
                     ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
-                    : 'bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark'
-                } disabled:opacity-60`}
+                    : 'bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark hover:scale-[1.02]'
+                } disabled:opacity-60 disabled:hover:scale-100`}
               >
                 {addingToCart ? (
                   <span className="w-5 h-5 border-2 border-nira-dark/30 border-t-nira-dark rounded-full animate-spin" />
                 ) : addedToCart ? (
                   <><Check className="w-4 h-4" /> Added!</>
                 ) : notifyColor ? (
-                  <><Bell className="w-4 h-4" /> Notify Me When Available</>
+                  <><Bell className="w-4 h-4" /> Notify Me</>
                 ) : (
                   <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
                 )}
@@ -541,102 +558,87 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <Link 
                 href="/checkout"
                 onClick={() => dispatch(addToCart(product))}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-nira-dark text-white font-black tracking-wider uppercase text-xs rounded-xl hover:bg-nira-yellow hover:text-nira-dark shadow-md cursor-pointer transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-nira-dark text-white font-black tracking-wider uppercase text-xs rounded-xl hover:bg-neutral-800 shadow-md hover:scale-[1.02] cursor-pointer transition-all"
               >
-                Buy Now
+                Buy Now <ArrowRight className="w-4 h-4" />
               </Link>
               <button 
                 onClick={() => product && dispatch(toggleWishlist(product.id))}
-                className={`w-14 h-14 flex items-center justify-center border-2 rounded-xl transition-all group cursor-pointer ${isInWishlist ? 'bg-nira-yellow border-nira-yellow text-nira-dark' : 'border-nira-gray-dark hover:bg-nira-gray text-nira-text-secondary hover:text-red-500 hover:border-red-200'}`} 
+                className={`w-14 h-14 flex items-center justify-center border-2 rounded-xl transition-all group cursor-pointer ${isInWishlist ? 'bg-nira-yellow border-nira-yellow text-nira-dark' : 'border-neutral-200 hover:bg-neutral-50 text-neutral-500 hover:text-red-500 hover:border-red-200'}`} 
                 aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart className={`w-5 h-5 transition-colors ${isInWishlist ? 'fill-nira-dark text-nira-dark' : 'group-hover:fill-red-500'}`} />
               </button>
-            </div>
-
-            {/* Diagnostics guarantees banner lists */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { icon: Shield, label: product.warranty || '6 Months Warranty' },
-                { icon: Truck, label: 'Standard Free Shipping' },
-                { icon: RotateCcw, label: '7-Day Return Diagnostics' },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-2 p-3 bg-nira-gray/40 rounded-xl text-center border border-nira-gray-dark/50">
-                  <Icon className="w-5 h-5 text-nira-success" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-nira-dark leading-tight">{label}</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
 
       {/* Amazon-Style Frequently Bought Together */}
       {bundleAccessories.length > 0 && (
-        <div className="mt-16 border-t border-nira-gray-dark pt-12">
-            <h2 className="font-heading font-black text-lg text-nira-dark uppercase tracking-wider mb-6 flex items-center gap-1.5">
-              📦 Frequently Bought Together
+        <div className="mt-16 pt-12 border-t border-neutral-200">
+            <h2 className="font-heading font-black text-xl text-neutral-900 mb-6 flex items-center gap-2">
+              Frequently Bought Together
             </h2>
-            <div className="bg-nira-gray/40 rounded-3xl p-6 border border-nira-gray-dark flex flex-col lg:flex-row items-center gap-8 justify-between">
-              {/* Products Flow */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 lg:gap-6 flex-1">
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              {/* Left Side: Images Flow */}
+              <div className="flex-1 flex flex-wrap items-center gap-4">
                 {/* Main Product */}
-                <div className="flex items-center gap-4">
-                  <div className="relative w-24 h-24 bg-white border border-nira-gray-dark rounded-2xl flex items-center justify-center p-3 shadow-inner">
-                    <Image src={product.image} alt={product.name} fill className="object-contain p-2" />
-                    <div className="absolute top-1.5 left-1.5 bg-nira-dark text-white rounded text-[7px] font-black px-1.5 py-0.5 uppercase">This Item</div>
-                  </div>
-                  <div className="max-w-[140px] text-xs">
-                    <p className="font-bold text-nira-dark line-clamp-2 leading-tight">{product.name}</p>
-                    <p className="font-black text-neutral-900 mt-1">{formatPrice(product.price)}</p>
-                  </div>
+                <div className="relative w-28 h-28 bg-white border border-neutral-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow">
+                  <Image src={product.image} alt={product.name} fill className="object-contain p-2" />
                 </div>
-
                 {bundleAccessories.map((acc) => (
                   <div key={acc.id} className="flex items-center gap-4">
-                    <span className="text-xl font-bold text-neutral-400">+</span>
-                    <div 
-                      onClick={() => toggleBundleItem(acc.id)}
-                      className={`relative w-24 h-24 bg-white border rounded-2xl flex items-center justify-center p-3 shadow-inner cursor-pointer select-none transition-all ${
-                        selectedBundleItems.includes(acc.id) ? 'border-nira-yellow ring-2 ring-nira-yellow/20' : 'border-nira-gray-dark opacity-50 hover:opacity-80'
-                      }`}
-                    >
+                    <span className="text-2xl font-bold text-neutral-300">+</span>
+                    <div className="relative w-28 h-28 bg-white border border-neutral-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => toggleBundleItem(acc.id)}>
                       <Image src={acc.image} alt={acc.name} fill className="object-contain p-2" />
-                      <input 
-                        type="checkbox" 
-                        checked={selectedBundleItems.includes(acc.id)}
-                        onChange={() => {}}
-                        className="absolute top-1.5 left-1.5 rounded text-nira-yellow focus:ring-nira-yellow border-neutral-300 w-3 h-3 cursor-pointer"
-                      />
-                    </div>
-                    <div className="max-w-[140px] text-xs">
-                      <p className="font-bold text-neutral-700 line-clamp-2 leading-tight">{acc.name}</p>
-                      <p className="font-black text-neutral-900 mt-1">{formatPrice(acc.price)}</p>
+                      {!selectedBundleItems.includes(acc.id) && (
+                        <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] rounded-xl transition-all" />
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Price Bundle Action Box */}
-              <div className="w-full lg:w-72 bg-white border border-nira-gray-dark rounded-2xl p-5 shadow-sm space-y-4">
-                <div className="text-center lg:text-left">
-                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Total Bundle Price</p>
-                  <div className="flex items-baseline justify-center lg:justify-start gap-2 mt-1">
-                    <span className="text-xl font-black text-nira-dark">{formatPrice(bundleTotal)}</span>
-                    {selectedBundleItems.length > 1 && (
-                      <span className="text-[8px] text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-lg uppercase tracking-wider">Save 5%</span>
-                    )}
-                  </div>
-                  <p className="text-[9px] text-neutral-500 mt-1 font-semibold">
-                    For {selectedBundleItems.length} selected items
-                  </p>
+              {/* Right Side: Checklist and Action */}
+              <div className="w-full lg:w-[380px] bg-neutral-50 rounded-2xl p-6 border border-neutral-200">
+                <div className="space-y-3 mb-6">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" checked readOnly className="mt-1 rounded text-nira-yellow focus:ring-nira-yellow border-neutral-300 w-4 h-4" />
+                    <div className="text-sm">
+                      <span className="font-bold text-neutral-800">This item:</span>{' '}
+                      <span className="text-neutral-600 line-clamp-2 leading-snug">{product.name}</span>
+                      <span className="font-black text-neutral-900 mt-1 block">{formatPrice(product.price)}</span>
+                    </div>
+                  </label>
+                  
+                  {bundleAccessories.map(acc => (
+                    <label key={acc.id} className="flex items-start gap-3 cursor-pointer group">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedBundleItems.includes(acc.id)}
+                        onChange={() => toggleBundleItem(acc.id)}
+                        className="mt-1 rounded text-nira-yellow focus:ring-nira-yellow border-neutral-300 w-4 h-4 cursor-pointer" 
+                      />
+                      <div className={`text-sm transition-opacity ${selectedBundleItems.includes(acc.id) ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`}>
+                        <span className="text-neutral-700 line-clamp-2 leading-snug">{acc.name}</span>
+                        <span className="font-black text-neutral-900 mt-1 block">{formatPrice(acc.price)}</span>
+                      </div>
+                    </label>
+                  ))}
                 </div>
 
-                <button
-                  onClick={handleAddBundleToCart}
-                  className="w-full py-3.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-[10px] rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-colors"
-                >
-                  <ShoppingCart className="w-3.5 h-3.5" /> Add Bundle to Cart
-                </button>
+                <div className="pt-5 border-t border-neutral-200">
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-sm font-bold text-neutral-600">Total Price:</span>
+                    <span className="text-2xl font-black text-neutral-900">{formatPrice(bundleTotal)}</span>
+                  </div>
+                  <button
+                    onClick={handleAddBundleToCart}
+                    className="w-full py-3.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer"
+                  >
+                    Add selected to Cart
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -659,7 +661,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     <div key={stars} className="flex items-center gap-2 text-xs">
                       <span className="w-3 text-right font-semibold">{stars}</span>
                       <div className="flex-1 h-2 bg-nira-gray rounded-full overflow-hidden">
-                        <div className="h-full bg-nira-yellow rounded-full" style={{ width: `${percentage}%` }} />
+                        <div className="h-full bg-nira-yellow rounded-full" ref={(el) => { if (el) el.style.width = `${percentage}%`; }} />
                       </div>
                       <span className="w-7 text-right text-[10px] text-nira-text-secondary font-bold">{percentage}%</span>
                     </div>
@@ -683,6 +685,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(null)}
                       className="p-0.5 text-gray-300 hover:scale-110 transition-transform cursor-pointer"
+                      title={`Rate ${star} stars`}
+                      aria-label={`Rate ${star} stars`}
                     >
                       <Star 
                         className={`w-6 h-6 ${
@@ -925,33 +929,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         )}
 
-        {/* Mobile Sticky CTA Bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-100 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-between lg:hidden md:px-6">
-          <div className="flex flex-col min-w-0 pr-4">
-            <h4 className="text-xs font-bold text-neutral-900 truncate leading-snug">{product.name}</h4>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="font-heading font-black text-sm text-neutral-950">{formatPrice(product.price)}</span>
-              <span className="text-[9px] font-bold text-nira-success bg-green-50 px-1.5 py-0.5 rounded border border-green-100">Grade {product.grade}</span>
-            </div>
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <button
-              onClick={handleAddToCartAnimated}
-              className="px-3.5 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold rounded-xl text-xs flex items-center justify-center cursor-pointer transition-colors"
-              aria-label="Add to cart"
+        {/* Sticky Mobile Buy Bar */}
+        <AnimatePresence>
+          {showStickyBar && (
+            <motion.div 
+              initial={{ y: 100 }}
+              animate={{ y: 0 }}
+              exit={{ y: 100 }}
+              className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-neutral-200 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] lg:hidden flex gap-3"
             >
-              <ShoppingCart className="w-4 h-4" />
-            </button>
-            <Link
-              href="/checkout"
-              onClick={() => dispatch(addToCart(product))}
-              className="px-5 py-2.5 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase text-xs rounded-xl flex items-center justify-center shadow-md cursor-pointer transition-colors"
-            >
-              Buy Now
-            </Link>
-          </div>
-        </div>
-
+              <button 
+                onClick={handleAddToCartAnimated}
+                disabled={addingToCart || !!notifyColor}
+                className={`flex-1 py-3.5 rounded-xl font-black text-xs uppercase tracking-wider flex justify-center items-center gap-2 ${
+                  addedToCart ? 'bg-emerald-500 text-white' : notifyColor ? 'bg-amber-400 text-amber-900' : 'bg-nira-yellow text-nira-dark'
+                }`}
+              >
+                {addingToCart ? <Loader2 className="w-4 h-4 animate-spin" /> : addedToCart ? <Check className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                {addedToCart ? 'Added' : notifyColor ? 'Notify' : 'Add to Cart'}
+              </button>
+              <Link 
+                href="/checkout"
+                onClick={() => dispatch(addToCart(product))}
+                className="flex-1 py-3.5 bg-nira-dark text-white rounded-xl font-black text-xs uppercase tracking-wider flex justify-center items-center gap-1.5"
+              >
+                Buy Now <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

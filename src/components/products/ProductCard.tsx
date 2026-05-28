@@ -57,51 +57,58 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Quality Grade Pill Badges */}
+        {/* Quality Grade Pill Badges & Urgency */}
         <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
           <span 
-            className="px-3 py-1 text-[10px] font-extrabold rounded-full text-white shadow-sm flex items-center gap-1" 
-            style={{ backgroundColor: gradeInfo.color }}
+            className={`px-3 py-1 text-[10px] font-extrabold rounded-full text-white shadow-sm flex items-center gap-1 ${gradeInfo.colorClass}`}
           >
             <Shield className="w-3 h-3" />
             Grade {product.grade}
           </span>
           {product.discount > 20 && (
-            <span className="px-3 py-1 text-[10px] font-extrabold rounded-full bg-red-500 text-white shadow-sm">
+            <span className="px-3 py-1 text-[10px] font-extrabold rounded-full bg-red-500 text-white shadow-sm w-fit">
               {product.discount}% OFF
+            </span>
+          )}
+          {product.discount > 30 && (
+            <span className="px-2 py-0.5 text-[9px] font-extrabold rounded-full bg-orange-100 text-orange-600 border border-orange-200 shadow-sm w-fit mt-0.5">
+              Only 2 left!
             </span>
           )}
         </div>
 
-        {/* Quick Save to Wishlist */}
-        <button 
-          onClick={(e) => { 
-            e.preventDefault(); 
-            e.stopPropagation();
-            dispatch(toggleWishlist(product.id)); 
-          }}
-          className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
-            isInWishlist 
-              ? 'bg-nira-yellow text-nira-dark opacity-100 scale-100' 
-              : 'bg-white/80 backdrop-blur-md text-neutral-600 opacity-0 group-hover:opacity-100 hover:bg-nira-yellow hover:text-nira-dark shadow-md'
-          }`} 
-          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-nira-dark' : ''}`} />
-        </button>
+        {/* Quick Actions Container (Always visible on mobile, hover on desktop) */}
+        <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
+          {/* Quick Save to Wishlist */}
+          <button 
+            onClick={(e) => { 
+              e.preventDefault(); 
+              e.stopPropagation();
+              dispatch(toggleWishlist(product.id)); 
+            }}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
+              isInWishlist 
+                ? 'bg-nira-yellow text-nira-dark' 
+                : 'bg-white/90 backdrop-blur-md text-neutral-600 hover:bg-nira-yellow hover:text-nira-dark'
+            }`} 
+            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-nira-dark' : ''}`} />
+          </button>
 
-        {/* Quick Add To Cart Button */}
-        <button
-          onClick={(e) => { 
-            e.preventDefault(); 
-            e.stopPropagation();
-            dispatch(addToCart(product)); 
-          }}
-          className="absolute bottom-4 right-4 w-10 h-10 bg-nira-dark text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-nira-yellow hover:text-nira-dark transition-all duration-350 shadow-lg transform translate-y-2 group-hover:translate-y-0 z-10"
-          aria-label="Add to cart"
-        >
-          <ShoppingCart className="w-4 h-4" />
-        </button>
+          {/* Quick Add To Cart Button */}
+          <button
+            onClick={(e) => { 
+              e.preventDefault(); 
+              e.stopPropagation();
+              dispatch(addToCart(product)); 
+            }}
+            className="w-9 h-9 bg-nira-dark text-white rounded-full flex items-center justify-center hover:bg-nira-yellow hover:text-nira-dark transition-all duration-300 shadow-md transform lg:translate-y-2 lg:group-hover:translate-y-0"
+            aria-label="Add to cart"
+          >
+            <ShoppingCart className="w-4 h-4" />
+          </button>
+        </div>
       </Link>
 
       {/* Product Information */}

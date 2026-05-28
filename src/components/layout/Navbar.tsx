@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { selectCartCount } from '@/store/cartSlice';
-import { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery } from '@/store/uiSlice';
+import { toggleMobileMenu, closeMobileMenu, toggleSearch, setSearchQuery, toggleCartDrawer } from '@/store/uiSlice';
 import { NAV_LINKS } from '@/lib/constants';
 import { Search, ShoppingCart, User, Menu, X, Heart, Bell, MessageSquare, Mail, Smartphone, AlertCircle, Sparkles, History, Tag, Award, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -232,6 +232,8 @@ export default function Navbar() {
                           });
                         }}
                         className="text-neutral-400 hover:text-red-500 p-0.5 rounded-full"
+                        title="Remove recent search"
+                        aria-label="Remove recent search"
                       >
                         <X className="w-2.5 h-2.5" />
                       </button>
@@ -510,6 +512,8 @@ export default function Navbar() {
                       setKeyboardIndex(-1);
                     }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-neutral-600 transition-colors"
+                    title="Clear search"
+                    aria-label="Clear search"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -539,18 +543,18 @@ export default function Navbar() {
               >
                 <Heart className="w-5 h-5" />
               </Link>
-              <Link 
-                href="/cart" 
-                className={`relative p-3 rounded-lg transition-colors ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
+              <button 
+                onClick={() => dispatch(toggleCartDrawer())}
+                className={`relative p-3 rounded-lg transition-colors cursor-pointer ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
                 aria-label="Cart"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-nira-yellow text-nira-dark text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-nira-yellow text-nira-dark text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
-              </Link>
+              </button>
 
               {/* Simulated Notification Bell & Log Terminal */}
               <div className="relative">
@@ -628,7 +632,7 @@ export default function Navbar() {
                                         <div className="prose prose-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: n.content }} />
                                       </div>
                                     ) : n.type === 'sms' ? (
-                                      <div className="mt-1.5 p-2 bg-nira-dark text-white rounded-xl text-[10px] font-mono leading-relaxed relative overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle at top right, #222, #000)' }}>
+                                      <div className="mt-1.5 p-2 bg-[radial-gradient(circle_at_top_right,_#222,_#000)] text-white rounded-xl text-[10px] font-mono leading-relaxed relative overflow-hidden">
                                         <div className="border-b border-white/10 pb-1 mb-1 font-bold text-[8px] text-nira-yellow uppercase tracking-widest">NIRA6 SECURE GATEWAY (SMS)</div>
                                         {n.content}
                                       </div>
@@ -704,6 +708,8 @@ export default function Navbar() {
                         setKeyboardIndex(-1);
                       }}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-neutral-600 transition-colors"
+                      title="Clear search"
+                      aria-label="Clear search"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -736,7 +742,12 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
                 <Logo height={26} theme="light" />
-                <button onClick={() => dispatch(closeMobileMenu())} className="p-2 hover:bg-neutral-100 rounded-xl transition-colors">
+                <button 
+                  onClick={() => dispatch(closeMobileMenu())} 
+                  className="p-2 hover:bg-neutral-100 rounded-xl transition-colors"
+                  title="Close mobile menu"
+                  aria-label="Close mobile menu"
+                >
                   <X className="w-5 h-5 text-nira-dark" />
                 </button>
               </div>

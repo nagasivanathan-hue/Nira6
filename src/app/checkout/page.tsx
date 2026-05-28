@@ -185,13 +185,16 @@ export default function CheckoutPage() {
     try {
       // Setup payload including new e-commerce fields
       const orderPayload = {
-        orderItems: items.map(i => ({
-          product: i.product.id,
-          quantity: i.quantity,
-          price: i.product.price,
-          sku: (i.product as any).sku || '',
-          variant: (i.product as any).condition || (i.product as any).grade || ''
-        })),
+        orderItems: items.map(i => {
+          const prod = i.product as unknown as Record<string, string | number | undefined>;
+          return {
+            product: i.product.id,
+            quantity: i.quantity,
+            price: i.product.price,
+            sku: prod.sku || '',
+            variant: prod.condition || prod.grade || ''
+          };
+        }),
         shippingAddress: address,
         paymentMethod: finalPayable === 0 ? 'wallet' : payMethod,
         totalAmount: checkoutGrandTotal,
@@ -306,14 +309,37 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-nira-gray">
+    <div className="min-h-screen bg-neutral-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/cart" className="inline-flex items-center gap-2 text-sm text-nira-text-secondary hover:text-nira-dark mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to Cart
-        </Link>
-        <h1 className="font-heading font-bold text-3xl mb-8 text-nira-dark">Secure Checkout</h1>
+        
+        {/* Header and Progress Indicator */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <Link href="/cart" className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 hover:text-neutral-900 mb-2 transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Back to Cart
+            </Link>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl text-neutral-900">Secure Checkout</h1>
+          </div>
+          
+          <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-neutral-400">
+            <span className="flex items-center gap-1.5 text-nira-yellow-dark">
+              <span className="w-5 h-5 rounded-full bg-nira-yellow-dark text-white flex items-center justify-center font-black">1</span>
+              Shipping
+            </span>
+            <div className="w-6 sm:w-10 h-px bg-neutral-300" />
+            <span className="flex items-center gap-1.5 text-neutral-900">
+              <span className="w-5 h-5 rounded-full bg-neutral-900 text-white flex items-center justify-center font-black">2</span>
+              Payment
+            </span>
+            <div className="w-6 sm:w-10 h-px bg-neutral-300" />
+            <span className="flex items-center gap-1.5">
+              <span className="w-5 h-5 rounded-full border-2 border-neutral-300 flex items-center justify-center">3</span>
+              Confirm
+            </span>
+          </div>
+        </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6">
             
             {/* Authenticated Check / Guest Mode Details */}
@@ -353,14 +379,31 @@ export default function CheckoutPage() {
             )}
 
             {/* Shipping details */}
-            <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark">
-              <h2 className="font-heading font-semibold text-lg flex items-center gap-2 mb-4 text-nira-dark"><MapPin className="w-5 h-5 text-nira-yellow" /> Shipping Destination</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <input type="text" name="name" value={address.name} onChange={handleInputChange} placeholder="Receiver Full Name" className="px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow" />
-                <input type="tel" name="phone" value={address.phone} onChange={handleInputChange} placeholder="Primary Phone Number" className="px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow" />
-                <textarea name="address" value={address.address} onChange={handleInputChange} placeholder="Door No., Street Address, Locality" className="sm:col-span-2 px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow" rows={2} />
-                <input type="text" name="city" value={address.city} onChange={handleInputChange} placeholder="City/Region" className="px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow" />
-                <input type="text" name="pincode" value={address.pincode} onChange={handleInputChange} placeholder="6-Digit PIN Code" className="px-4 py-3 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow" />
+            <div className="bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
+              <h2 className="font-heading font-black text-lg flex items-center gap-2 mb-5 text-neutral-900">
+                <MapPin className="w-5 h-5 text-nira-yellow-dark" /> 1. Shipping Destination
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Full Name</label>
+                  <input type="text" name="name" value={address.name} onChange={handleInputChange} placeholder="First & Last Name" className="w-full px-4 py-3.5 bg-neutral-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow border border-neutral-200 focus:border-transparent transition-all" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Phone Number</label>
+                  <input type="tel" name="phone" value={address.phone} onChange={handleInputChange} placeholder="+91 98765 43210" className="w-full px-4 py-3.5 bg-neutral-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow border border-neutral-200 focus:border-transparent transition-all" />
+                </div>
+                <div className="flex flex-col gap-1.5 sm:col-span-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Delivery Address</label>
+                  <textarea name="address" value={address.address} onChange={handleInputChange} placeholder="House/Flat No., Building, Street Area" className="w-full px-4 py-3.5 bg-neutral-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow border border-neutral-200 focus:border-transparent transition-all resize-none" rows={2} />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">City / District</label>
+                  <input type="text" name="city" value={address.city} onChange={handleInputChange} placeholder="E.g. Bangalore" className="w-full px-4 py-3.5 bg-neutral-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow border border-neutral-200 focus:border-transparent transition-all" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">PIN Code</label>
+                  <input type="text" name="pincode" value={address.pincode} onChange={handleInputChange} placeholder="6-Digit Code" className="w-full px-4 py-3.5 bg-neutral-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow border border-neutral-200 focus:border-transparent transition-all" />
+                </div>
               </div>
             </div>
 
@@ -389,26 +432,36 @@ export default function CheckoutPage() {
             )}
 
             {/* Payment methods */}
-            <div className="bg-white rounded-2xl p-6 border border-nira-gray-dark">
-              <h2 className="font-heading font-semibold text-lg flex items-center gap-2 mb-4 text-nira-dark"><CreditCard className="w-5 h-5 text-nira-yellow" /> Payment Method</h2>
+            <div className="bg-white rounded-2xl p-6 border border-neutral-200 shadow-sm">
+              <h2 className="font-heading font-black text-lg flex items-center gap-2 mb-5 text-neutral-900">
+                <CreditCard className="w-5 h-5 text-nira-yellow-dark" /> 2. Payment Method
+              </h2>
               <div className="space-y-3">
                 {finalPayable === 0 ? (
-                  <div className="p-4 bg-teal-50 border border-teal-200 rounded-xl text-teal-800 text-xs font-semibold text-center">
-                    🎉 Your Wallet Balance fully covers this transaction! Wallet Checkout will be processed securely.
+                  <div className="p-4 bg-teal-50 border border-teal-200 rounded-xl text-teal-800 text-xs font-semibold text-center flex items-center justify-center gap-2">
+                    <CheckCircle className="w-4 h-4" /> Your Wallet Balance fully covers this transaction!
                   </div>
                 ) : (
-                  [
-                    { id: 'razorpay', label: 'Razorpay Gateway (UPI, Cards, Netbanking)', desc: 'Secure payment powered by encrypted channels' },
-                    { id: 'cod', label: 'Cash on Delivery (COD)', desc: 'Pay with cash or UPI at your doorstep' },
-                  ].map((m) => (
-                    <label key={m.id} className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === m.id ? 'border-nira-yellow bg-nira-yellow/5' : 'border-nira-gray-dark'}`}>
-                      <input type="radio" name="payment" checked={payMethod === m.id} onChange={() => setPayMethod(m.id)} className="mt-0.5 accent-nira-yellow" />
-                      <div>
-                        <p className="font-bold text-sm text-nira-dark">{m.label}</p>
-                        <p className="text-xs text-nira-text-secondary">{m.desc}</p>
-                      </div>
-                    </label>
-                  ))
+                  <div className="border border-neutral-200 rounded-xl overflow-hidden divide-y divide-neutral-200">
+                    {[
+                      { id: 'razorpay', label: 'UPI / Credit Card / Debit Card', desc: 'Google Pay, PhonePe, Paytm, Visa, Mastercard via Razorpay Secure' },
+                      { id: 'cod', label: 'Cash on Delivery (COD)', desc: 'Pay with cash or UPI at your doorstep upon delivery' },
+                    ].map((m) => (
+                      <label key={m.id} className={`flex items-start gap-4 p-5 cursor-pointer transition-colors ${payMethod === m.id ? 'bg-nira-yellow/5' : 'hover:bg-neutral-50'}`}>
+                        <input type="radio" name="payment" checked={payMethod === m.id} onChange={() => setPayMethod(m.id)} className="mt-1 w-4 h-4 accent-nira-yellow" />
+                        <div>
+                          <p className={`font-bold text-sm ${payMethod === m.id ? 'text-neutral-900' : 'text-neutral-700'}`}>{m.label}</p>
+                          <p className="text-xs text-neutral-500 mt-1 leading-relaxed">{m.desc}</p>
+                          {payMethod === m.id && m.id === 'razorpay' && (
+                            <div className="mt-4 p-3 bg-neutral-100 rounded-lg flex items-center justify-center gap-2">
+                              <Shield className="w-4 h-4 text-emerald-600" />
+                              <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest">Encrypted Payment Gateway</span>
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -488,8 +541,13 @@ export default function CheckoutPage() {
               {!loading && <ChevronRight className="w-4 h-4" />}
             </button>
 
-            <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-nira-text-secondary">
-              <Shield className="w-3.5 h-3.5 text-nira-success" /> 256-Bit SSL Diagnostics &amp; Gateway Secured
+            <div className="mt-4 flex flex-col items-center gap-3">
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-700 font-bold uppercase tracking-wider bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                <Shield className="w-3.5 h-3.5" /> 100% Secure Checkout Guarantee
+              </div>
+              <p className="text-[9px] text-neutral-400 text-center px-4 leading-relaxed">
+                By placing your order, you agree to NIRA6&apos;s privacy notice and conditions of use. Your transaction is 256-bit encrypted.
+              </p>
             </div>
           </div>
         </div>
