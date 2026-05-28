@@ -122,6 +122,34 @@ export async function POST(req: Request) {
     }
 
     const createdOrder = await order.save();
+
+    // Trigger confirmation email asynchronously
+    try {
+      const { sendOrderConfirmationEmail } = await import('@/lib/email/email');
+      const populatedOrder = await Order.findById(createdOrder._id).populate('items.product', 'name');
+      
+      const emailItems = populatedOrder?.items.map((item: any) => ({
+        name: item.product?.name || 'Camera Equipment',
+        quantity: item.quantity,
+        price: item.price
+      })) || [];
+
+      const customerEmail = isGuestCheckout ? guestEmail : user?.email;
+      const customerName = isGuestCheckout ? shippingAddress.name : user?.name;
+
+      if (customerEmail) {
+        sendOrderConfirmationEmail({
+          orderId: createdOrder._id.toString(),
+          totalAmount: createdOrder.totalAmount,
+          items: emailItems,
+          customerName: customerName || 'Valued Creator',
+          customerEmail: customerEmail
+        }).catch(e => console.error('Background email failed:', e));
+      }
+    } catch (emailErr) {
+      console.error('Failed to trigger order confirmation email:', emailErr);
+    }
+
     return NextResponse.json(createdOrder, { status: 201 });
   } catch (err) {
     const error = err as Error;
