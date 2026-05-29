@@ -7,7 +7,6 @@ import {
   RefreshCw, Upload, Sliders, X, 
   MessageSquare, Clock
 } from 'lucide-react';
-import ImageDropzone from '@/components/studio/ImageDropzone';
 
 const formatPrice = (p: number) => {
   return new Intl.NumberFormat('en-IN', {
@@ -68,7 +67,6 @@ export default function CreatorStudioPage() {
   const [rvPrompt, setRvPrompt] = useState('');
   const [rvLoading, setRvLoading] = useState(false);
   const [rvLogs, setRvLogs] = useState<string[]>([]);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [rvResult, setRvResult] = useState<{
     name: string;
     description: string;
@@ -153,24 +151,17 @@ export default function CreatorStudioPage() {
 
   // Run RV Bot via backend API
   const handleRvBot = async () => {
-    if (!rvPrompt.trim() && !uploadedImageUrl) return;
+    if (!rvPrompt.trim()) return;
     setRvLoading(true);
     setRvResult(null);
     setRvLogs([]);
 
-    const logSequence = uploadedImageUrl 
-      ? [
-          'Analyzing uploaded reference visual composition...',
-          'Extracting exposure and luminance vectors from image pixels...',
-          'Calculating required exposure triangle values...',
-          'Finalizing manual camera settings...'
-        ]
-      : [
-          'Tokenizing photography type description...',
-          'Calculating required shutter and aperture rules...',
-          'Optimizing ISO and white balance recommendations...',
-          'Finalizing manual camera settings...'
-        ];
+    const logSequence = [
+      'Tokenizing photography type description...',
+      'Calculating required shutter and aperture rules...',
+      'Optimizing ISO and white balance recommendations...',
+      'Finalizing manual camera settings...'
+    ];
 
     logSequence.forEach((log, index) => {
       setTimeout(() => {
@@ -182,7 +173,7 @@ export default function CreatorStudioPage() {
       const res = await fetch('/api/studio/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: rvPrompt, imageUrl: uploadedImageUrl || '' }),
+        body: JSON.stringify({ prompt: rvPrompt }),
       });
 
       if (res.ok) {
@@ -294,28 +285,7 @@ export default function CreatorStudioPage() {
                     ))}
                   </div>
 
-                  {/* Advanced Drag-and-Drop Image Upload */}
-                  <div className="mb-5">
-                    <ImageDropzone 
-                      onUploadComplete={(url, meta) => {
-                        setUploadedImageUrl(url);
-                        let promptSuffix = `\n\n[Reference Image]: ${url}`;
-                        if (meta) {
-                          promptSuffix += `\n[Camera Metadata]: ${meta.cameraModel} with ${meta.lensModel} optics (ISO: ${meta.iso}, Aperture: ${meta.aperture}, Shutter: ${meta.shutterSpeed}, Focal: ${meta.focalLength})`;
-                        }
-                        setRvPrompt(prev => prev ? `${prev}${promptSuffix}` : promptSuffix.trim());
-                      }}
-                      onClear={() => {
-                        setUploadedImageUrl(null);
-                        setRvPrompt(prev => {
-                          return prev
-                            .replace(/\[Reference Image\]:\s*\S+/g, '')
-                            .replace(/\[Camera Metadata\]:[^\n]*/g, '')
-                            .trim();
-                        });
-                      }}
-                    />
-                  </div>
+
 
                   <div className="relative mb-5">
                     <textarea
@@ -328,7 +298,7 @@ export default function CreatorStudioPage() {
                   </div>
 
                   <button
-                    disabled={rvLoading || (!rvPrompt.trim() && !uploadedImageUrl)}
+                    disabled={rvLoading || !rvPrompt.trim()}
                     onClick={handleRvBot}
                     className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
