@@ -2,26 +2,50 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /* ═══════════════════════════════════════════════════════════
    NIRA6 — RV Bot API  (/api/studio/concierge)
-   POST: Accepts a scene prompt + optional image URL,
-         returns recommended manual camera settings.
+   POST: Accepts a scene prompt, returns recommended manual 
+         camera settings and optional step-by-step procedure.
    ═══════════════════════════════════════════════════════════ */
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const prompt: string = body.prompt || '';
-    const imageUrl: string = body.imageUrl || '';
 
-    if (!prompt.trim() && !imageUrl.trim()) {
+    if (!prompt.trim()) {
       return NextResponse.json(
-        { error: 'Provide a scene description prompt or reference image URL.' },
+        { error: 'Provide a scene description prompt.' },
         { status: 400 }
       );
     }
 
     const lower = prompt.toLowerCase();
     
-    let result = {
+    // Device detection
+    const mobileKeywords = ['iphone', 'galaxy', 'pixel', 'samsung', 'apple', 'mobile', 'phone', 'smartphone'];
+    const cameraKeywords = ['sony', 'canon', 'nikon', 'fujifilm', 'lumix', 'panasonic', 'camera', 'dslr', 'mirrorless'];
+    
+    let deviceType: 'mobile' | 'camera' | null = null;
+    let detectedDeviceName = '';
+    
+    for (const kw of mobileKeywords) {
+      if (lower.includes(kw)) {
+        deviceType = 'mobile';
+        detectedDeviceName = kw.charAt(0).toUpperCase() + kw.slice(1);
+        break;
+      }
+    }
+    
+    if (!deviceType) {
+      for (const kw of cameraKeywords) {
+        if (lower.includes(kw)) {
+          deviceType = 'camera';
+          detectedDeviceName = kw.charAt(0).toUpperCase() + kw.slice(1);
+          break;
+        }
+      }
+    }
+
+    let result: any = {
       name: 'Standard Portrait',
       description: 'A balanced setup for standard photography with a slightly shallow depth of field for subject isolation.',
       settings: {
@@ -45,6 +69,23 @@ export async function POST(request: NextRequest) {
           focus: 'Manual (Infinity ∞)',
         }
       };
+      if (deviceType) {
+        result.steps = deviceType === 'mobile' 
+          ? [
+              `Mount your ${detectedDeviceName} on a sturdy tripod.`,
+              'Open your camera app and switch to Pro/Manual mode or use a specialized long-exposure app.',
+              'Set the focus to Manual and slide it all the way to Infinity (∞).',
+              'Set your shutter speed to the maximum allowed (usually 10-30s) and ISO to 800.',
+              'Use a 3-second timer to avoid shaking the device when tapping the shutter button.'
+            ]
+          : [
+              `Mount your ${detectedDeviceName} on a sturdy tripod to completely eliminate camera shake.`,
+              'Switch your camera dial to Manual (M) mode.',
+              'Turn off autofocus on your lens and set the focus ring to Infinity (∞).',
+              'Set your aperture as wide as possible (e.g., f/1.4 to f/2.8), shutter speed to 20-30s, and ISO between 800-3200.',
+              'Use a remote shutter release or a 2-second timer to take the shot without touching the camera.'
+            ];
+      }
     } else if (lower.includes('slow shutter') || lower.includes('waterfall') || lower.includes('light trail')) {
       result = {
         name: 'Slow Shutter / Motion Blur',
@@ -57,6 +98,23 @@ export async function POST(request: NextRequest) {
           focus: 'Single AF or Manual',
         }
       };
+      if (deviceType) {
+        result.steps = deviceType === 'mobile'
+          ? [
+              `Place your ${detectedDeviceName} on a tripod or lean it against a stable surface.`,
+              'If shooting a waterfall in daylight, use a Live Photo mode and apply the Long Exposure effect, or use a Pro app.',
+              'For light trails at night, switch to Pro mode and lower your ISO to the minimum.',
+              'Adjust the shutter speed between 1 to 5 seconds depending on the traffic/water speed.',
+              'Use a timer to trigger the shutter.'
+            ]
+          : [
+              `Mount your ${detectedDeviceName} on a tripod.`,
+              'If shooting in daylight, attach an ND (Neutral Density) filter to your lens to avoid overexposure.',
+              'Set your camera to Shutter Priority (S/Tv) or Manual (M) mode.',
+              'Lower ISO to 100 and set shutter speed to 1-5 seconds.',
+              'Focus on your static subject, then switch to manual focus to lock it before pressing the shutter.'
+            ];
+      }
     } else if (lower.includes('sports') || lower.includes('action') || lower.includes('wildlife') || lower.includes('fast')) {
       result = {
         name: 'High-Speed Action',
@@ -69,6 +127,23 @@ export async function POST(request: NextRequest) {
           focus: 'Continuous AF (AF-C / AI Servo)',
         }
       };
+      if (deviceType) {
+        result.steps = deviceType === 'mobile'
+          ? [
+              `Hold your ${detectedDeviceName} firmly with both hands.`,
+              'Tap and hold on the subject on your screen to lock focus and exposure.',
+              'If your phone has an Action mode or Burst mode, enable it now.',
+              'Follow the subject smoothly (panning) while holding down the shutter button to capture a burst of photos.',
+              'Review the burst sequence and save the sharpest frame.'
+            ]
+          : [
+              `Set your ${detectedDeviceName} to Shutter Priority (S/Tv) or Manual (M) mode.`,
+              'Dial your shutter speed up to 1/1000s or faster to freeze the action.',
+              'Change your autofocus mode to Continuous (AF-C / AI Servo) so it tracks the moving subject.',
+              'Set your drive mode to High-Speed Continuous (Burst mode).',
+              'Half-press the shutter to track the subject, then fully press and hold to shoot the burst.'
+            ];
+      }
     } else if (lower.includes('landscape') || lower.includes('nature') || lower.includes('architecture')) {
       result = {
         name: 'Landscape & Architecture',
@@ -81,6 +156,23 @@ export async function POST(request: NextRequest) {
           focus: 'Manual or Single-Point AF',
         }
       };
+      if (deviceType) {
+        result.steps = deviceType === 'mobile'
+          ? [
+              `Switch your ${detectedDeviceName} to the wide-angle lens (e.g., 0.5x).`,
+              'Tap on the primary point of interest in the distance to set focus.',
+              'If the sky is too bright, tap the screen and drag the exposure slider down slightly.',
+              'Hold the device steady and keep the horizon level (use the grid overlay if available).',
+              'Take the shot, or use panorama mode for an even wider field of view.'
+            ]
+          : [
+              `Attach a wide-angle lens to your ${detectedDeviceName} and mount it on a tripod.`,
+              'Switch to Aperture Priority (A/Av) or Manual (M) mode.',
+              'Stop down your aperture to f/8 or f/11 to ensure front-to-back sharpness (deep depth of field).',
+              'Set ISO to 100 for maximum dynamic range and minimal noise.',
+              'Use a single autofocus point to focus one-third of the way into the scene, then take the photo.'
+            ];
+      }
     } else if (lower.includes('macro') || lower.includes('close up')) {
       result = {
         name: 'Macro Photography',
@@ -93,6 +185,41 @@ export async function POST(request: NextRequest) {
           focus: 'Manual Focus (Rock back and forth)',
         }
       };
+      if (deviceType) {
+        result.steps = deviceType === 'mobile'
+          ? [
+              `Move your ${detectedDeviceName} extremely close to the subject (within a few inches).`,
+              'If your device has an ultra-wide lens with macro capabilities, ensure Macro mode is triggered (often automatic).',
+              'Tap the subject on the screen to lock focus.',
+              'Ensure there is plenty of light hitting the subject, as macro blocks ambient light.',
+              'Hold your breath to stay perfectly still, then capture the image.'
+            ]
+          : [
+              `Attach a dedicated Macro lens (e.g., 90mm or 100mm) to your ${detectedDeviceName}.`,
+              'Switch your camera and lens to Manual Focus.',
+              'Set your aperture to f/11 or f/16 to get enough depth of field on the tiny subject.',
+              'Turn on your flash or macro ring light to compensate for the narrow aperture.',
+              'Physically rock your body slightly forward and backward until the subject is razor sharp, then press the shutter.'
+            ];
+      }
+    } else {
+      // Default fallback steps
+      if (deviceType) {
+        result.steps = deviceType === 'mobile'
+          ? [
+              `Clean the lens of your ${detectedDeviceName} with a microfiber cloth.`,
+              'Frame your subject using the rule of thirds grid on your screen.',
+              'Tap on the subject to lock focus and adjust the exposure slider if needed.',
+              'Hold the device steady and press the shutter button.'
+            ]
+          : [
+              `Make sure your ${detectedDeviceName} is in Aperture Priority or Manual mode.`,
+              'Select an appropriate ISO based on your lighting (100 for sun, 800+ for indoors).',
+              'Set your aperture to control the depth of field (lower f-number for blurry background).',
+              'Focus on your subject\'s eyes or the most critical element of the scene.',
+              'Press the shutter smoothly without jerking the camera.'
+            ];
+      }
     }
 
     return NextResponse.json(result, { status: 200 });
@@ -101,3 +228,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'RV Bot recommendation failed.' }, { status: 500 });
   }
 }
+

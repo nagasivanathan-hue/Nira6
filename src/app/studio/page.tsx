@@ -77,6 +77,7 @@ export default function CreatorStudioPage() {
       whiteBalance: string;
       focus: string;
     };
+    steps?: string[];
   } | null>(null);
 
   // Inventory loaded from API
@@ -379,6 +380,33 @@ export default function CreatorStudioPage() {
                             </div>
                           </div>
                         </div>
+
+                        {/* Step-by-Step Procedure */}
+                        {rvResult.steps && rvResult.steps.length > 0 && (
+                          <div className="mt-2 border-t border-neutral-800 pt-4">
+                            <span className="text-[10px] font-black uppercase text-neutral-400 block mb-3 tracking-widest">
+                              Shooting Procedure
+                            </span>
+                            <div className="space-y-2.5">
+                              {rvResult.steps.map((step, idx) => (
+                                <motion.div 
+                                  key={idx}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: idx * 0.15 + 0.3 }}
+                                  className="flex items-start gap-3 bg-neutral-950/80 p-3 rounded-lg border border-neutral-900"
+                                >
+                                  <div className="bg-[#FFDA03]/10 text-[#FFDA03] text-[9px] font-black w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full mt-0.5 border border-[#FFDA03]/20">
+                                    {idx + 1}
+                                  </div>
+                                  <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                                    {step}
+                                  </p>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   ) : (
