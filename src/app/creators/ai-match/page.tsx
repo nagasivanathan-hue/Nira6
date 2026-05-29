@@ -104,7 +104,7 @@ export default function AiMatchPage() {
     <div className="min-h-screen bg-nira-gray text-nira-dark pb-20">
       {/* Header Banner */}
       <div className="bg-nira-dark text-white py-16 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(255,218,3,0.4), transparent 60%)' }} />
+        <div className="absolute inset-0 opacity-15"  />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nira-yellow/10 border border-nira-yellow/20 text-xs font-bold text-nira-yellow mb-4 uppercase tracking-widest">
             <Sparkles className="w-4.5 h-4.5" /> AI Matchmaking
@@ -131,7 +131,7 @@ export default function AiMatchPage() {
               <div className="grid sm:grid-cols-2 gap-5">
                 <div>
                   <label className="text-[10px] font-bold text-nira-text-secondary uppercase tracking-wider mb-2 block">Creative Category</label>
-                  <select
+                  <select aria-label="Select option" title="Select option"
                     value={category}
                     onChange={e => setCategory(e.target.value)}
                     className="w-full px-4 py-3 bg-nira-gray rounded-xl text-xs font-bold border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow"

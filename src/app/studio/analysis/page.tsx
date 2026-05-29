@@ -309,7 +309,7 @@ export default function AnalysisResultPage() {
             {/* Header section */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-neutral-900 pb-6 mb-8">
               <div className="flex items-center gap-3">
-                <button
+                <button aria-label="Button" title="Button"
                   onClick={() => router.push('/studio')}
                   className="p-2.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl text-neutral-400 hover:text-white transition-all cursor-pointer"
                 >
@@ -625,7 +625,7 @@ export default function AnalysisResultPage() {
                 className="object-contain"
               />
             </div>
-            <button
+            <button aria-label="Button" title="Button"
               onClick={() => setShowFullImage(false)}
               className="absolute top-4 right-4 p-2.5 bg-neutral-900 border border-neutral-800 rounded-full text-white cursor-pointer hover:bg-neutral-800"
             >

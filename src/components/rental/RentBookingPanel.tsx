@@ -99,7 +99,7 @@ export default function RentBookingPanel({ item }: { item: RentalItem }) {
         <label className="text-[9px] font-bold uppercase text-white/25 mb-1.5 block">Pickup Location</label>
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
-          <select
+          <select aria-label="Select option" title="Select option"
             value={pickupIdx}
             onChange={(e) => setPickupIdx(Number(e.target.value))}
             className="w-full input-dark rounded-xl pl-9 pr-8 py-2.5 text-xs font-bold appearance-none cursor-pointer"

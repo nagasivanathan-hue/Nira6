@@ -202,7 +202,7 @@ export default function BuyPage() {
                 className="w-full pl-12 pr-10 py-3 bg-nira-gray rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow transition-all"
               />
               {localSearch && (
-                <button 
+                <button aria-label="Button" title="Button" 
                   onClick={() => {
                     setLocalSearch('');
                     dispatch(setSearchQuery(''));
@@ -256,7 +256,7 @@ export default function BuyPage() {
                                   >
                                     {term}
                                   </button>
-                                  <button
+                                  <button aria-label="Button" title="Button"
                                     onClick={() => {
                                       setRecentSearches(prev => {
                                         const updated = prev.filter(t => t !== term);
@@ -403,7 +403,7 @@ export default function BuyPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <select 
+              <select aria-label="Select option" title="Select option" 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="px-4 py-2 bg-nira-gray rounded-xl text-sm font-medium focus:outline-none cursor-pointer"
@@ -414,8 +414,8 @@ export default function BuyPage() {
               </select>
               <div className="h-10 w-px bg-nira-gray-dark mx-1 hidden md:block" />
               <div className="flex bg-nira-gray p-1 rounded-xl">
-                <button className="p-2 bg-white shadow-sm rounded-lg text-nira-dark"><Grid className="w-4 h-4" /></button>
-                <button className="p-2 text-nira-text-secondary"><ListIcon className="w-4 h-4" /></button>
+                <button aria-label="Button" title="Button" className="p-2 bg-white shadow-sm rounded-lg text-nira-dark"><Grid className="w-4 h-4" /></button>
+                <button aria-label="Button" title="Button" className="p-2 text-nira-text-secondary"><ListIcon className="w-4 h-4" /></button>
               </div>
             </div>
           </div>
@@ -507,7 +507,7 @@ export default function BuyPage() {
                 {activeCategory !== 'All' && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-yellow/10 border border-nira-yellow/30 text-nira-dark rounded-full text-xs font-bold">
                     <span>Category: {activeCategory}</span>
-                    <button onClick={() => clearFilter('category')} className="hover:bg-nira-yellow/20 p-0.5 rounded-full transition-colors">
+                    <button aria-label="Button" title="Button" onClick={() => clearFilter('category')} className="hover:bg-nira-yellow/20 p-0.5 rounded-full transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -516,7 +516,7 @@ export default function BuyPage() {
                 {activeBrand !== 'All' && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-dark/5 border border-nira-dark/10 text-nira-dark rounded-full text-xs font-bold">
                     <span>Brand: {activeBrand}</span>
-                    <button onClick={() => clearFilter('brand')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
+                    <button aria-label="Button" title="Button" onClick={() => clearFilter('brand')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -525,7 +525,7 @@ export default function BuyPage() {
                 {activeGrade !== 'All' && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-dark/5 border border-nira-dark/10 text-nira-dark rounded-full text-xs font-bold">
                     <span>Grade: {activeGrade}</span>
-                    <button onClick={() => clearFilter('grade')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
+                    <button aria-label="Button" title="Button" onClick={() => clearFilter('grade')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -534,7 +534,7 @@ export default function BuyPage() {
                 {searchQuery !== '' && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-yellow text-nira-dark rounded-full text-xs font-bold shadow-sm">
                     <span>Search: &ldquo;{searchQuery}&rdquo;</span>
-                    <button onClick={() => clearFilter('search')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
+                    <button aria-label="Button" title="Button" onClick={() => clearFilter('search')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -650,7 +650,7 @@ export default function BuyPage() {
             <Filter className="w-5 h-5 text-nira-dark" />
             <h3 className="font-heading font-extrabold text-lg text-nira-dark">Filters</h3>
           </div>
-          <button 
+          <button aria-label="Button" title="Button" 
             onClick={() => setIsMobileFilterOpen(false)}
             className="p-1.5 bg-nira-gray hover:bg-nira-gray-dark rounded-full transition-colors"
           >

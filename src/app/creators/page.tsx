@@ -40,11 +40,11 @@ export default function CreatorHubPage() {
       <section className="relative overflow-hidden bg-nira-dark min-h-[520px] flex items-center">
         {/* Animated gradient orbs */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-20" style={{ background: 'radial-gradient(circle, #FFDA03 0%, transparent 70%)' }} />
-          <div className="absolute -bottom-60 -left-40 w-[500px] h-[500px] rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #A855F7 0%, transparent 70%)' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-5" style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 60%)' }} />
+          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-20"  />
+          <div className="absolute -bottom-60 -left-40 w-[500px] h-[500px] rounded-full opacity-10"  />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-5"  />
           {/* Floating grid pattern */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+          <div className="absolute inset-0 opacity-[0.03]"  />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 w-full">
@@ -206,8 +206,8 @@ export default function CreatorHubPage() {
               <motion.div key={creator.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <Link href={`/creators/${creator.id}`} className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:shadow-black/5 transition-all duration-300">
                   {/* Cover gradient */}
-                  <div className="h-24 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${CREATOR_CATEGORIES.find(c => c.id === creator.category)?.color || '#FFDA03'}22, ${CREATOR_CATEGORIES.find(c => c.id === creator.category)?.color || '#FFDA03'}44)` }}>
-                    <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3), transparent 50%)' }} />
+                  <div className="h-24 relative overflow-hidden" >
+                    <div className="absolute inset-0 opacity-30"  />
                     {/* Availability badge */}
                     <div className="absolute top-3 right-3">
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase backdrop-blur-md ${
@@ -308,7 +308,7 @@ export default function CreatorHubPage() {
       <section className="bg-nira-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-nira-yellow/10 via-purple-500/10 to-blue-500/10 border border-white/5 p-8 sm:p-12 text-center">
-            <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, #FFDA03, transparent 50%), radial-gradient(circle at 70% 50%, #A855F7, transparent 50%)' }} />
+            <div className="absolute inset-0 opacity-5"  />
             <div className="relative z-10">
               <h2 className="font-heading font-black text-2xl sm:text-3xl text-white mb-3">Are You a Creator?</h2>
               <p className="text-sm text-gray-400 max-w-lg mx-auto mb-6">Join NIRA6&apos;s creator ecosystem. Get discovered, receive bookings, rent your gear, and grow your creative business.</p>

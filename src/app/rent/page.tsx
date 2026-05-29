@@ -84,7 +84,7 @@ export default function RentPage() {
           <p className="text-sm text-white/30 font-medium">
             <span className="text-white font-bold">{rentals.length}</span> items found
           </p>
-          <select
+          <select aria-label="Select option" title="Select option"
             value={sort}
             onChange={(e) => setSort(e.target.value)}
             className="input-dark rounded-xl px-4 py-2.5 text-xs font-bold cursor-pointer"

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ChevronRight, UploadCloud, User, MapPin, Briefcase, Camera, FileCheck, Calendar } from 'lucide-react';
+import { Check, ChevronRight, UploadCloud, User, Briefcase, Camera, FileCheck, Calendar } from 'lucide-react';
 import Image from 'next/image';
 
 const steps = [
@@ -106,8 +106,9 @@ export default function CreatorOnboarding() {
       }
 
       router.push('/dashboard/creator');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -175,7 +176,7 @@ export default function CreatorOnboarding() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Profile Photo (Simulated Cloudinary)</label>
-                    <input type="file" accept="image/*" onChange={(e) => handleUpload(e, 'profilePhoto')} className="w-full text-sm" />
+                    <input aria-label="Input" title="Input" placeholder="Input" type="file" accept="image/*" onChange={(e) => handleUpload(e, 'profilePhoto')} className="w-full text-sm" />
                     {formData.profilePhoto && <p className="text-xs text-green-600 mt-2">Uploaded successfully!</p>}
                   </div>
                 </div>
@@ -188,7 +189,7 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Primary Category</label>
-                      <select value={formData.primaryServiceCategory} onChange={e => setFormData({...formData, primaryServiceCategory: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm">
+                      <select aria-label="Select option" title="Select option" value={formData.primaryServiceCategory} onChange={e => setFormData({...formData, primaryServiceCategory: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm">
                         <option value="photographer">Photographer</option>
                         <option value="videographer">Videographer</option>
                         <option value="editor">Video Editor</option>
@@ -197,7 +198,7 @@ export default function CreatorOnboarding() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Years of Experience</label>
-                      <input type="number" required min="0" value={formData.yearsOfExperience} onChange={e => setFormData({...formData, yearsOfExperience: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="number" required min="0" value={formData.yearsOfExperience} onChange={e => setFormData({...formData, yearsOfExperience: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                   </div>
                   <div>
@@ -207,15 +208,15 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">City</label>
-                      <input type="text" required value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="text" required value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">State</label>
-                      <input type="text" required value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="text" required value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Country</label>
-                      <input type="text" required value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="text" required value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                   </div>
                 </div>
@@ -232,11 +233,11 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Starting Price (₹)</label>
-                      <input type="number" required min="0" value={formData.startingPrice} onChange={e => setFormData({...formData, startingPrice: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="number" required min="0" value={formData.startingPrice} onChange={e => setFormData({...formData, startingPrice: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Pricing Type</label>
-                      <select value={formData.pricingType} onChange={e => setFormData({...formData, pricingType: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm">
+                      <select aria-label="Select option" title="Select option" value={formData.pricingType} onChange={e => setFormData({...formData, pricingType: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm">
                         <option>Hourly</option>
                         <option>Per Project</option>
                         <option>Per Day</option>
@@ -245,7 +246,7 @@ export default function CreatorOnboarding() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Service Description</label>
-                    <textarea required rows={4} value={formData.serviceDescription} onChange={e => setFormData({...formData, serviceDescription: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm resize-none" />
+                    <textarea aria-label="Textarea" title="Textarea" placeholder="Textarea" required rows={4} value={formData.serviceDescription} onChange={e => setFormData({...formData, serviceDescription: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm resize-none" />
                   </div>
                 </div>
               )}
@@ -257,7 +258,7 @@ export default function CreatorOnboarding() {
                   <div>
                     <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Upload Portfolio Media (Drag & Drop)</label>
                     <div className="border-2 border-dashed border-nira-gray-dark hover:border-nira-yellow rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors relative">
-                      <input type="file" multiple accept="image/*,video/*" onChange={(e) => handleUpload(e, 'portfolioUrls')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="file" multiple accept="image/*,video/*" onChange={(e) => handleUpload(e, 'portfolioUrls')} className="absolute inset-0 opacity-0 cursor-pointer" />
                       <UploadCloud className="w-10 h-10 text-nira-text-secondary mb-3" />
                       <p className="text-sm font-bold text-nira-dark">Click or drag media here</p>
                       <p className="text-xs text-nira-text-secondary mt-1">Supports JPG, PNG, MP4 up to 50MB</p>
@@ -297,12 +298,12 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Upload Govt ID</label>
-                      <input type="file" required onChange={(e) => handleUpload(e, 'govtIdUrl')} className="w-full text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="file" required onChange={(e) => handleUpload(e, 'govtIdUrl')} className="w-full text-sm" />
                       {formData.govtIdUrl && <p className="text-xs text-green-600 mt-2">ID Uploaded</p>}
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Take a Selfie</label>
-                      <input type="file" required accept="image/*" capture="user" onChange={(e) => handleUpload(e, 'selfieUrl')} className="w-full text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="file" required accept="image/*" onChange={(e) => handleUpload(e, 'selfieUrl')} className="w-full text-sm" />
                       {formData.selfieUrl && <p className="text-xs text-green-600 mt-2">Selfie Uploaded</p>}
                     </div>
                   </div>
@@ -310,11 +311,11 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Business Name (Optional)</label>
-                      <input type="text" value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="text" value={formData.businessName} onChange={e => setFormData({...formData, businessName: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">GST Number (Optional)</label>
-                      <input type="text" value={formData.gstNumber} onChange={e => setFormData({...formData, gstNumber: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="text" value={formData.gstNumber} onChange={e => setFormData({...formData, gstNumber: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                   </div>
                 </div>
@@ -328,11 +329,11 @@ export default function CreatorOnboarding() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Service Radius (KM)</label>
-                      <input type="number" required min="1" value={formData.serviceRadius} onChange={e => setFormData({...formData, serviceRadius: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="number" required min="1" value={formData.serviceRadius} onChange={e => setFormData({...formData, serviceRadius: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-nira-text-secondary uppercase mb-2">Team Size</label>
-                      <input type="number" required min="1" value={formData.teamSize} onChange={e => setFormData({...formData, teamSize: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
+                      <input aria-label="Input" title="Input" placeholder="Input" type="number" required min="1" value={formData.teamSize} onChange={e => setFormData({...formData, teamSize: Number(e.target.value)})} className="w-full px-4 py-3 rounded-xl bg-nira-gray border-transparent focus:border-nira-yellow text-sm" />
                     </div>
                   </div>
 

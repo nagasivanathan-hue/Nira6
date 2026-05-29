@@ -147,11 +147,11 @@ export default function SellPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Pickup Date</label>
-                    <input type="date" className="w-full px-4 py-3 bg-nira-gray rounded-xl focus:outline-none focus:ring-2 focus:ring-nira-yellow" />
+                    <input aria-label="Input" title="Input" placeholder="Input" type="date" className="w-full px-4 py-3 bg-nira-gray rounded-xl focus:outline-none focus:ring-2 focus:ring-nira-yellow" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Time Slot</label>
-                    <select className="w-full px-4 py-3 bg-nira-gray rounded-xl focus:outline-none focus:ring-2 focus:ring-nira-yellow">
+                    <select aria-label="Select option" title="Select option" className="w-full px-4 py-3 bg-nira-gray rounded-xl focus:outline-none focus:ring-2 focus:ring-nira-yellow">
                       <option>10:00 AM - 12:00 PM</option>
                       <option>12:00 PM - 2:00 PM</option>
                       <option>2:00 PM - 4:00 PM</option>

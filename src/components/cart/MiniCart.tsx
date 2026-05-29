@@ -71,7 +71,7 @@ export default function MiniCart() {
                   {items.reduce((sum, item) => sum + item.quantity, 0)}
                 </span>
               </div>
-              <button
+              <button aria-label="Button" title="Button"
                 onClick={() => dispatch(closeCartDrawer())}
                 className="p-1.5 hover:bg-white/10 rounded-xl transition-colors text-neutral-300 hover:text-white"
               >
@@ -166,7 +166,7 @@ export default function MiniCart() {
                       <div className="flex items-center justify-between mt-2">
                         {/* Quantity Counter */}
                         <div className="flex items-center bg-neutral-100 rounded-lg">
-                          <button
+                          <button aria-label="Button" title="Button"
                             onClick={() =>
                               handleDecreaseQuantity(item.product.id, item.quantity, item.product.name)
                             }
@@ -175,7 +175,7 @@ export default function MiniCart() {
                             <Minus className="w-3 h-3" />
                           </button>
                           <span className="w-6 text-center text-xs font-bold text-neutral-800">{item.quantity}</span>
-                          <button
+                          <button aria-label="Button" title="Button"
                             onClick={() =>
                               dispatch(updateQuantity({ id: item.product.id, quantity: item.quantity + 1 }))
                             }

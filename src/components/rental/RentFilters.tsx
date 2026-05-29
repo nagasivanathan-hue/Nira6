@@ -93,7 +93,7 @@ export default function RentFilters({ filters, onChange, onReset, open, onClose 
           <button onClick={onReset} className="text-[10px] font-bold text-white/30 hover:text-nira-yellow transition-colors flex items-center gap-1 cursor-pointer">
             <RotateCcw className="w-3 h-3" /> Reset
           </button>
-          <button onClick={onClose} className="lg:hidden p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/40 cursor-pointer">
+          <button aria-label="Button" title="Button" onClick={onClose} className="lg:hidden p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/40 cursor-pointer">
             <X className="w-4 h-4" />
           </button>
         </div>

@@ -124,7 +124,7 @@ export default function RentalCard({ item, index }: RentalCardProps) {
                 <span>{score}% Score</span>
               </div>
               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className="condition-bar h-full rounded-full" style={{ width: `${score}%` }} />
+                <div className="condition-bar h-full rounded-full"  />
               </div>
             </div>
 

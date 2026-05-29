@@ -27,13 +27,13 @@ export default function CreatorPicks() {
               transition={{ delay: i * 0.1 }}
             >
               <Link href={s.href} className="group block p-6 rounded-2xl border border-nira-gray-dark hover:border-transparent hover:shadow-xl transition-all bg-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity" style={{ backgroundColor: s.color }} />
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: s.color + '15', color: s.color }}>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"  />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" >
                   <s.icon className="w-6 h-6" />
                 </div>
                 <h3 className="font-heading font-semibold text-lg mb-2">{s.title}</h3>
                 <p className="text-sm text-nira-text-secondary mb-4">{s.desc}</p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all" style={{ color: s.color }}>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all" >
                   Learn More <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>

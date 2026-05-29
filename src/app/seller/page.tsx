@@ -923,7 +923,7 @@ export default function SellerPartnerPage() {
                             <span className="font-heading font-black text-sm text-nira-dark">{formatPrice(p.price)}</span>
                             <div className="flex items-center gap-2">
                               <span className="text-[8px] bg-nira-success/15 text-nira-success px-2 py-0.5 rounded font-black uppercase">Active</span>
-                              <button 
+                              <button aria-label="Button" title="Button" 
                                 onClick={() => {
                                   setProducts(products.filter(item => item.id !== p.id));
                                   alert('Item de-indexed successfully.');
@@ -970,7 +970,7 @@ export default function SellerPartnerPage() {
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Role Category</label>
-                          <select
+                          <select aria-label="Select option" title="Select option"
                             value={newSrv.category}
                             onChange={(e) => setNewSrv({ ...newSrv, category: e.target.value })}
                             className="px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent cursor-pointer"

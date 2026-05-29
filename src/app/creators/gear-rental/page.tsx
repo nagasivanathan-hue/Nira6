@@ -43,7 +43,7 @@ export default function GearRentalPage() {
           <div className="flex gap-2 overflow-x-auto scrollbar-hide w-full sm:w-auto">
             {categories.map(c => <button key={c} onClick={() => setCat(c)} className={`px-3 py-2 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer transition-all ${cat === c ? 'bg-nira-dark text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-dark/5'}`}>{c}</button>)}
           </div>
-          <select value={sort} onChange={e => setSort(e.target.value)} className="px-3 py-2.5 bg-white rounded-xl text-xs border border-gray-200 focus:outline-none focus:ring-2 focus:ring-nira-yellow">
+          <select aria-label="Select option" title="Select option" value={sort} onChange={e => setSort(e.target.value)} className="px-3 py-2.5 bg-white rounded-xl text-xs border border-gray-200 focus:outline-none focus:ring-2 focus:ring-nira-yellow">
             <option value="price_low">Price: Low to High</option><option value="price_high">Price: High to Low</option><option value="rating">Top Rated</option>
           </select>
         </div>

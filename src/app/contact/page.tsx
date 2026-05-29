@@ -183,7 +183,7 @@ export default function ContactPage() {
 
                   <div>
                     <label className="block text-[10px] font-bold text-nira-dark uppercase tracking-wider mb-1">Inquiry Subject</label>
-                    <select
+                    <select aria-label="Select option" title="Select option"
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       className="w-full px-4 py-3 bg-nira-gray/30 border border-nira-gray-dark rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow"

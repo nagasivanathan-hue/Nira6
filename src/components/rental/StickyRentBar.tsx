@@ -14,7 +14,7 @@ export default function StickyRentBar({ onFilterToggle, sort, onSort, resultCoun
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-bold text-white/30">{resultCount} items</span>
         <div className="flex items-center gap-2">
-          <select
+          <select aria-label="Select option" title="Select option"
             value={sort}
             onChange={(e) => onSort(e.target.value)}
             className="input-dark rounded-lg px-3 py-1.5 text-[11px] font-bold cursor-pointer appearance-none pr-7"

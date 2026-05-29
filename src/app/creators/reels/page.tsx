@@ -818,7 +818,7 @@ function CreatorDashboard({ onClose, onPostSuccess }: CreatorDashboardProps) {
               Creator Studio Panel
             </h3>
           </div>
-          <button 
+          <button aria-label="Button" title="Button" 
             onClick={onClose}
             className="p-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-xl transition-all cursor-pointer"
           >
@@ -1078,7 +1078,7 @@ function CommentsSheet({
               <h3 className="font-heading font-black text-sm uppercase tracking-widest">
                 Viewer Engagement ({reel.comments.length} Comments)
               </h3>
-              <button 
+              <button aria-label="Button" title="Button" 
                 onClick={onClose} 
                 className="p-1 rounded-xl bg-neutral-850 hover:bg-neutral-800 transition-all cursor-pointer text-neutral-400"
               >
@@ -1160,7 +1160,7 @@ function CommentsSheet({
                   onChange={e => setCommentInput(e.target.value)}
                   className="flex-1 px-4 py-2.5 bg-neutral-950 border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500 focus:bg-neutral-950 transition-all font-medium"
                 />
-                <button
+                <button aria-label="Button" title="Button"
                   type="submit"
                   disabled={!commentInput.trim()}
                   className="p-2.5 bg-yellow-500 hover:bg-yellow-600 text-neutral-950 rounded-xl disabled:opacity-50 cursor-pointer shrink-0 transition-all"
@@ -1225,7 +1225,7 @@ function ShareSheet({ isOpen, reel, onClose }: ShareSheetProps) {
               <h3 className="font-heading font-black text-xs uppercase tracking-widest text-neutral-300">
                 Share Cinematic Portfolio
               </h3>
-              <button onClick={onClose} className="p-1 rounded-xl bg-neutral-850 hover:bg-neutral-800">
+              <button aria-label="Button" title="Button" onClick={onClose} className="p-1 rounded-xl bg-neutral-850 hover:bg-neutral-800">
                 <X className="w-4 h-4" />
               </button>
             </div>

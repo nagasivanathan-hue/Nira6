@@ -332,7 +332,7 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
               )}
             </div>
 
-            <button
+            <button aria-label="Button" title="Button"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClear();

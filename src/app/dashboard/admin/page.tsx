@@ -397,7 +397,7 @@ export default function AdminDashboardPage() {
       
       {/* Header Banner */}
       <div className="bg-nira-dark text-white py-12 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle at 10% 30%, rgba(255,218,3,0.15), transparent 50%)' }} />
+        <div className="absolute inset-0 opacity-15"  />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
           <div>
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nira-yellow/10 border border-nira-yellow/20 text-xs font-bold text-nira-yellow mb-3 uppercase tracking-widest">
@@ -537,7 +537,7 @@ export default function AdminDashboardPage() {
                           <span className="text-nira-dark">{count} ({percent}%)</span>
                         </div>
                         <div className="w-full h-1.5 bg-nira-gray rounded-full overflow-hidden">
-                          <div className={`h-full ${stat.color}`} style={{ width: `${percent}%` }} />
+                          <div className={`h-full ${stat.color}`}  />
                         </div>
                       </div>
                     );
@@ -638,7 +638,7 @@ export default function AdminDashboardPage() {
                               </button>
 
                               {/* Manual overrides */}
-                              <select 
+                              <select aria-label="Select option" title="Select option" 
                                 onChange={(e) => transitionOrderStatus(order._id, e.target.value)}
                                 className="px-2 py-1.5 border border-nira-gray-dark bg-white rounded-lg font-bold text-[9px] focus:outline-none"
                               >
@@ -875,7 +875,7 @@ export default function AdminDashboardPage() {
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
                           <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Courier Partner</label>
-                          <select 
+                          <select aria-label="Select option" title="Select option" 
                             value={selectedCourier}
                             onChange={(e) => setSelectedCourier(e.target.value)}
                             className="px-3 py-2.5 bg-nira-gray rounded-xl text-xs font-bold focus:outline-none border border-transparent focus:border-nira-yellow focus:bg-white"
@@ -888,7 +888,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Fulfillment Station Hub</label>
-                          <select 
+                          <select aria-label="Select option" title="Select option" 
                             value={dispatchLocation}
                             onChange={(e) => setDispatchLocation(e.target.value)}
                             className="px-3 py-2.5 bg-nira-gray rounded-xl text-xs font-bold focus:outline-none border border-transparent focus:border-nira-yellow focus:bg-white"
@@ -937,7 +937,7 @@ export default function AdminDashboardPage() {
               <form onSubmit={handleRestock} className="space-y-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Select SKU</label>
-                  <select
+                  <select aria-label="Select option" title="Select option"
                     value={selectedRestockSku}
                     onChange={(e) => setSelectedRestockSku(e.target.value)}
                     className="px-3 py-2.5 bg-nira-gray rounded-xl text-xs font-bold focus:outline-none border border-transparent focus:border-nira-yellow focus:bg-white"
@@ -962,7 +962,7 @@ export default function AdminDashboardPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Fulfillment Warehouse</label>
-                  <select
+                  <select aria-label="Select option" title="Select option"
                     value={restockWarehouse}
                     onChange={(e) => setRestockWarehouse(e.target.value)}
                     className="px-3 py-2.5 bg-nira-gray rounded-xl text-xs font-bold focus:outline-none border border-transparent focus:border-nira-yellow focus:bg-white"

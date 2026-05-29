@@ -1,81 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/db/mongodb';
-import StudioGear from '@/models/StudioGear';
 
 /* ═══════════════════════════════════════════════════════════
-   NIRA6 — AI DP Concierge API  (/api/studio/concierge)
+   NIRA6 — RV Bot API  (/api/studio/concierge)
    POST: Accepts a scene prompt + optional image URL,
-         matches gear from DB, returns curated bundle.
+         returns recommended manual camera settings.
    ═══════════════════════════════════════════════════════════ */
-
-interface GearItem {
-  _id?: string;
-  id?: string;
-  name: string;
-  category: string;
-  image: string;
-  buyPrice: number;
-  rentRate: number;
-}
-
-const FALLBACK_GEAR: GearItem[] = [
-  { id: 'cam-fx3', name: 'Sony FX3 Cinema Camera', category: 'camera', image: '/assets/product-camera.png', buyPrice: 295000, rentRate: 2500 },
-  { id: 'cam-a7iv', name: 'Sony Alpha 7 IV Mirrorless', category: 'camera', image: '/assets/product-camera.png', buyPrice: 198000, rentRate: 1600 },
-  { id: 'lens-85gm', name: 'Sony FE 85mm f/1.4 GM', category: 'lens', image: '/assets/product-lens.png', buyPrice: 145000, rentRate: 1100 },
-  { id: 'lens-2470gm', name: 'Sony FE 24-70mm f/2.8 GM II', category: 'lens', image: '/assets/product-lens.png', buyPrice: 199000, rentRate: 1400 },
-  { id: 'light-godox', name: 'Godox SZ150R Zoom RGB LED', category: 'lighting', image: '/assets/product-drone.png', buyPrice: 48000, rentRate: 500 },
-  { id: 'light-aputure', name: 'Aputure LS 600d Pro Light', category: 'lighting', image: '/assets/product-drone.png', buyPrice: 185000, rentRate: 1800 },
-  { id: 'audio-rodewp', name: 'Rode Wireless PRO Mic System', category: 'audio', image: '/assets/product-camera.png', buyPrice: 38000, rentRate: 400 },
-  { id: 'audio-ntg5', name: 'Rode NTG5 Shotgun Mic Kit', category: 'audio', image: '/assets/product-camera.png', buyPrice: 42000, rentRate: 450 },
-];
-
-// Keyword-to-category matching intelligence
-function matchGearToPrompt(prompt: string, allGear: GearItem[]): { packageName: string; items: GearItem[] } {
-  const lower = prompt.toLowerCase();
-
-  // Lighting-focused shoots
-  if (lower.includes('light') || lower.includes('chiaroscuro') || lower.includes('studio') || lower.includes('portrait')) {
-    const items = [
-      allGear.find(g => g.category === 'camera') || allGear[0],
-      allGear.find(g => g.category === 'lens') || allGear[2],
-      ...allGear.filter(g => g.category === 'lighting').slice(0, 1),
-    ].filter(Boolean) as GearItem[];
-    return { packageName: 'Chiaroscuro Dark Cinema Kit', items };
-  }
-
-  // Audio / interview / documentary
-  if (lower.includes('audio') || lower.includes('interview') || lower.includes('documentary') || lower.includes('podcast')) {
-    const items = [
-      allGear.find(g => g.category === 'camera') || allGear[0],
-      allGear.find(g => g.category === 'lens') || allGear[2],
-      ...allGear.filter(g => g.category === 'audio').slice(0, 1),
-    ].filter(Boolean) as GearItem[];
-    return { packageName: 'Documentary & Dialogue Kit', items };
-  }
-
-  // Wedding / event
-  if (lower.includes('wedding') || lower.includes('event') || lower.includes('ceremony')) {
-    const cameras = allGear.filter(g => g.category === 'camera').slice(0, 2);
-    const lens = allGear.find(g => g.category === 'lens') || allGear[2];
-    const light = allGear.find(g => g.category === 'lighting') || allGear[4];
-    return { packageName: 'Wedding Cinematic Package', items: [...cameras, lens, light].filter(Boolean) as GearItem[] };
-  }
-
-  // Cinematic / film
-  if (lower.includes('cinematic') || lower.includes('film') || lower.includes('movie') || lower.includes('short film')) {
-    const items = allGear.slice(0, 4);
-    return { packageName: 'Full Cinematic Production Kit', items };
-  }
-
-  // Default: Run-and-Gun commercial pack
-  const items = [
-    allGear.find(g => g.category === 'camera') || allGear[0],
-    allGear.find(g => g.category === 'lens') || allGear[2],
-    allGear.find(g => g.category === 'lighting') || allGear[4],
-    allGear.find(g => g.category === 'audio') || allGear[6],
-  ].filter(Boolean) as GearItem[];
-  return { packageName: 'Run-and-Gun Commercial Pack', items };
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -90,39 +19,85 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch gear from DB or fallback
-    let allGear: GearItem[];
-    try {
-      await dbConnect();
-      const dbGear = await StudioGear.find({ inStock: true }).lean();
-      allGear = dbGear.length > 0 ? dbGear.map(g => ({
-        _id: String(g._id),
-        id: String(g._id),
-        name: g.name,
-        category: g.category,
-        image: g.image,
-        buyPrice: g.buyPrice,
-        rentRate: g.rentRate,
-      })) : FALLBACK_GEAR;
-    } catch {
-      allGear = FALLBACK_GEAR;
+    const lower = prompt.toLowerCase();
+    
+    let result = {
+      name: 'Standard Portrait',
+      description: 'A balanced setup for standard photography with a slightly shallow depth of field for subject isolation.',
+      settings: {
+        iso: '100 - 200',
+        shutter: '1/200s',
+        aperture: 'f/1.8 - f/2.8',
+        whiteBalance: 'Auto (AWB) or 5200K',
+        focus: 'Continuous AF (Eye Tracking)',
+      }
+    };
+
+    if (lower.includes('star trail') || lower.includes('astro') || lower.includes('night sky')) {
+      result = {
+        name: 'Astrophotography & Star Trails',
+        description: 'Long exposure setup to capture starlight without trailing, or extremely long for trails. Use a sturdy tripod and a wide-angle lens.',
+        settings: {
+          iso: '800 - 3200',
+          shutter: '20s - 30s',
+          aperture: 'f/1.4 - f/2.8 (Wide Open)',
+          whiteBalance: '3800K - 4200K (Cool)',
+          focus: 'Manual (Infinity ∞)',
+        }
+      };
+    } else if (lower.includes('slow shutter') || lower.includes('waterfall') || lower.includes('light trail')) {
+      result = {
+        name: 'Slow Shutter / Motion Blur',
+        description: 'Ideal for silky waterfalls or car light trails at night. Requires a tripod and possibly an ND filter during the day.',
+        settings: {
+          iso: '100 (Lowest possible)',
+          shutter: '1/4s - 5s',
+          aperture: 'f/8 - f/16',
+          whiteBalance: 'Auto (AWB)',
+          focus: 'Single AF or Manual',
+        }
+      };
+    } else if (lower.includes('sports') || lower.includes('action') || lower.includes('wildlife') || lower.includes('fast')) {
+      result = {
+        name: 'High-Speed Action',
+        description: 'Fast shutter speed to freeze motion. Requires a fast lens or higher ISO to compensate for the short exposure.',
+        settings: {
+          iso: '800 - Auto',
+          shutter: '1/1000s - 1/2000s',
+          aperture: 'f/2.8 - f/4',
+          whiteBalance: 'Auto (AWB)',
+          focus: 'Continuous AF (AF-C / AI Servo)',
+        }
+      };
+    } else if (lower.includes('landscape') || lower.includes('nature') || lower.includes('architecture')) {
+      result = {
+        name: 'Landscape & Architecture',
+        description: 'Deep depth of field to keep both foreground and background in sharp focus.',
+        settings: {
+          iso: '100',
+          shutter: '1/60s - 1/125s (on tripod: any)',
+          aperture: 'f/8 - f/11',
+          whiteBalance: 'Daylight or Auto',
+          focus: 'Manual or Single-Point AF',
+        }
+      };
+    } else if (lower.includes('macro') || lower.includes('close up')) {
+      result = {
+        name: 'Macro Photography',
+        description: 'Close-up photography requiring a narrow aperture to get a usable depth of field.',
+        settings: {
+          iso: '100 - 400 (Use Flash/Strobe)',
+          shutter: '1/200s (Sync Speed)',
+          aperture: 'f/11 - f/16',
+          whiteBalance: 'Flash (5500K)',
+          focus: 'Manual Focus (Rock back and forth)',
+        }
+      };
     }
 
-    // Build search string from prompt + image context
-    const searchText = prompt + (imageUrl ? ' chiaroscuro light cinematic' : '');
-    const { packageName, items } = matchGearToPrompt(searchText, allGear);
-
-    const buyTotal = items.reduce((sum, item) => sum + item.buyPrice, 0);
-    const rentRateTotal = items.reduce((sum, item) => sum + item.rentRate, 0);
-
-    return NextResponse.json({
-      packageName,
-      items,
-      buyTotal,
-      rentRateTotal,
-    }, { status: 200 });
+    return NextResponse.json(result, { status: 200 });
   } catch (err) {
     console.error('[api/studio/concierge] Error:', err);
-    return NextResponse.json({ error: 'Concierge recommendation failed.' }, { status: 500 });
+    return NextResponse.json({ error: 'RV Bot recommendation failed.' }, { status: 500 });
   }
 }

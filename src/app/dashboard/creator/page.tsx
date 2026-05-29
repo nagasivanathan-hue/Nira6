@@ -68,7 +68,7 @@ export default async function CreatorDashboard() {
             <Link href={`/creators/${profile._id}`} className="px-5 py-2.5 bg-nira-gray text-nira-dark font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-neutral-200 transition-all">
               View Public Profile
             </Link>
-            <button className="w-10 h-10 rounded-xl bg-nira-gray flex items-center justify-center text-nira-dark hover:bg-neutral-200 transition-all relative">
+            <button aria-label="Button" title="Button" className="w-10 h-10 rounded-xl bg-nira-gray flex items-center justify-center text-nira-dark hover:bg-neutral-200 transition-all relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             </button>

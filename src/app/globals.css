@@ -146,7 +146,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Scrollbar hide for horizontal scroll */
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide { -ms-overflow-style: none;  }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* Focus ring */
@@ -248,7 +248,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Momentum scroll behavior for absolute/overflow sections */
   .touch-scroll {
-    -webkit-overflow-scrolling: touch;
+    
   }
 
   /* Safe Area paddings */

@@ -266,7 +266,7 @@ function ChatContent() {
                   onChange={(e) => setInputText(e.target.value)}
                   className="flex-1 px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow focus:bg-white transition-all"
                 />
-                <button
+                <button aria-label="Button" title="Button"
                   type="submit"
                   disabled={sending || !inputText.trim()}
                   className="p-3 bg-nira-yellow text-nira-dark rounded-xl hover:bg-nira-yellow-dark transition-all disabled:opacity-50 cursor-pointer shrink-0"

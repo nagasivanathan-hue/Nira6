@@ -33,8 +33,8 @@ export default function CreatorProfilePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-nira-gray">
       {/* Cover */}
-      <div className="relative h-48 sm:h-64 overflow-hidden" style={{ background: `linear-gradient(135deg, ${catColor}30, ${catColor}60, #0A0A0A)` }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.3), transparent 50%)' }} />
+      <div className="relative h-48 sm:h-64 overflow-hidden" >
+        <div className="absolute inset-0 opacity-10"  />
         <div className="absolute top-4 left-4 z-10">
           <Link href="/creators/discover" className="flex items-center gap-1.5 px-3 py-1.5 bg-black/30 backdrop-blur-md text-white text-xs font-bold rounded-lg hover:bg-black/50 transition-all">
             <ArrowLeft className="w-3.5 h-3.5" /> Back
@@ -44,7 +44,7 @@ export default function CreatorProfilePage({ params }: Props) {
           <button onClick={() => setLiked(!liked)} className={`p-2 rounded-lg backdrop-blur-md transition-all cursor-pointer ${liked ? 'bg-red-500/80 text-white' : 'bg-black/30 text-white hover:bg-black/50'}`}>
             <Heart className={`w-4 h-4 ${liked ? 'fill-white' : ''}`} />
           </button>
-          <button className="p-2 bg-black/30 backdrop-blur-md text-white rounded-lg hover:bg-black/50 transition-all cursor-pointer">
+          <button aria-label="Button" title="Button" className="p-2 bg-black/30 backdrop-blur-md text-white rounded-lg hover:bg-black/50 transition-all cursor-pointer">
             <Share2 className="w-4 h-4" />
           </button>
         </div>
@@ -83,7 +83,7 @@ export default function CreatorProfilePage({ params }: Props) {
                   { icon: Zap, label: 'Response', value: creator.responseTime, color: '#A855F7' },
                 ].map(s => (
                   <div key={s.label} className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.color + '15' }}>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" >
                       <s.icon className="w-4 h-4" style={{ color: s.color }} />
                     </div>
                     <div>

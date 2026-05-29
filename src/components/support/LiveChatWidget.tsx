@@ -177,7 +177,7 @@ export default function LiveChatWidget() {
                   </p>
                 </div>
               </div>
-              <button
+              <button aria-label="Button" title="Button"
                 onClick={() => setOpen(false)}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer relative z-10"
@@ -237,7 +237,7 @@ export default function LiveChatWidget() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(input)}
                 className="flex-1 px-4 py-2.5 bg-nira-gray rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-nira-yellow border border-transparent focus:border-nira-yellow transition-all"
               />
-              <button
+              <button aria-label="Button" title="Button"
                 onClick={() => handleSendMessage(input)}
                 className="w-10 h-10 bg-nira-dark hover:bg-nira-yellow hover:text-nira-dark rounded-xl flex items-center justify-center text-white transition-colors cursor-pointer flex-shrink-0 shadow-md"
               >

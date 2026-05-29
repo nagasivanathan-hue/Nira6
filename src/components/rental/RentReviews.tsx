@@ -40,7 +40,7 @@ export default function RentReviews({ reviews, rating, reviewCount }: RentReview
               <span className="text-[10px] font-bold text-white/30 w-3">{star}</span>
               <Star className="w-3 h-3 text-nira-yellow/40" />
               <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-nira-yellow rounded-full transition-all" style={{ width: `${pct}%` }} />
+                <div className="h-full bg-nira-yellow rounded-full transition-all"  />
               </div>
               <span className="text-[10px] font-bold text-white/20 w-6 text-right">{count}</span>
             </div>

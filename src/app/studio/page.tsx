@@ -62,18 +62,23 @@ const INITIAL_BARTER_LISTINGS: BarterListing[] = [];
 // -------------------------------------------------------------
 
 export default function CreatorStudioPage() {
-  const [activeTab, setActiveTab] = useState<'concierge' | 'barter' | 'grader' | 'garage'>('concierge');
+  const [activeTab, setActiveTab] = useState<'concierge' | 'barter' | 'garage'>('concierge');
   
-  // States for Feature 1: DP Concierge
-  const [dpPrompt, setDpPrompt] = useState('');
-  const [dpLoading, setDpLoading] = useState(false);
-  const [dpLogs, setDpLogs] = useState<string[]>([]);
+  // States for Feature 1: RV Bot (Manual Settings Guide)
+  const [rvPrompt, setRvPrompt] = useState('');
+  const [rvLoading, setRvLoading] = useState(false);
+  const [rvLogs, setRvLogs] = useState<string[]>([]);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [dpResult, setDpResult] = useState<{
-    packageName: string;
-    items: GearItem[];
-    buyTotal: number;
-    rentRateTotal: number;
+  const [rvResult, setRvResult] = useState<{
+    name: string;
+    description: string;
+    settings: {
+      iso: string;
+      shutter: string;
+      aperture: string;
+      whiteBalance: string;
+      focus: string;
+    };
   } | null>(null);
 
   // Inventory loaded from API
@@ -87,20 +92,7 @@ export default function CreatorStudioPage() {
   const [chatMessage, setChatMessage] = useState('');
   const [chatLogs, setChatLogs] = useState<Record<string, string[]>>({});
 
-  // States for Feature 3: Visual Grader
-  const [selectedGraderFile, setSelectedGraderFile] = useState<string | null>(null);
-  const [graderLoading, setGraderLoading] = useState(false);
-  const [graderLogs, setGraderLogs] = useState<string[]>([]);
-  const [graderResult, setGraderResult] = useState<{
-    modelName: string;
-    conditionScore: number;
-    shutterCount: number;
-    quickSellPrice: number;
-    maxProfitPrice: number;
-  } | null>(null);
-  const [selectedPayout, setSelectedPayout] = useState<'quick' | 'max' | null>(null);
-
-  // States for Feature 4: Creator's Garage
+  // States for Feature 3: Creator's Garage
   const [garageItems, setGarageItems] = useState<GearItem[]>([]);
   const [rentToggle, setRentToggle] = useState(true); // true = Rent for 1 Week, false = Buy Outright
 
@@ -159,110 +151,54 @@ export default function CreatorStudioPage() {
   // LOGIC & TIMERS SIMULATION
   // -------------------------------------------------------------
 
-  // Run DP Concierge via backend API
-  const handleDpConcierge = async () => {
-    if (!dpPrompt.trim() && !uploadedImageUrl) return;
-    setDpLoading(true);
-    setDpResult(null);
-    setDpLogs([]);
+  // Run RV Bot via backend API
+  const handleRvBot = async () => {
+    if (!rvPrompt.trim() && !uploadedImageUrl) return;
+    setRvLoading(true);
+    setRvResult(null);
+    setRvLogs([]);
 
     const logSequence = uploadedImageUrl 
       ? [
-          'Analyzing uploaded reference storyboard visual composition...',
+          'Analyzing uploaded reference visual composition...',
           'Extracting exposure and luminance vectors from image pixels...',
-          'Detecting lighting key, fill, and backlight distribution curves...',
-          'Matching optical aperture simulation for shallow depth-of-field f/1.4 GM setup...',
-          'Finalizing cinematic recommendation setup package...'
+          'Calculating required exposure triangle values...',
+          'Finalizing manual camera settings...'
         ]
       : [
-          'Tokenizing scene description parameters...',
-          'Matching composition requirements with high-contrast chiaroscuro optics...',
-          'Filtering for 8K-ready low-light sensors...',
-          'Optimizing three-point lighting rig luminance levels...',
-          'Finalizing tailored director bundle packages...'
+          'Tokenizing photography type description...',
+          'Calculating required shutter and aperture rules...',
+          'Optimizing ISO and white balance recommendations...',
+          'Finalizing manual camera settings...'
         ];
 
-    // Show animated logs while API runs
     logSequence.forEach((log, index) => {
       setTimeout(() => {
-        setDpLogs(prev => [...prev, `[system]: ${log}`]);
-      }, (index + 1) * 600);
+        setRvLogs(prev => [...prev, `[RV Bot]: ${log}`]);
+      }, (index + 1) * 400);
     });
 
     try {
       const res = await fetch('/api/studio/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: dpPrompt, imageUrl: uploadedImageUrl || '' }),
+        body: JSON.stringify({ prompt: rvPrompt, imageUrl: uploadedImageUrl || '' }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        // Normalize items
-        const items = (data.items || []).map((g: GearItem & { _id?: string }) => ({
-          ...g,
-          id: g.id || g._id || '',
-        }));
-        setDpResult({
-          packageName: data.packageName || 'Cinematic Bundle',
-          items,
-          buyTotal: data.buyTotal || items.reduce((s: number, i: GearItem) => s + i.buyPrice, 0),
-          rentRateTotal: data.rentRateTotal || items.reduce((s: number, i: GearItem) => s + i.rentRate, 0),
-        });
+        setTimeout(() => {
+          setRvResult(data);
+          setRvLoading(false);
+        }, logSequence.length * 400 + 500);
       } else {
-        setDpLogs(prev => [...prev, '[error]: Concierge API returned an error. Using local matching...']);
-        // Local fallback
-        const matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4]].filter(Boolean);
-        setDpResult({
-          packageName: 'Run-and-Gun Commercial Pack',
-          items: matched,
-          buyTotal: matched.reduce((s, i) => s + i.buyPrice, 0),
-          rentRateTotal: matched.reduce((s, i) => s + i.rentRate, 0),
-        });
+        setRvLogs(prev => [...prev, '[error]: RV Bot API returned an error.']);
+        setRvLoading(false);
       }
     } catch (err) {
-      console.warn('[Studio] Concierge API failed:', err);
-      const matched = [INVENTORY[0], INVENTORY[2], INVENTORY[4]].filter(Boolean);
-      setDpResult({
-        packageName: 'Run-and-Gun Commercial Pack',
-        items: matched,
-        buyTotal: matched.reduce((s, i) => s + i.buyPrice, 0),
-        rentRateTotal: matched.reduce((s, i) => s + i.rentRate, 0),
-      });
-    } finally {
-      setDpLoading(false);
+      console.warn('[Studio] RV Bot API failed:', err);
+      setRvLoading(false);
     }
-  };
-
-  // Run Grader simulation
-  const handleGraderSimulation = () => {
-    setGraderLoading(true);
-    setGraderResult(null);
-    setGraderLogs([]);
-    setSelectedPayout(null);
-
-    const graderSequence = [
-      'Extracting camera body cosmetic micro-abrasions...',
-      'Evaluating lens element lens-flare and dust patterns...',
-      'Analyzing sensor pixel integrity & CMOS wear count...',
-      'Querying real-time MongoDB recommerce valuation indexes...'
-    ];
-
-    graderSequence.forEach((log, index) => {
-      setTimeout(() => {
-        setGraderLogs(prev => [...prev, `[AI Grader]: ${log}`]);
-        if (index === graderSequence.length - 1) {
-          setGraderResult({
-            modelName: 'Sony Alpha 7 IV Cinema Config',
-            conditionScore: 92,
-            shutterCount: 12402,
-            quickSellPrice: 112000,
-            maxProfitPrice: 139000
-          });
-          setGraderLoading(false);
-        }
-      }, (index + 1) * 900);
-    });
   };
 
   // Toggle garage items
@@ -297,9 +233,8 @@ export default function CreatorStudioPage() {
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10 border-b border-neutral-900 pb-6">
           {(
             [
-              { id: 'concierge', label: 'AI DP Concierge', icon: Sparkles },
+              { id: 'concierge', label: 'RV Bot', icon: Sparkles },
               { id: 'barter', label: 'Barter Board', icon: RefreshCw },
-              { id: 'grader', label: 'Wear & Tear Grader', icon: Sliders },
               { id: 'garage', label: 'Creators Garage', icon: Camera },
             ] as const
           ).map(tab => {
@@ -325,7 +260,7 @@ export default function CreatorStudioPage() {
         {/* Tabs Content Wrapper */}
         <div className="grid grid-cols-1 gap-8">
           
-          {/* TAB 1: AI DP CONCIERGE */}
+          {/* TAB 1: RV BOT */}
           {activeTab === 'concierge' && (
             <motion.div 
               initial={{ opacity: 0, y: 10 }} 
@@ -335,25 +270,26 @@ export default function CreatorStudioPage() {
               <div className="lg:col-span-7 flex flex-col gap-6">
                 <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
                   <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-3">
-                    <Sparkles className="w-5 h-5 text-[#FFDA03]" /> AI Director of Photography Concierge
+                    <Sparkles className="w-5 h-5 text-[#FFDA03]" /> RV - Your Photography Assistant
                   </h3>
                   <p className="text-xs text-neutral-400 leading-relaxed mb-6">
-                    Describe your cinematic vision, shoot environment, lighting goals, or camera configurations. The AI matches and curates the equipment you need.
+                    Tell RV what kind of photography you are shooting, and get precise manual camera settings instantly.
                   </p>
 
                   {/* Suggestion Prompts */}
                   <div className="flex flex-wrap gap-2 mb-5">
                     {[
-                      'Golden hour noir short film, soft backlight, ultra-sharp f/1.4 prime lens setup',
-                      'High-end studio product shoot, dramatic overhead lights, slow-motion detail shots',
-                      'Outdoor run-and-gun music video, stabilized gimbal, ultra-wide drone setup'
+                      'Star trails and astrophotography',
+                      'Slow shutter waterfall',
+                      'High-speed sports photography',
+                      'Macro close up photography'
                     ].map((p, idx) => (
                       <button
                         key={idx}
-                        onClick={() => setDpPrompt(p)}
+                        onClick={() => setRvPrompt(p)}
                         className="text-[10px] text-left px-3 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:text-white text-neutral-400 rounded-lg transition-colors cursor-pointer"
                       >
-                        &ldquo;{p.substring(0, 52)}...&rdquo;
+                        &ldquo;{p}&rdquo;
                       </button>
                     ))}
                   </div>
@@ -367,12 +303,11 @@ export default function CreatorStudioPage() {
                         if (meta) {
                           promptSuffix += `\n[Camera Metadata]: ${meta.cameraModel} with ${meta.lensModel} optics (ISO: ${meta.iso}, Aperture: ${meta.aperture}, Shutter: ${meta.shutterSpeed}, Focal: ${meta.focalLength})`;
                         }
-                        setDpPrompt(prev => prev ? `${prev}${promptSuffix}` : promptSuffix.trim());
+                        setRvPrompt(prev => prev ? `${prev}${promptSuffix}` : promptSuffix.trim());
                       }}
                       onClear={() => {
                         setUploadedImageUrl(null);
-                        setDpPrompt(prev => {
-                          // Clean both reference image URL and camera metadata from the prompt
+                        setRvPrompt(prev => {
                           return prev
                             .replace(/\[Reference Image\]:\s*\S+/g, '')
                             .replace(/\[Camera Metadata\]:[^\n]*/g, '')
@@ -384,39 +319,39 @@ export default function CreatorStudioPage() {
 
                   <div className="relative mb-5">
                     <textarea
-                      value={dpPrompt}
-                      onChange={(e) => setDpPrompt(e.target.value)}
-                      placeholder='e.g., "Shooting a low-light moody interview, need cinematic shallow depth of field, high CRI lighting rigs, and professional wireless lavs..."'
+                      value={rvPrompt}
+                      onChange={(e) => setRvPrompt(e.target.value)}
+                      placeholder='e.g., "Shooting a slow shutter waterfall..."'
                       rows={4}
                       className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl p-4 text-sm text-neutral-200 focus:outline-none focus:border-[#FFDA03] transition-all resize-none font-sans"
                     />
                   </div>
 
                   <button
-                    disabled={dpLoading || (!dpPrompt.trim() && !uploadedImageUrl)}
-                    onClick={handleDpConcierge}
+                    disabled={rvLoading || (!rvPrompt.trim() && !uploadedImageUrl)}
+                    onClick={handleRvBot}
                     className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                   >
-                    {dpLoading ? (
+                    {rvLoading ? (
                       <>
-                        <RefreshCw className="w-4 h-4 animate-spin" /> Synthesizing Package...
+                        <RefreshCw className="w-4 h-4 animate-spin" /> Calculating Settings...
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4" /> Generate DP Bundle setup
+                        <Sparkles className="w-4 h-4" /> Get Camera Settings
                       </>
                     )}
                   </button>
                 </div>
 
                 {/* Console Logs Output */}
-                {(dpLoading || dpLogs.length > 0) && (
+                {(rvLoading || rvLogs.length > 0) && (
                   <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-neutral-500 h-44 overflow-y-auto">
                     <div className="text-neutral-400 border-b border-neutral-900 pb-2 mb-2 flex justify-between items-center">
-                      <span>DP AI Concierge Logs</span>
-                      {dpLoading && <span className="w-1.5 h-1.5 bg-[#FFDA03] rounded-full animate-ping" />}
+                      <span>RV Bot Logs</span>
+                      {rvLoading && <span className="w-1.5 h-1.5 bg-[#FFDA03] rounded-full animate-ping" />}
                     </div>
-                    {dpLogs.map((log, i) => (
+                    {rvLogs.map((log, i) => (
                       <div key={i} className="mb-1">
                         <span className="text-[#FFDA03]/60 mr-2">{'>'}</span>{log}
                       </div>
@@ -425,10 +360,10 @@ export default function CreatorStudioPage() {
                 )}
               </div>
 
-              {/* Matched Bundle Result Section */}
+              {/* Matched Settings Result Section */}
               <div className="lg:col-span-5">
                 <AnimatePresence mode="wait">
-                  {dpResult ? (
+                  {rvResult ? (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -439,61 +374,49 @@ export default function CreatorStudioPage() {
                         <div className="flex items-center justify-between mb-4 border-b border-neutral-800 pb-4">
                           <div>
                             <span className="text-[9px] font-black uppercase text-[#FFDA03] bg-[#FFDA03]/10 px-2 py-0.5 rounded border border-[#FFDA03]/25">
-                              Matched Bundle
+                              Recommended Settings
                             </span>
                             <h4 className="font-heading font-black text-lg text-white mt-1">
-                              {dpResult.packageName}
+                              {rvResult.name}
                             </h4>
+                            <p className="text-xs text-neutral-400 mt-2">{rvResult.description}</p>
                           </div>
-                          <Clock className="w-5 h-5 text-neutral-500" />
+                          <Camera className="w-5 h-5 text-neutral-500" />
                         </div>
 
-                        {/* Matched Bundle Items */}
+                        {/* Camera Settings Details */}
                         <div className="space-y-3.5 mb-6">
-                          {dpResult.items.map(item => (
-                            <div key={item.id} className="flex items-center gap-3 bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
-                              <div className="w-10 h-10 relative bg-neutral-900 rounded-lg flex items-center justify-center p-1.5">
-                                <Image src={item.image} alt={item.name} width={40} height={40} unoptimized className="object-contain max-h-full" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-bold text-white truncate">{item.name}</p>
-                                <p className="text-[10px] text-neutral-400 capitalize">{item.category}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-[10px] text-[#FFDA03] font-bold">{formatPrice(item.rentRate)}/d</p>
-                                <p className="text-[8px] text-neutral-500">{formatPrice(item.buyPrice)} buy</p>
-                              </div>
+                          <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-900 space-y-4">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-neutral-400 font-bold uppercase tracking-widest text-[10px]">Shutter Speed</span>
+                              <span className="font-black text-[#FFDA03] text-sm">{rvResult.settings.shutter}</span>
                             </div>
-                          ))}
-                        </div>
-
-                        {/* Price Details */}
-                        <div className="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 space-y-2 mb-6">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-neutral-400">Total Purchase Value</span>
-                            <span className="font-bold text-white">{formatPrice(dpResult.buyTotal)}</span>
-                          </div>
-                          <div className="flex justify-between text-xs">
-                            <span className="text-neutral-400">Daily Rental Fee</span>
-                            <span className="font-bold text-[#FFDA03]">{formatPrice(dpResult.rentRateTotal)}/day</span>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-neutral-400 font-bold uppercase tracking-widest text-[10px]">Aperture</span>
+                              <span className="font-black text-white text-sm">{rvResult.settings.aperture}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-neutral-400 font-bold uppercase tracking-widest text-[10px]">ISO</span>
+                              <span className="font-black text-white text-sm">{rvResult.settings.iso}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs border-t border-neutral-800 pt-3">
+                              <span className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">White Balance</span>
+                              <span className="font-bold text-neutral-300 text-xs">{rvResult.settings.whiteBalance}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">Focus Mode</span>
+                              <span className="font-bold text-neutral-300 text-xs">{rvResult.settings.focus}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-
-                      {/* Action trigger */}
-                      <button
-                        onClick={() => handleSendToGarage(dpResult.items)}
-                        className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-neutral-800 flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4 text-[#FFDA03]" /> Send Bundle to Creator Garage
-                      </button>
                     </motion.div>
                   ) : (
                     <div className="bg-neutral-900/10 border border-dashed border-neutral-800 rounded-3xl p-8 h-full flex flex-col items-center justify-center text-center text-neutral-500 min-h-[300px]">
                       <Sparkles className="w-10 h-10 text-neutral-700 mb-3 animate-pulse" />
-                      <p className="text-xs font-bold text-neutral-400">No Bundle Generated Yet</p>
+                      <p className="text-xs font-bold text-neutral-400">Waiting for Input</p>
                       <p className="text-[10px] text-neutral-500 max-w-xs mt-1">
-                        Describe your project context on the left side and hit generate to query matched rigs.
+                        Select a prompt or describe your shot to get manual settings from RV.
                       </p>
                     </div>
                   )}
@@ -628,7 +551,7 @@ export default function CreatorStudioPage() {
                       exit={{ opacity: 0, scale: 0.96 }}
                       className="bg-neutral-900/50 border border-[#FFDA03]/30 p-6 rounded-2xl backdrop-blur-md relative"
                     >
-                      <button 
+                      <button aria-label="Button" title="Button" 
                         onClick={() => setActiveCounterId(null)}
                         className="absolute top-4 right-4 text-neutral-400 hover:text-white"
                       >
@@ -675,7 +598,7 @@ export default function CreatorStudioPage() {
                       exit={{ opacity: 0, scale: 0.96 }}
                       className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-2xl backdrop-blur-md relative h-96 flex flex-col justify-between"
                     >
-                      <button 
+                      <button aria-label="Button" title="Button" 
                         onClick={() => setChattingListingId(null)}
                         className="absolute top-4 right-4 text-neutral-400 hover:text-white"
                       >
@@ -724,7 +647,7 @@ export default function CreatorStudioPage() {
                           placeholder="Type response message..."
                           className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#FFDA03] text-neutral-200"
                         />
-                        <button
+                        <button aria-label="Button" title="Button"
                           onClick={() => {
                             if (!chatMessage.trim()) return;
                             const listId = chattingListingId;
@@ -757,165 +680,7 @@ export default function CreatorStudioPage() {
             </motion.div>
           )}
 
-          {/* TAB 3: WEAR & TEAR GRADER */}
-          {activeTab === 'grader' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              className="grid lg:grid-cols-12 gap-8"
-            >
-              <div className="lg:col-span-7 flex flex-col gap-6">
-                <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
-                  <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-3">
-                    <Sliders className="w-5 h-5 text-[#FFDA03]" /> Algorithmic Wear & Tear Visual Grader
-                  </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed mb-6">
-                    Our recommerce algorithm evaluates cosmetic condition, shutter count, and sensor pixel arrays to calculate maximum buyout rates instantly.
-                  </p>
 
-                  {/* Drag-and-drop simulation zone */}
-                  <div 
-                    onClick={() => {
-                      setSelectedGraderFile('mock-camera-upload.jpg');
-                      handleGraderSimulation();
-                    }}
-                    className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
-                      selectedGraderFile 
-                        ? 'border-[#FFDA03]/50 bg-[#FFDA03]/5' 
-                        : 'border-neutral-800 hover:border-neutral-700 bg-neutral-950/40'
-                    }`}
-                  >
-                    <input type="file" className="hidden" id="grader-file" />
-                    <Upload className={`w-8 h-8 mb-3 ${selectedGraderFile ? 'text-[#FFDA03]' : 'text-neutral-600'}`} />
-                    <p className="text-xs font-bold text-neutral-300">
-                      {selectedGraderFile ? 'File: camera_diagonal_sensor.jpg' : 'Drag & Drop your gear photos here'}
-                    </p>
-                    <p className="text-[10px] text-neutral-500 mt-1">
-                      Supports high-resolution PNG, JPG, or HEIC formats. Or tap to simulate scan.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Progress Scan Logs */}
-                {(graderLoading || graderLogs.length > 0) && (
-                  <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-neutral-500 h-44 overflow-y-auto relative">
-                    {graderLoading && (
-                      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFDA03] to-transparent animate-pulse" />
-                    )}
-                    <div className="text-neutral-400 border-b border-neutral-900 pb-2 mb-2 flex justify-between items-center">
-                      <span>Neural Vision Scanning Logs</span>
-                      {graderLoading && <RefreshCw className="w-3.5 h-3.5 text-[#FFDA03] animate-spin" />}
-                    </div>
-                    {graderLogs.map((log, i) => (
-                      <div key={i} className="mb-1">
-                        <span className="text-[#FFDA03]/60 mr-2">{'[scan]'}</span>{log}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Evaluated Price details widget */}
-              <div className="lg:col-span-5">
-                <AnimatePresence mode="wait">
-                  {graderResult ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-3xl backdrop-blur-md h-full flex flex-col justify-between"
-                    >
-                      <div>
-                        {/* Title header */}
-                        <div className="border-b border-neutral-800 pb-4 mb-5">
-                          <span className="text-[9px] font-black uppercase text-[#FFDA03] bg-[#FFDA03]/10 px-2 py-0.5 rounded border border-[#FFDA03]/25">
-                            AI Diagnostic Report
-                          </span>
-                          <h4 className="font-heading font-black text-lg text-white mt-1.5">
-                            {graderResult.modelName}
-                          </h4>
-                          <div className="flex gap-4 mt-2 text-[10px] text-neutral-400">
-                            <span>Score: <strong className="text-emerald-400">{graderResult.conditionScore}%</strong></span>
-                            <span>Shutter Count: <strong className="text-white">{graderResult.shutterCount}</strong></span>
-                          </div>
-                        </div>
-
-                        {/* Dual Payout Pricing Options */}
-                        <div className="space-y-3 mb-6">
-                          {/* Option 1: Quick Sell */}
-                          <button
-                            onClick={() => setSelectedPayout('quick')}
-                            className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex justify-between items-center ${
-                              selectedPayout === 'quick'
-                                ? 'bg-neutral-950 border-[#FFDA03] shadow-md'
-                                : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700'
-                            }`}
-                          >
-                            <div>
-                              <span className="text-[9px] font-black uppercase text-emerald-400 tracking-wider">Option A: Instant Payout</span>
-                              <h5 className="text-sm font-bold text-white mt-0.5">Quick Cash Buyout</h5>
-                              <p className="text-[9px] text-neutral-500 mt-0.5">Nira buys outright, free home pickup tomorrow.</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-base font-black text-[#FFDA03]">{formatPrice(graderResult.quickSellPrice)}</p>
-                              <p className="text-[8px] text-neutral-400">Instant Wallet Cash</p>
-                            </div>
-                          </button>
-
-                          {/* Option 2: Max Profit */}
-                          <button
-                            onClick={() => setSelectedPayout('max')}
-                            className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex justify-between items-center ${
-                              selectedPayout === 'max'
-                                ? 'bg-neutral-950 border-[#FFDA03] shadow-md'
-                                : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700'
-                            }`}
-                          >
-                            <div>
-                              <span className="text-[9px] font-black uppercase text-[#FFDA03] tracking-wider">Option B: Marketplace Listing</span>
-                              <h5 className="text-sm font-bold text-white mt-0.5">Maximum Profit Value</h5>
-                              <p className="text-[9px] text-neutral-500 mt-0.5">List on Nira recommerce. 5% transaction commission.</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-base font-black text-white">{formatPrice(graderResult.maxProfitPrice)}</p>
-                              <p className="text-[8px] text-neutral-400">Est. Sell in 4 days</p>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Checkout / Finish execution */}
-                      <button
-                        disabled={!selectedPayout}
-                        onClick={() => {
-                          window.dispatchEvent(new CustomEvent('nira_notification', {
-                            detail: { 
-                              type: 'push', 
-                              title: '💰 Payout Chosen!', 
-                              content: `You selected the ${selectedPayout === 'quick' ? 'Quick Cash Buyout' : 'Marketplace Listing'} method.` 
-                            }
-                          }));
-                          setSelectedGraderFile(null);
-                          setGraderResult(null);
-                        }}
-                        className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      >
-                        Proceed with Payout Selection
-                      </button>
-                    </motion.div>
-                  ) : (
-                    <div className="bg-neutral-900/10 border border-dashed border-neutral-800 rounded-3xl p-8 h-full flex flex-col items-center justify-center text-center text-neutral-500 min-h-[300px]">
-                      <Sliders className="w-10 h-10 text-neutral-700 mb-3 animate-pulse" />
-                      <p className="text-xs font-bold text-neutral-400">Diagnostic Data Awaiting Scan</p>
-                      <p className="text-[10px] text-neutral-500 max-w-xs mt-1">
-                        Use the photo upload zone on the left to activate visual grader scanner diagnostics.
-                      </p>
-                    </div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
 
           {/* TAB 4: CREATOR'S GARAGE CANVAS */}
           {activeTab === 'garage' && (

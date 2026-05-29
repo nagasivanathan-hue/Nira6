@@ -11,7 +11,7 @@ export default function CreatorCard({ creator, compact = false }: { creator: Cre
   if (compact) {
     return (
       <Link href={`/creators/${creator.id}`} className="group flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-nira-yellow/30 hover:shadow-md transition-all">
-        <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border-2" style={{ borderColor: catColor + '40' }}>
+        <div className="w-11 h-11 rounded-lg overflow-hidden shrink-0 border-2" >
           <img src={creator.avatar} alt={creator.name} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 min-w-0">
@@ -31,10 +31,10 @@ export default function CreatorCard({ creator, compact = false }: { creator: Cre
 
   return (
     <Link href={`/creators/${creator.id}`} className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:shadow-black/5 transition-all duration-300">
-      <div className="h-28 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${catColor}15, ${catColor}35)` }}>
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at 80% 20%, ${catColor}60, transparent 50%)` }} />
+      <div className="h-28 relative overflow-hidden" >
+        <div className="absolute inset-0 opacity-20"  />
         <div className="absolute top-3 left-3">
-          <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase backdrop-blur-md text-white" style={{ backgroundColor: catColor + 'CC' }}>
+          <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase backdrop-blur-md text-white" >
             {CREATOR_CATEGORIES.find(c => c.id === creator.category)?.name}
           </span>
         </div>

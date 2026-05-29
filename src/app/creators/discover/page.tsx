@@ -102,7 +102,7 @@ export default function DiscoverPage() {
                   className="w-full pl-9 pr-4 py-2.5 bg-nira-gray rounded-xl text-xs border border-transparent focus:border-nira-yellow focus:bg-white focus:outline-none transition-all"
                 />
               </div>
-              <button onClick={() => setFiltersOpen(!filtersOpen)} className={`p-2.5 rounded-xl border transition-all cursor-pointer ${filtersOpen ? 'bg-nira-yellow text-nira-dark border-nira-yellow' : 'bg-white text-nira-text-secondary border-gray-200 hover:border-nira-yellow'}`}>
+              <button aria-label="Button" title="Button" onClick={() => setFiltersOpen(!filtersOpen)} className={`p-2.5 rounded-xl border transition-all cursor-pointer ${filtersOpen ? 'bg-nira-yellow text-nira-dark border-nira-yellow' : 'bg-white text-nira-text-secondary border-gray-200 hover:border-nira-yellow'}`}>
                 <SlidersHorizontal className="w-4 h-4" />
               </button>
               <div className="flex bg-white rounded-xl border border-gray-200 p-0.5">
@@ -111,7 +111,7 @@ export default function DiscoverPage() {
                   { mode: 'map' as const, icon: MapPin },
                   { mode: 'list' as const, icon: List },
                 ].map(v => (
-                  <button key={v.mode} onClick={() => setViewMode(v.mode)} className={`p-2 rounded-lg transition-all cursor-pointer ${viewMode === v.mode ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}>
+                  <button aria-label="Button" title="Button" key={v.mode} onClick={() => setViewMode(v.mode)} className={`p-2 rounded-lg transition-all cursor-pointer ${viewMode === v.mode ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}>
                     <v.icon className="w-4 h-4" />
                   </button>
                 ))}
@@ -139,7 +139,7 @@ export default function DiscoverPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
                   <label className="text-[10px] font-bold text-nira-text-secondary uppercase tracking-wider mb-1.5 block">Min Rating</label>
-                  <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
+                  <select aria-label="Select option" title="Select option" value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
                     <option value={0}>Any</option>
                     <option value={4}>4+ Stars</option>
                     <option value={4.5}>4.5+ Stars</option>
@@ -148,7 +148,7 @@ export default function DiscoverPage() {
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-nira-text-secondary uppercase tracking-wider mb-1.5 block">Availability</label>
-                  <select value={availability} onChange={e => setAvailability(e.target.value as AvailabilityStatus | 'all')} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
+                  <select aria-label="Select option" title="Select option" value={availability} onChange={e => setAvailability(e.target.value as AvailabilityStatus | 'all')} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
                     <option value="all">Any</option>
                     <option value="available">Available Now</option>
                     <option value="busy">Busy</option>
@@ -156,11 +156,11 @@ export default function DiscoverPage() {
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-nira-text-secondary uppercase tracking-wider mb-1.5 block">Max Budget (₹)</label>
-                  <input type="number" value={maxBudget} onChange={e => setMaxBudget(Number(e.target.value))} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow" />
+                  <input aria-label="Input" title="Input" placeholder="Input" type="number" value={maxBudget} onChange={e => setMaxBudget(Number(e.target.value))} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow" />
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-nira-text-secondary uppercase tracking-wider mb-1.5 block">Sort By</label>
-                  <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
+                  <select aria-label="Select option" title="Select option" value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-none focus:outline-none focus:ring-2 focus:ring-nira-yellow">
                     <option value="rating">Top Rated</option>
                     <option value="price_low">Price: Low to High</option>
                     <option value="price_high">Price: High to Low</option>

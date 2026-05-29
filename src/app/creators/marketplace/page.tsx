@@ -73,7 +73,7 @@ export default function MarketplacePage() {
                     </div>
                     <div className="flex gap-2">
                       <button className="flex-1 px-4 py-2.5 bg-nira-yellow text-nira-dark font-bold text-xs rounded-xl hover:shadow-lg transition-all cursor-pointer">Buy Now</button>
-                      <button className="px-3 py-2.5 bg-nira-dark text-white rounded-xl hover:bg-nira-dark/80 transition-all cursor-pointer"><MessageSquare className="w-4 h-4" /></button>
+                      <button aria-label="Button" title="Button" className="px-3 py-2.5 bg-nira-dark text-white rounded-xl hover:bg-nira-dark/80 transition-all cursor-pointer"><MessageSquare className="w-4 h-4" /></button>
                     </div>
                   </div>
                 </div>

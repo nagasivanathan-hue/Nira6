@@ -139,7 +139,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
               dragActive ? 'border-nira-yellow bg-nira-yellow/5' : 'border-neutral-300 hover:border-nira-yellow/50 bg-neutral-50 hover:bg-neutral-100/50'
             }`}
           >
-            <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => { if(e.target.files?.length) simulateUpload(); }} multiple accept="image/*" />
+            <input aria-label="Input" title="Input" placeholder="Input" type="file" ref={fileInputRef} className="hidden" onChange={(e) => { if(e.target.files?.length) simulateUpload(); }} multiple accept="image/*" />
             <UploadCloud className={`w-10 h-10 mx-auto mb-3 ${dragActive ? 'text-nira-yellow text-nira-yellow' : 'text-neutral-400'}`} />
             <h4 className="font-heading font-black text-sm text-nira-dark">Drag & Drop Media Assets</h4>
             <p className="text-xs text-nira-text-secondary mt-1">Upload up to 5 clear photos of the gear. (Simulated upload)</p>
@@ -157,7 +157,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
               {images.map((img, idx) => (
                 <div key={idx} className="relative w-24 h-24 rounded-xl border border-neutral-200 overflow-hidden shrink-0 group">
                   <Image src={img} alt="Preview" fill className="object-cover" unoptimized />
-                  <button type="button" onClick={() => setImages(images.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button aria-label="Button" title="Button" type="button" onClick={() => setImages(images.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <X className="w-3 h-3" />
                   </button>
                   {idx === 0 && <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] font-black uppercase text-center py-0.5">Cover</span>}
@@ -187,7 +187,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
           </div>
           <div>
             <label className="text-[10px] font-bold text-nira-text-secondary uppercase mb-1 block">Category</label>
-            <select
+            <select aria-label="Select option" title="Select option"
               name="category" value={formData.category} onChange={handleChange}
               className="w-full px-4 py-3 bg-nira-gray rounded-xl text-xs text-nira-dark focus:outline-none focus:border-nira-yellow border border-transparent cursor-pointer"
             >

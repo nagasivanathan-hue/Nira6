@@ -118,7 +118,7 @@ export default function ServicesPage() {
           </div>
           <div className="flex-1 min-w-[150px]">
             <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Min Rating</label>
-            <select value={filters.rating} onChange={e => setFilters({...filters, rating: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0">
+            <select aria-label="Select option" title="Select option" value={filters.rating} onChange={e => setFilters({...filters, rating: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0">
               <option value="">Any Rating</option>
               <option value="4">4.0 & Above</option>
               <option value="4.5">4.5 & Above</option>
@@ -172,7 +172,7 @@ export default function ServicesPage() {
                         {service.freelancer.verified && <CheckCircle className="w-3.5 h-3.5 text-nira-info flex-shrink-0" />}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-nira-text-secondary">
-                        <span style={{ color: levelColors[service.freelancer.level] || '#6B7280' }} className="font-semibold">{service.freelancer.level}</span>
+                        <span  className="font-semibold">{service.freelancer.level}</span>
                         <span>•</span>
                         <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{service.freelancer.location}</span>
                       </div>

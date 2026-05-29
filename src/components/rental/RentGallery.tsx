@@ -34,7 +34,7 @@ export default function RentGallery({ item }: { item: RentalItem }) {
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {images.map((img: string, idx: number) => (
-            <button
+            <button aria-label="Button" title="Button"
               key={idx}
               onClick={() => setActiveIdx(idx)}
               className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
