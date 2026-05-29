@@ -150,6 +150,39 @@ export async function POST(req: Request) {
       console.error('Failed to trigger order confirmation email:', emailErr);
     }
 
+    // Webhook Integration for Excel/Google Sheets
+    try {
+      const webhookUrl = process.env.ORDER_WEBHOOK_URL;
+      if (webhookUrl) {
+        const customerEmail = isGuestCheckout ? guestEmail : user?.email;
+        const customerName = isGuestCheckout ? shippingAddress.name : user?.name;
+        
+        // Construct the item names as a comma-separated string for easy Excel viewing
+        const itemNames = (orderItems || []).map((item: any) => `${item.quantity}x ${item.sku || 'Item'}`).join(', ');
+
+        const webhookPayload = {
+          orderId: createdOrder._id.toString(),
+          date: new Date().toISOString(),
+          customerName: customerName || 'Guest',
+          customerEmail: customerEmail || 'Unknown',
+          customerPhone: isGuestCheckout ? guestPhone : (shippingAddress.phone || 'Unknown'),
+          totalAmount: createdOrder.totalAmount,
+          paymentMethod: createdOrder.paymentMethod,
+          shippingCity: shippingAddress.city || 'Unknown',
+          items: itemNames,
+          orderStatus: createdOrder.orderStatus
+        };
+
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(webhookPayload)
+        }).catch(e => console.error('Background webhook failed:', e));
+      }
+    } catch (webhookErr) {
+      console.error('Failed to trigger order webhook:', webhookErr);
+    }
+
     return NextResponse.json(createdOrder, { status: 201 });
   } catch (err) {
     const error = err as Error;
