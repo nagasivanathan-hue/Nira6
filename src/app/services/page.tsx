@@ -92,8 +92,8 @@ export default function ServicesPage() {
             <button 
               key={cat} 
               role="tab"
-              aria-selected={activeCategory === cat}
-              aria-controls={`panel-${cat}`}
+              aria-selected={activeCategory === cat ? 'true' : 'false'}
+              aria-controls={'panel-' + cat.replace(/\s+/g, '-')}
               onClick={() => setActiveCategory(cat)} 
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeCategory === cat ? 'bg-nira-dark text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-gray-dark'}`}
             >

@@ -283,6 +283,8 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
         <input
           ref={fileInputRef}
           type="file"
+          aria-label="Upload Image"
+          title="Upload Image"
           accept=".jpg,.jpeg,.png,.webp"
           onChange={handleFileInput}
           className="hidden"

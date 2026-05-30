@@ -72,6 +72,8 @@ export default function RentBookingPanel({ item }: { item: RentalItem }) {
             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
             <input
               type="date"
+              aria-label="Start Date"
+              title="Start Date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
@@ -85,6 +87,8 @@ export default function RentBookingPanel({ item }: { item: RentalItem }) {
             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
             <input
               type="date"
+              aria-label="End Date"
+              title="End Date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               min={startDate || new Date().toISOString().split('T')[0]}

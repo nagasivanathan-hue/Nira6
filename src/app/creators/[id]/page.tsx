@@ -41,7 +41,7 @@ export default function CreatorProfilePage({ params }: Props) {
           </Link>
         </div>
         <div className="absolute top-4 right-4 z-10 flex gap-2">
-          <button onClick={() => setLiked(!liked)} className={`p-2 rounded-lg backdrop-blur-md transition-all cursor-pointer ${liked ? 'bg-red-500/80 text-white' : 'bg-black/30 text-white hover:bg-black/50'}`}>
+          <button onClick={() => setLiked(!liked)} aria-label="Like Profile" title="Like Profile" className={`p-2 rounded-lg backdrop-blur-md transition-all cursor-pointer ${liked ? 'bg-red-500/80 text-white' : 'bg-black/30 text-white hover:bg-black/50'}`}>
             <Heart className={`w-4 h-4 ${liked ? 'fill-white' : ''}`} />
           </button>
           <button aria-label="Button" title="Button" className="p-2 bg-black/30 backdrop-blur-md text-white rounded-lg hover:bg-black/50 transition-all cursor-pointer">
@@ -117,8 +117,8 @@ export default function CreatorProfilePage({ params }: Props) {
             <button 
               key={tab} 
               role="tab"
-              aria-selected={activeTab === tab}
-              aria-controls={`tabpanel-${tab}`}
+              aria-selected={activeTab === tab ? 'true' : 'false'}
+              aria-controls={'tabpanel-' + tab}
               onClick={() => setActiveTab(tab)} 
               className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeTab === tab ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}
             >

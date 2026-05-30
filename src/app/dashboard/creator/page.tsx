@@ -3,6 +3,8 @@ import dbConnect from '@/lib/db/mongodb';
 import CreatorProfile from '@/models/CreatorProfile';
 import User from '@/models/User';
 import Service from '@/models/Service';
+import Booking from '@/models/Booking';
+import CreatorBookingsList from '@/components/dashboard/CreatorBookingsList';
 import { cookies, headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { 
@@ -25,8 +27,17 @@ async function getCreatorData() {
 
     const profile = await CreatorProfile.findOne({ userId: user._id });
     const services = await Service.find({ creatorId: profile?._id });
+    
+    // Fetch all bookings for this creator
+    const bookingsRaw = await Booking.find({ creatorId: user._id })
+      .populate('clientId', 'name email avatar')
+      .sort({ date: -1 })
+      .lean();
+    
+    // Serialize for Client Component
+    const bookings = JSON.parse(JSON.stringify(bookingsRaw));
 
-    return { user, profile, services };
+    return { user, profile, services, bookings };
   } catch {
     return null;
   }
@@ -39,7 +50,8 @@ export default async function CreatorDashboard() {
     redirect('/auth/login');
   }
 
-  const { user, profile, services } = data;
+  const { user, profile, services, bookings } = data;
+  const activeBookingsCount = bookings.filter((b: any) => b.status === 'confirmed' || b.status === 'in_progress').length;
 
   if (!profile) {
     redirect('/auth/creator/onboarding');
@@ -89,7 +101,7 @@ export default async function CreatorDashboard() {
               <div className="p-2 bg-blue-100 rounded-lg"><Calendar className="w-5 h-5 text-blue-600" /></div>
               <p className="text-xs font-bold text-nira-text-secondary uppercase">Active Bookings</p>
             </div>
-            <p className="text-2xl font-black text-nira-dark">0</p>
+            <p className="text-2xl font-black text-nira-dark">{activeBookingsCount}</p>
           </div>
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-nira-gray-dark">
             <div className="flex items-center gap-3 mb-2">
@@ -106,6 +118,9 @@ export default async function CreatorDashboard() {
             <p className="text-2xl font-black text-nira-dark">{profile.completedJobs}</p>
           </div>
         </div>
+
+        {/* Creator Bookings Management */}
+        <CreatorBookingsList initialBookings={bookings} />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

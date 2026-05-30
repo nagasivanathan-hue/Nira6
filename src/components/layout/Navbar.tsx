@@ -651,13 +651,24 @@ export default function Navbar() {
               </div>
 
               {isAuthenticated ? (
-                <Link
-                  href="/dashboard"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-nira-dark text-white text-sm font-medium rounded-xl hover:bg-nira-dark/90 transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  {user?.name?.split(' ')[0] || 'Dashboard'}
-                </Link>
+                <div className="hidden sm:flex items-center gap-2">
+                  {user?.role === 'creator' && (
+                    <Link
+                      href="/dashboard/creator"
+                      className="flex items-center gap-2 px-4 py-2 bg-nira-yellow text-nira-dark text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-sm"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Creator Hub
+                    </Link>
+                  )}
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 px-4 py-2 bg-nira-dark text-white text-sm font-medium rounded-xl hover:bg-nira-dark/90 transition-colors shadow-sm"
+                  >
+                    <User className="w-4 h-4" />
+                    {user?.name?.split(' ')[0] || 'Dashboard'}
+                  </Link>
+                </div>
               ) : (
                 <Link
                   href="/auth/login"
