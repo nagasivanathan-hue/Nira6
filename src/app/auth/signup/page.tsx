@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle, Loader2, Phone } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { register, clearError } from '@/store/authSlice';
 import Logo from '@/components/layout/Logo';
@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState<'user' | 'creator'>('user');
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function SignupPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(register({ name, email, password, role }));
+    dispatch(register({ name, email, password, phone, role }));
   };
 
   return (
@@ -87,6 +88,16 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address" 
+              className="w-full pl-12 pr-4 py-3.5 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow transition-all"
+            />
+          </div>
+          <div className="relative">
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-nira-text-secondary" />
+            <input 
+              type="tel" 
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone number (optional, for SMS OTP)" 
               className="w-full pl-12 pr-4 py-3.5 bg-nira-gray rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow transition-all"
             />
           </div>

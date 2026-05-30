@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         }
       );
     }
-    const { name, email, password, role = 'user' } = await req.json();
+    const { name, email, password, role = 'user', phone } = await req.json();
 
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return NextResponse.json({ message: 'Invalid name' }, { status: 400 });
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'User already exists' }, { status: 400 });
       }
 
-      const user = await User.create({ name: name.trim(), email: sanitizedEmail, password, role });
+      const user = await User.create({ name: name.trim(), email: sanitizedEmail, password, role, phone: phone || undefined });
 
       if (user) {
         return NextResponse.json({
