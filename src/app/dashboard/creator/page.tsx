@@ -5,11 +5,13 @@ import User from '@/models/User';
 import Service from '@/models/Service';
 import Booking from '@/models/Booking';
 import CreatorBookingsList from '@/components/dashboard/CreatorBookingsList';
+import BarterInbox from '@/components/dashboard/BarterInbox';
+import CreatorsGarage from '@/components/dashboard/CreatorsGarage';
 import { cookies, headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { 
   BarChart3, Calendar, MessageSquare, DollarSign, 
-  Settings, Briefcase, Plus, Bell, Star
+  Settings, Briefcase, Plus, Bell, Star, ArrowRightLeft, Camera
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -121,6 +123,12 @@ export default async function CreatorDashboard() {
 
         {/* Creator Bookings Management */}
         <CreatorBookingsList initialBookings={bookings} />
+
+        {/* Barter Trade Inbox */}
+        <BarterInbox />
+
+        {/* Creator's Garage — Personal Gear Inventory */}
+        <CreatorsGarage />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
