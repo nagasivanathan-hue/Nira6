@@ -1,727 +1,477 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import { Search, SlidersHorizontal, Grid, List as ListIcon, X, Sparkles, Filter, Check, ArrowRight, History, Tag, Award, Package } from 'lucide-react';
-import ProductCard from '@/components/products/ProductCard';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchProducts } from '@/store/productSlice';
-import { setSearchQuery } from '@/store/uiSlice';
-import { mockProducts } from '@/lib/mockData';
+import Link from 'next/link';
+import { BadgeCheck, ExternalLink, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const CATEGORIES = ['All', 'Cameras', 'Lenses', 'Drones', 'Gimbals', 'Audio', 'Lighting', 'Accessories'];
-const GRADES = ['All', 'Like New', 'Excellent', 'Good', 'Fair'];
-const BRANDS = ['All', 'Sony', 'Canon', 'Nikon', 'DJI', 'Fujifilm', 'Blackmagic', 'Digitek', 'ULANZI', 'Neewer', 'Hiffin'];
+// --- DATA STRUCTURES (MOCKED) ---
 
-// Lightweight text highlighting component
-function HighlightText({ text, highlight }: { text: string; highlight: string }) {
-  if (!highlight.trim()) return <span>{text}</span>;
-  const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-  const parts = text.split(regex);
+// 1. Used Listings (from NIRA6 / Supabase swap point)
+/*
+  Supabase swap:
+  const { data: usedListings } = await supabase
+    .from('gear_listings')
+    .select('id, title, category, condition, price, thumbnail_url, seller:profiles(name, verified), views')
+    .order('created_at', { ascending: false })
+*/
+const mockUsedListings = [
+  {
+    id: "listing-001",
+    title: "Sony A7III Full Kit",
+    category: "Camera",
+    condition: "Mint",
+    price: 88000,
+    thumbnail: "https://picsum.photos/seed/sony/400/300",
+    seller: { name: "Arjun K", verified: true },
+    views: 9400
+  },
+  {
+    id: "listing-002",
+    title: "Sony FE 24-70mm f/2.8 GM",
+    category: "Lens",
+    condition: "Good",
+    price: 110000,
+    thumbnail: "https://picsum.photos/seed/lens/400/300",
+    seller: { name: "Priya S", verified: true },
+    views: 3200
+  },
+  {
+    id: "listing-003",
+    title: "DJI Mavic 3 Pro",
+    category: "Drone",
+    condition: "Mint",
+    price: 175000,
+    thumbnail: "https://picsum.photos/seed/drone/400/300",
+    seller: { name: "Rohan D", verified: false },
+    views: 12500
+  },
+  {
+    id: "listing-004",
+    title: "Rode Wireless GO II",
+    category: "Audio",
+    condition: "Fair",
+    price: 15000,
+    thumbnail: "https://picsum.photos/seed/rode/400/300",
+    seller: { name: "Anita V", verified: true },
+    views: 890
+  },
+  {
+    id: "listing-005",
+    title: "Aputure LS 300x",
+    category: "Lighting",
+    condition: "Good",
+    price: 65000,
+    thumbnail: "https://picsum.photos/seed/aputure/400/300",
+    seller: { name: "Vikram S", verified: true },
+    views: 4100
+  },
+  {
+    id: "listing-006",
+    title: "Canon EOS R5 Body",
+    category: "Camera",
+    condition: "Mint",
+    price: 245000,
+    thumbnail: "https://picsum.photos/seed/canon/400/300",
+    seller: { name: "Neha M", verified: true },
+    views: 11200
+  }
+];
+
+// 2. Buy New (Amazon Affiliate)
+/*
+  Affiliate swap: 
+  Replace 'affiliate_url' with real Amazon Associates link
+*/
+const mockAffiliateProducts = [
+  {
+    id: "aff-001",
+    title: "Sony Alpha ILCE-7M3 (A7III) Full-Frame",
+    category: "Camera",
+    image: "https://picsum.photos/seed/a7m3/400/300",
+    rating: 4.7,
+    reviews: 2840,
+    price: 139990,
+    original: 167990,
+    affiliate_url: "https://www.amazon.in/dp/B07B4L1PQ8?tag=nira6-21"
+  },
+  {
+    id: "aff-002",
+    title: "Sigma 24-70mm F2.8 DG DN Art for Sony E",
+    category: "Lens",
+    image: "https://picsum.photos/seed/sigma/400/300",
+    rating: 4.8,
+    reviews: 1420,
+    price: 94990,
+    original: 105000,
+    affiliate_url: "https://www.amazon.in/dp/B082T2V1JD?tag=nira6-21"
+  },
+  {
+    id: "aff-003",
+    title: "DJI Mini 3 Pro with DJI RC",
+    category: "Drone",
+    image: "https://picsum.photos/seed/mini3/400/300",
+    rating: 4.6,
+    reviews: 3105,
+    price: 89990,
+    original: 99990,
+    affiliate_url: "https://www.amazon.in/dp/B09WDBDGBK?tag=nira6-21"
+  },
+  {
+    id: "aff-004",
+    title: "Sennheiser MKE 600 Shotgun Microphone",
+    category: "Audio",
+    image: "https://picsum.photos/seed/sennheiser/400/300",
+    rating: 4.5,
+    reviews: 890,
+    price: 24990,
+    original: 32000,
+    affiliate_url: "https://www.amazon.in/dp/B00B4UHEBA?tag=nira6-21"
+  }
+];
+
+const CATEGORIES = ['All', 'Camera', 'Lens', 'Lighting', 'Audio', 'Drone', 'Accessories'];
+const SORTS = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Viewed'];
+
+// --- SUB-COMPONENTS ---
+
+function Starfield() {
+  const [stars, setStars] = useState<{ id: number; top: string; left: string; size: string; delay: string; duration: string }[]>([]);
+
+  useEffect(() => {
+    // Generate static stars once on mount to avoid hydration mismatch
+    const generated = Array.from({ length: 100 }).map((_, i) => ({
+      id: i,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      size: `${Math.random() * 2 + 1}px`,
+      delay: `${Math.random() * 5}s`,
+      duration: `${Math.random() * 3 + 2}s`,
+    }));
+    setStars(generated);
+  }, []);
+
   return (
-    <span>
-      {parts.map((part, index) => 
-        regex.test(part) ? (
-          <mark key={index} className="bg-nira-yellow/30 text-nira-dark font-extrabold rounded-xs px-0.5">{part}</mark>
-        ) : (
-          <span key={index}>{part}</span>
-        )
-      )}
-    </span>
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#0A0A0A]">
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className="absolute bg-white rounded-full opacity-0 animate-twinkle"
+          style={{
+            top: star.top,
+            left: star.left,
+            width: star.size,
+            height: star.size,
+            animationDelay: star.delay,
+            animationDuration: star.duration,
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
-export default function BuyPage() {
-  const dispatch = useAppDispatch();
-  const { products, loading, error } = useAppSelector((state) => state.products);
-  const { searchQuery } = useAppSelector((state) => state.ui);
-  
+const FloatCard = ({ children }: { children: React.ReactNode }) => {
+  const tilt = useMemo(() => (Math.random() * 6 - 3).toFixed(2), []); // -3deg to +3deg
+  const dur = useMemo(() => (Math.random() * 2 + 4).toFixed(2), []);  // 4s to 6s
+  const delay = useMemo(() => (Math.random() * 2).toFixed(2), []);    // 0s to 2s
+
+  return (
+    <div
+      className="gear-card relative bg-[#111111] border border-[#1E1E1E] rounded-2xl overflow-hidden transition-all duration-300 ease-out flex flex-col group z-10"
+      style={{
+        '--tilt': `${tilt}deg`,
+        '--dur': `${dur}s`,
+        '--delay': `${delay}s`,
+      } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+};
+
+export default function BuyGearTab() {
+  const [activeTab, setActiveTab] = useState<'used' | 'new'>('used');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [activeGrade, setActiveGrade] = useState('All');
-  const [activeBrand, setActiveBrand] = useState('All');
-  const [sortBy, setSortBy] = useState('latest');
-  
-  // UX Optimizations
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  
-  // Search Experience States & Effects
-  const [localSearch, setLocalSearch] = useState(searchQuery);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('Newest');
 
-  useEffect(() => {
-    setLocalSearch(searchQuery);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (localSearch !== searchQuery) {
-        dispatch(setSearchQuery(localSearch));
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [localSearch, dispatch, searchQuery]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('nira_recent_searches');
-    if (saved) {
-      try {
-        setRecentSearches(JSON.parse(saved));
-      } catch {
-        // Ignore malformed localStorage data
-      }
-    }
-  }, []);
-
-  const saveSearchTerm = (term: string) => {
-    const trimmed = term.trim();
-    if (!trimmed) return;
-    setRecentSearches(prev => {
-      const filtered = prev.filter(t => t !== trimmed);
-      const updated = [trimmed, ...filtered].slice(0, 5);
-      localStorage.setItem('nira_recent_searches', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  useEffect(() => {
-    if (searchQuery.trim() !== '') {
-      saveSearchTerm(searchQuery);
-    }
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const params: Record<string, string> = {};
-    if (activeCategory !== 'All') params.category = activeCategory;
-    if (activeGrade !== 'All') params.grade = activeGrade;
-    if (activeBrand !== 'All') params.brand = activeBrand;
-    if (searchQuery) params.keyword = searchQuery;
-    params.sort = sortBy;
-    
-    dispatch(fetchProducts(params));
-  }, [dispatch, activeCategory, activeGrade, activeBrand, sortBy, searchQuery]);
-
-  const popularTags = ['Sony FX3', 'Mavic 3', 'Rode Mic', 'Sigma Art', 'Canon R5', 'Lenses'];
-
-  // Dynamic search suggestions engine based on loaded products list
-  const getDynamicSuggestions = () => {
-    if (!localSearch.trim()) return [];
-    const term = localSearch.toLowerCase().trim();
-    const suggestionsSet = new Set<string>();
-    const results: { text: string; category: string; type: 'brand' | 'category' | 'product' }[] = [];
-
-    // 1. Matches for Brands
-    BRANDS.forEach(brand => {
-      if (brand !== 'All' && brand.toLowerCase().includes(term) && !suggestionsSet.has(brand.toLowerCase())) {
-        suggestionsSet.add(brand.toLowerCase());
-        results.push({ text: brand, category: 'Brand', type: 'brand' });
-      }
+  // Filter & Sort Logic
+  const filteredUsed = mockUsedListings
+    .filter(item => activeCategory === 'All' || item.category === activeCategory)
+    .sort((a, b) => {
+      if (sortBy === 'Price: Low to High') return a.price - b.price;
+      if (sortBy === 'Price: High to Low') return b.price - a.price;
+      if (sortBy === 'Most Viewed') return b.views - a.views;
+      return 0; // Newest logic would go here
     });
 
-    // 2. Matches for Categories
-    CATEGORIES.forEach(cat => {
-      if (cat !== 'All' && cat.toLowerCase().includes(term) && !suggestionsSet.has(cat.toLowerCase())) {
-        suggestionsSet.add(cat.toLowerCase());
-        results.push({ text: cat, category: 'Category', type: 'category' });
-      }
+  const filteredNew = mockAffiliateProducts
+    .filter(item => activeCategory === 'All' || item.category === activeCategory)
+    .sort((a, b) => {
+      if (sortBy === 'Price: Low to High') return a.price - b.price;
+      if (sortBy === 'Price: High to Low') return b.price - a.price;
+      if (sortBy === 'Most Viewed') return b.reviews - a.reviews;
+      return 0;
     });
 
-    // 3. Matches for Products
-    const matchedProducts = mockProducts.filter(p => 
-      p.name.toLowerCase().includes(term) || 
-      p.brand.toLowerCase().includes(term)
-    );
-
-    matchedProducts.forEach(p => {
-      const lowerName = p.name.toLowerCase();
-      if (!suggestionsSet.has(lowerName) && results.length < 8) {
-        suggestionsSet.add(lowerName);
-        results.push({ 
-          text: p.name, 
-          category: p.category.charAt(0).toUpperCase() + p.category.slice(1), 
-          type: 'product' 
-        });
-      }
-    });
-
-    return results.slice(0, 6);
-  };
-
-  const dynamicSuggestions = getDynamicSuggestions();
-
-  const matchingProducts = mockProducts.filter(p => 
-    p.name.toLowerCase().includes(localSearch.toLowerCase()) ||
-    p.brand.toLowerCase().includes(localSearch.toLowerCase())
-  ).slice(0, 4);
-
-  const hasActiveFilters = activeCategory !== 'All' || activeGrade !== 'All' || activeBrand !== 'All' || searchQuery !== '';
-  
-  let activeFilterCount = 0;
-  if (activeCategory !== 'All') activeFilterCount++;
-  if (activeBrand !== 'All') activeFilterCount++;
-  if (activeGrade !== 'All') activeFilterCount++;
-  if (searchQuery !== '') activeFilterCount++;
-
-  const clearFilter = (type: 'category' | 'brand' | 'grade' | 'search') => {
-    if (type === 'category') setActiveCategory('All');
-    if (type === 'brand') setActiveBrand('All');
-    if (type === 'grade') setActiveGrade('All');
-    if (type === 'search') {
-      setLocalSearch('');
-      dispatch(setSearchQuery(''));
+  const getConditionColor = (cond: string) => {
+    switch (cond) {
+      case 'Mint': return 'bg-green-500 text-green-950';
+      case 'Good': return 'bg-blue-500 text-blue-950';
+      case 'Fair': return 'bg-amber-500 text-amber-950';
+      default: return 'bg-neutral-500 text-neutral-900';
     }
   };
 
-  const clearAllFilters = () => {
-    setActiveCategory('All');
-    setActiveBrand('All');
-    setActiveGrade('All');
-    setLocalSearch('');
-    dispatch(setSearchQuery(''));
+  const formatPrice = (p: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(p);
   };
 
   return (
-    <div className="min-h-screen bg-nira-gray pb-20">
-      {/* Header & Search */}
-      <div className="bg-white border-b border-nira-gray-dark sticky top-16 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 className="font-heading font-bold text-2xl">Buy Creator Gear</h1>
+    <div className="min-h-screen bg-[#0A0A0A] text-white font-sans relative">
+      <style>{`
+        @keyframes float {
+          0%   { transform: translateY(0px) rotate(var(--tilt)); }
+          50%  { transform: translateY(-10px) rotate(var(--tilt)); }
+          100% { transform: translateY(0px) rotate(var(--tilt)); }
+        }
+        @keyframes twinkle {
+          0%, 100% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 0.8; transform: scale(1); }
+        }
+        .animate-twinkle {
+          animation: twinkle linear infinite;
+        }
+        .gear-card {
+          --tilt: 0deg;
+          --dur: 5s;
+          --delay: 0s;
+          animation: float var(--dur) ease-in-out infinite;
+          animation-delay: var(--delay);
+          will-change: transform;
+        }
+        .gear-card:hover {
+          animation-play-state: paused !important;
+          transform: scale(1.04) rotate(0deg) !important;
+          border-color: #FFDA03 !important;
+          box-shadow: 0 0 30px rgba(255, 218, 3, 0.2), 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+          z-index: 20;
+        }
+      `}</style>
+      
+      <Starfield />
+
+      {/* Main Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="font-heading font-black text-5xl md:text-6xl tracking-wider text-white">
+            GEAR <span className="text-[#FFDA03]">MARKETPLACE</span>
+          </h1>
+          <p className="text-[#555555] font-sans mt-4 max-w-2xl mx-auto text-sm md:text-base">
+            Discover verified recommerce gear from creators across India, or buy brand new equipment directly via Amazon.
+          </p>
+        </div>
+
+        {/* Tab Toggle */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-[#111111] p-1.5 rounded-full border border-[#1E1E1E] flex items-center">
+            <button
+              onClick={() => setActiveTab('used')}
+              className={`px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all ${
+                activeTab === 'used' 
+                  ? 'bg-[#FFDA03] text-[#0A0A0A] shadow-[0_0_15px_rgba(255,218,3,0.3)]' 
+                  : 'text-[#555555] hover:text-white'
+              }`}
+            >
+              Used Gear ({mockUsedListings.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('new')}
+              className={`px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all ${
+                activeTab === 'new' 
+                  ? 'bg-[#FFDA03] text-[#0A0A0A] shadow-[0_0_15px_rgba(255,218,3,0.3)]' 
+                  : 'text-[#555555] hover:text-white'
+              }`}
+            >
+              Buy New on Amazon ({mockAffiliateProducts.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Filters & Sort */}
+        <div className="sticky top-16 z-30 bg-[#0A0A0A]/80 backdrop-blur-xl border-y border-[#1E1E1E] py-4 mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 sm:rounded-2xl sm:border-x">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 max-w-7xl mx-auto px-4">
             
-            {/* Dynamic Search Bar Container */}
-            <div className="relative flex-1 max-w-xl">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-nira-text-secondary" />
-              <input 
-                type="text" 
-                placeholder="Search cameras, lenses, drones..." 
-                value={localSearch}
-                onChange={(e) => {
-                  setLocalSearch(e.target.value);
-                  setShowSuggestions(true);
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                className="w-full pl-12 pr-10 py-3 bg-nira-gray rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-nira-yellow transition-all"
-              />
-              {localSearch && (
-                <button aria-label="Button" title="Button" 
-                  onClick={() => {
-                    setLocalSearch('');
-                    dispatch(setSearchQuery(''));
-                    setShowSuggestions(false);
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-nira-gray-dark rounded-full text-nira-text-secondary transition-colors"
+            {/* Category Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+                    activeCategory === cat
+                      ? 'bg-[#FFDA03] text-[#0A0A0A]'
+                      : 'bg-[#111111] text-[#555555] border border-[#1E1E1E] hover:border-[#FFDA03]/50 hover:text-white'
+                  }`}
                 >
-                  <X className="w-4 h-4" />
+                  {cat}
                 </button>
-              )}
-
-              {/* Suggestions Dropdown Overlay */}
-              {showSuggestions && (
-                <>
-                  {/* Backdrop overlay to catch outside click */}
-                  <div 
-                    className="fixed inset-0 z-40 bg-transparent" 
-                    onClick={() => setShowSuggestions(false)} 
-                  />
-                  <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-nira-gray-dark z-50 overflow-hidden animate-fade-in max-h-[420px] overflow-y-auto">
-                    {localSearch.trim() === '' ? (
-                      <div className="p-5">
-                        {/* Recent Searches */}
-                        {recentSearches.length > 0 && (
-                          <div className="mb-5">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary flex items-center gap-1.5">
-                                <History className="w-3.5 h-3.5 text-nira-text-secondary animate-pulse" />
-                                Recent Searches
-                              </h4>
-                              <button 
-                                onClick={() => {
-                                  setRecentSearches([]);
-                                  localStorage.removeItem('nira_recent_searches');
-                                }}
-                                className="text-[10px] text-nira-text-secondary hover:text-nira-error font-extrabold transition-colors cursor-pointer uppercase"
-                              >
-                                Clear All
-                              </button>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              {recentSearches.map(term => (
-                                <div key={term} className="flex items-center gap-1.5 bg-nira-gray hover:bg-nira-yellow/10 rounded-xl transition-all pl-3.5 pr-2 py-1.5 group">
-                                  <button
-                                    onClick={() => {
-                                      setLocalSearch(term);
-                                      dispatch(setSearchQuery(term));
-                                      setShowSuggestions(false);
-                                    }}
-                                    className="text-nira-text-secondary group-hover:text-nira-dark text-xs cursor-pointer font-bold transition-colors"
-                                  >
-                                    {term}
-                                  </button>
-                                  <button aria-label="Button" title="Button"
-                                    onClick={() => {
-                                      setRecentSearches(prev => {
-                                        const updated = prev.filter(t => t !== term);
-                                        localStorage.setItem('nira_recent_searches', JSON.stringify(updated));
-                                        return updated;
-                                      });
-                                    }}
-                                    className="text-nira-text-secondary hover:text-nira-error hover:bg-nira-gray-dark p-0.5 rounded-full transition-all"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="mb-4">
-                          <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3 flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-nira-yellow fill-nira-yellow animate-bounce" />
-                            Popular Searches
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {popularTags.map(tag => (
-                              <button
-                                key={tag}
-                                onClick={() => {
-                                  setLocalSearch(tag);
-                                  dispatch(setSearchQuery(tag));
-                                  setShowSuggestions(false);
-                                }}
-                                className="px-3.5 py-1.5 bg-nira-gray hover:bg-nira-yellow/10 hover:text-nira-dark text-nira-text-secondary text-xs rounded-xl transition-all cursor-pointer font-medium"
-                              >
-                                {tag}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3">
-                            Browse Quick Categories
-                          </h4>
-                          <div className="grid grid-cols-2 gap-2">
-                            {CATEGORIES.filter(c => c !== 'All').map(cat => (
-                              <button
-                                key={cat}
-                                onClick={() => {
-                                  setActiveCategory(cat);
-                                  setShowSuggestions(false);
-                                }}
-                                className="flex items-center justify-between px-3 py-2 border border-nira-gray hover:border-nira-yellow rounded-xl text-left text-xs font-medium text-nira-dark hover:bg-nira-gray/30 transition-all cursor-pointer"
-                              >
-                                <span>{cat}</span>
-                                <ArrowRight className="w-3 h-3 text-nira-text-secondary" />
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        {/* Matching Products */}
-                        {matchingProducts.length > 0 && (
-                          <div className="p-4 border-b border-nira-gray">
-                            <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3 flex items-center gap-1.5">
-                              <Package className="w-3.5 h-3.5 text-nira-text-secondary" />
-                              Store Matches
-                            </h4>
-                            <div className="space-y-2">
-                              {matchingProducts.map(p => (
-                                <a
-                                  key={p.id}
-                                  href={`/buy/${p.id}`}
-                                  className="flex items-center gap-3 p-2 hover:bg-nira-gray rounded-xl transition-colors"
-                                >
-                                  <Image 
-                                    src={p.image} 
-                                    alt={p.name} 
-                                    width={40}
-                                    height={40}
-                                    className="w-10 h-10 object-cover rounded-lg bg-nira-gray"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-semibold text-nira-dark truncate">
-                                      <HighlightText text={p.name} highlight={localSearch} />
-                                    </p>
-                                    <p className="text-[10px] text-nira-text-secondary font-medium">Grade: {p.grade} • {p.brand}</p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="text-xs font-bold text-nira-dark">₹{p.price.toLocaleString('en-IN')}</p>
-                                    <span className="text-[9px] text-nira-success font-extrabold uppercase bg-nira-success/10 px-1.5 py-0.5 rounded">In Stock</span>
-                                  </div>
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Search Autocomplete Suggestions */}
-                        <div className="p-3">
-                          <h4 className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary px-2 mb-2">
-                            Search Suggestions
-                          </h4>
-                          {dynamicSuggestions.length === 0 && matchingProducts.length === 0 && (
-                            <div className="p-4 text-center text-xs text-nira-text-secondary">
-                              No quick suggestions for &ldquo;{localSearch}&rdquo;
-                            </div>
-                          )}
-                          {dynamicSuggestions.map(item => (
-                            <button
-                              key={item.text + '-' + item.type}
-                              onClick={() => {
-                                setLocalSearch(item.text);
-                                dispatch(setSearchQuery(item.text));
-                                setShowSuggestions(false);
-                              }}
-                              className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-nira-gray rounded-xl text-left text-xs text-nira-dark transition-colors cursor-pointer group"
-                            >
-                              {item.type === 'category' ? (
-                                <Tag className="w-3.5 h-3.5 text-purple-500 group-hover:scale-110 transition-transform" />
-                              ) : item.type === 'brand' ? (
-                                <Award className="w-3.5 h-3.5 text-blue-500 group-hover:scale-110 transition-transform" />
-                              ) : (
-                                <Search className="w-3.5 h-3.5 text-nira-text-secondary group-hover:scale-110 transition-transform" />
-                              )}
-                              <span className="flex-1 truncate">
-                                <HighlightText text={item.text} highlight={localSearch} />
-                              </span>
-                              <span className={`text-[9px] px-2 py-0.5 rounded-md font-bold uppercase ${
-                                item.type === 'category' ? 'bg-purple-100 text-purple-700' :
-                                item.type === 'brand' ? 'bg-blue-100 text-blue-700' :
-                                'bg-nira-gray text-nira-text-secondary'
-                              }`}>
-                                {item.category}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
+              ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              <select aria-label="Select option" title="Select option" 
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#555555]">Sort:</span>
+              <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 bg-nira-gray rounded-xl text-sm font-medium focus:outline-none cursor-pointer"
+                className="bg-[#111111] border border-[#1E1E1E] text-white text-xs font-bold px-3 py-2 rounded-lg focus:outline-none focus:border-[#FFDA03] cursor-pointer"
               >
-                <option value="latest">Sort: Latest</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
+                {SORTS.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
               </select>
-              <div className="h-10 w-px bg-nira-gray-dark mx-1 hidden md:block" />
-              <div className="flex bg-nira-gray p-1 rounded-xl">
-                <button aria-label="Button" title="Button" className="p-2 bg-white shadow-sm rounded-lg text-nira-dark"><Grid className="w-4 h-4" /></button>
-                <button aria-label="Button" title="Button" className="p-2 text-nira-text-secondary"><ListIcon className="w-4 h-4" /></button>
-              </div>
             </div>
+
           </div>
         </div>
-      </div>
 
-      {/* Main Content Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8">
-          
-          {/* Sidebar Filters - Desktop only */}
-          <aside className="hidden lg:block lg:col-span-1 space-y-8">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-heading font-bold flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-nira-dark" /> Filters
-                </h3>
-                {hasActiveFilters && (
-                  <button 
-                    onClick={clearAllFilters}
-                    className="text-xs text-nira-text-secondary hover:text-nira-error underline font-bold"
-                  >
-                    Reset All
-                  </button>
-                )}
-              </div>
+        {/* Content Area */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'used' ? (
+            <motion.div
+              key="used"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {filteredUsed.length > 0 ? (
+                filteredUsed.map((item) => (
+                  <FloatCard key={item.id}>
+                    <div className="relative aspect-video w-full bg-[#0A0A0A]">
+                      <Image src={item.thumbnail} alt={item.title} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                      <div className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${getConditionColor(item.condition)}`}>
+                        {item.condition}
+                      </div>
+                    </div>
+                    <div className="p-5 flex flex-col flex-1">
+                      <div className="text-[10px] text-[#555555] font-bold uppercase tracking-[2px] mb-2">{item.category}</div>
+                      <h3 className="text-base font-bold text-white mb-4 line-clamp-2 leading-snug">{item.title}</h3>
+                      
+                      <div className="flex items-center gap-1.5 mb-4 mt-auto">
+                        <div className="w-5 h-5 rounded-full bg-[#1E1E1E] flex items-center justify-center text-[10px] font-bold">
+                          {item.seller.name.charAt(0)}
+                        </div>
+                        <span className="text-xs text-[#555555]">{item.seller.name}</span>
+                        {item.seller.verified && <BadgeCheck className="w-3.5 h-3.5 text-blue-500" />}
+                      </div>
 
-              {/* Category */}
-              <div className="mb-6">
-                <h4 className="text-xs font-extrabold mb-3 uppercase tracking-wider text-nira-text-secondary">Category</h4>
-                <div className="space-y-1">
-                  {CATEGORIES.map(cat => (
-                    <button 
-                      key={cat} 
-                      onClick={() => setActiveCategory(cat)}
-                      className={`block w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${activeCategory === cat ? 'bg-nira-yellow/10 text-nira-dark font-bold' : 'text-nira-text-secondary hover:bg-nira-gray'}`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
+                      <div className="flex items-end justify-between mt-auto pt-4 border-t border-[#1E1E1E]">
+                        <div>
+                          <span className="text-[10px] text-[#555555] uppercase tracking-wider block mb-0.5">Price</span>
+                          <span className="font-heading text-2xl text-[#FFDA03] tracking-wide">{formatPrice(item.price)}</span>
+                        </div>
+                        <Link href={`/buy/${item.id}`} className="px-4 py-2 bg-[#1E1E1E] hover:bg-white hover:text-black text-white text-xs font-bold rounded-lg transition-colors">
+                          View Listing
+                        </Link>
+                      </div>
+                    </div>
+                  </FloatCard>
+                ))
+              ) : (
+                <div className="col-span-full py-20 text-center text-[#555555]">
+                  <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-sm font-bold uppercase tracking-widest">No used gear found for {activeCategory}</p>
                 </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="new"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mb-8 text-center sm:text-left">
+                <h2 className="text-xl font-heading tracking-widest text-[#FFDA03] uppercase">Can&apos;t find it used? Buy new on Amazon</h2>
               </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredNew.length > 0 ? (
+                  filteredNew.map((item) => (
+                    <FloatCard key={item.id}>
+                      {/* Affiliate Badges */}
+                      <div className="absolute top-3 left-3 z-10 flex gap-2">
+                        <span className="bg-[#111111]/80 backdrop-blur border border-[#1E1E1E] text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">
+                          Affiliate
+                        </span>
+                        <span className="bg-[#FF9900] text-black px-2 py-0.5 rounded text-[10px] font-black lowercase flex items-center">
+                          amazon
+                        </span>
+                      </div>
 
-              {/* Brand */}
-              <div className="mb-6">
-                <h4 className="text-xs font-extrabold mb-3 uppercase tracking-wider text-nira-text-secondary">Brand</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {BRANDS.map(brand => (
-                    <button 
-                      key={brand}
-                      onClick={() => setActiveBrand(brand)}
-                      className={`px-3 py-2 rounded-xl text-xs text-center border transition-all cursor-pointer ${activeBrand === brand ? 'bg-nira-dark text-white border-nira-dark font-semibold' : 'border-nira-gray-dark text-nira-text-secondary hover:border-nira-yellow hover:bg-nira-gray/20'}`}
-                    >
-                      {brand}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                      <div className="relative aspect-square w-full bg-white p-6">
+                        <Image src={item.image} alt={item.title} fill className="object-contain p-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-110" />
+                      </div>
 
-              {/* Grade */}
-              <div>
-                <h4 className="text-xs font-extrabold mb-3 uppercase tracking-wider text-nira-text-secondary">Equipment Grade</h4>
-                <div className="space-y-2">
-                  {GRADES.map(grade => (
-                    <label key={grade} className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="radio" 
-                        name="grade" 
-                        checked={activeGrade === grade} 
-                        onChange={() => setActiveGrade(grade)}
-                        className="w-4 h-4 accent-nira-yellow" 
-                      />
-                      <span className={`text-sm ${activeGrade === grade ? 'text-nira-dark font-bold' : 'text-nira-text-secondary group-hover:text-nira-dark'}`}>{grade}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
+                      <div className="p-5 flex flex-col flex-1">
+                        <div className="text-[10px] text-[#555555] font-bold uppercase tracking-[2px] mb-2">{item.category}</div>
+                        <h3 className="text-base font-bold text-white mb-3 line-clamp-2 leading-snug">{item.title}</h3>
+                        
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="flex text-[#FF9900] text-xs">
+                            {'★'.repeat(Math.floor(item.rating))}
+                            <span className="text-[#555555]">{'★'.repeat(5 - Math.floor(item.rating))}</span>
+                          </div>
+                          <span className="text-[10px] text-[#555555]">({item.reviews})</span>
+                        </div>
 
-          {/* Product Grid & Active Chips */}
-          <main className="col-span-4 lg:col-span-3">
-            
-            {/* Active Filters Chips Component */}
-            {hasActiveFilters && (
-              <div className="flex flex-wrap items-center gap-2 mb-6 bg-white p-4 rounded-2xl border border-nira-gray-dark">
-                <span className="text-xs font-bold text-nira-text-secondary uppercase tracking-wider mr-2">Active Filters:</span>
-                
-                {activeCategory !== 'All' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-yellow/10 border border-nira-yellow/30 text-nira-dark rounded-full text-xs font-bold">
-                    <span>Category: {activeCategory}</span>
-                    <button aria-label="Button" title="Button" onClick={() => clearFilter('category')} className="hover:bg-nira-yellow/20 p-0.5 rounded-full transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
+                        <div className="flex flex-col mt-auto pt-4 border-t border-[#1E1E1E]">
+                          <div className="flex items-center justify-between mb-4">
+                            <div>
+                              <span className="text-[10px] text-[#555555] line-through block">{formatPrice(item.original)}</span>
+                              <span className="font-heading text-2xl text-[#FFDA03] tracking-wide">{formatPrice(item.price)}</span>
+                            </div>
+                            <div className="bg-red-500/10 text-red-500 border border-red-500/20 px-2 py-1 rounded text-xs font-bold">
+                              -{Math.round(((item.original - item.price) / item.original) * 100)}%
+                            </div>
+                          </div>
+                          <a 
+                            href={item.affiliate_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer sponsored" 
+                            className="w-full py-3 bg-[#FF9900] hover:bg-[#E48A00] text-black text-xs uppercase tracking-widest font-black rounded-lg transition-colors flex items-center justify-center gap-2"
+                          >
+                            Buy on Amazon <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      </div>
+                    </FloatCard>
+                  ))
+                ) : (
+                  <div className="col-span-full py-20 text-center text-[#555555]">
+                    <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-sm font-bold uppercase tracking-widest">No affiliate gear found for {activeCategory}</p>
                   </div>
                 )}
-
-                {activeBrand !== 'All' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-dark/5 border border-nira-dark/10 text-nira-dark rounded-full text-xs font-bold">
-                    <span>Brand: {activeBrand}</span>
-                    <button aria-label="Button" title="Button" onClick={() => clearFilter('brand')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-
-                {activeGrade !== 'All' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-dark/5 border border-nira-dark/10 text-nira-dark rounded-full text-xs font-bold">
-                    <span>Grade: {activeGrade}</span>
-                    <button aria-label="Button" title="Button" onClick={() => clearFilter('grade')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-
-                {searchQuery !== '' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-nira-yellow text-nira-dark rounded-full text-xs font-bold shadow-sm">
-                    <span>Search: &ldquo;{searchQuery}&rdquo;</span>
-                    <button aria-label="Button" title="Button" onClick={() => clearFilter('search')} className="hover:bg-nira-dark/10 p-0.5 rounded-full transition-colors">
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-
-                <button 
-                  onClick={clearAllFilters}
-                  className="text-xs font-extrabold text-nira-error hover:underline ml-2"
-                >
-                  Clear All
-                </button>
               </div>
-            )}
 
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {[1,2,3,4,5,6].map(i => (
-                  <div key={i} className="bg-white rounded-2xl aspect-[4/5] animate-pulse border border-nira-gray-dark" />
-                ))}
+              <div className="mt-12 text-center text-[10px] text-[#555555] max-w-2xl mx-auto border-t border-[#1E1E1E] pt-6 pb-20">
+                NIRA6 participates in the Amazon Associates Programme. Purchases through these links earn us a small commission at no extra cost to you. This helps support the platform.
               </div>
-            ) : error ? (
-              <div className="bg-nira-error/5 text-nira-error p-8 rounded-2xl text-center border border-nira-error/20">
-                <p className="font-bold">Error loading products</p>
-                <p className="text-sm">{error}</p>
-                <button onClick={() => window.location.reload()} className="mt-4 px-6 py-2 bg-nira-error text-white rounded-xl text-sm font-bold shadow-sm">Retry</button>
-              </div>
-            ) : products.length === 0 ? (
-              <div className="bg-white p-12 rounded-2xl text-center border border-nira-gray-dark max-w-2xl mx-auto my-8 shadow-sm">
-                <Search className="w-16 h-16 text-nira-yellow/60 mx-auto mb-4 animate-bounce" />
-                <h3 className="font-heading font-extrabold text-xl text-nira-dark">No gear matches found</h3>
-                <p className="text-nira-text-secondary text-sm mt-2 max-w-md mx-auto">We couldn&apos;t find any items matching your active filters or search term: &ldquo;{searchQuery}&rdquo;</p>
-                
-                <div className="mt-8 pt-6 border-t border-nira-gray-dark">
-                  <p className="text-xs font-extrabold uppercase tracking-wider text-nira-text-secondary mb-3">Try Popular Keywords instead</p>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {popularTags.map(tag => (
-                      <button
-                        key={tag}
-                        onClick={() => {
-                          setLocalSearch(tag);
-                          dispatch(setSearchQuery(tag));
-                        }}
-                        className="px-4 py-2 bg-nira-gray hover:bg-nira-yellow/10 hover:text-nira-dark text-nira-text-secondary text-xs rounded-xl font-bold transition-all cursor-pointer"
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-center gap-4 mt-8">
-                  {searchQuery && (
-                    <button 
-                      onClick={() => {
-                        setLocalSearch('');
-                        dispatch(setSearchQuery(''));
-                      }}
-                      className="px-5 py-2.5 bg-nira-gray text-nira-dark text-xs font-bold rounded-xl transition-all hover:bg-nira-gray-dark cursor-pointer"
-                    >
-                      Clear Search Keyword
-                    </button>
-                  )}
-                  {hasActiveFilters && (
-                    <button 
-                      onClick={clearAllFilters}
-                      className="px-5 py-2.5 bg-nira-yellow text-nira-dark text-xs font-bold rounded-xl shadow-sm hover:scale-102 transition-all cursor-pointer"
-                    >
-                      Reset All Filters
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </main>
-        </div>
-      </div>
-
-      {/* Mobile Sticky Filter Trigger Button */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-        <button 
-          onClick={() => setIsMobileFilterOpen(true)}
-          className="flex items-center gap-2.5 px-6 py-3 bg-nira-dark text-white rounded-full font-bold shadow-2xl border border-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        >
-          <SlidersHorizontal className="w-4 h-4 text-nira-yellow" />
-          <span className="text-sm">Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="flex items-center justify-center w-5 h-5 bg-nira-yellow text-nira-dark text-xs rounded-full font-black">
-              {activeFilterCount}
-            </span>
+            </motion.div>
           )}
-        </button>
-      </div>
+        </AnimatePresence>
 
-      {/* Mobile Drawer Overlay Backdrop */}
-      {isMobileFilterOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 transition-opacity animate-fade-in"
-          onClick={() => setIsMobileFilterOpen(false)}
-        />
-      )}
-
-      {/* Mobile Bottom Filter Drawer Sheet */}
-      <div className={`lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.2rem] z-50 p-6 shadow-2xl transition-transform duration-300 transform max-h-[85vh] overflow-y-auto ${isMobileFilterOpen ? 'translate-y-0' : 'translate-y-full'}`}>
-        <div className="w-12 h-1 bg-nira-gray-dark rounded-full mx-auto mb-5" />
-        <div className="flex items-center justify-between mb-6 border-b border-nira-gray-dark pb-4">
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-nira-dark" />
-            <h3 className="font-heading font-extrabold text-lg text-nira-dark">Filters</h3>
-          </div>
-          <button aria-label="Button" title="Button" 
-            onClick={() => setIsMobileFilterOpen(false)}
-            className="p-1.5 bg-nira-gray hover:bg-nira-gray-dark rounded-full transition-colors"
-          >
-            <X className="w-4 h-4 text-nira-dark" />
-          </button>
-        </div>
-
-        {/* Mobile Filter Category Section */}
-        <div className="mb-6">
-          <h4 className="text-xs font-black mb-3 uppercase tracking-wider text-nira-text-secondary">Category</h4>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map(cat => (
-              <button 
-                key={cat} 
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-sm transition-all cursor-pointer ${activeCategory === cat ? 'bg-nira-yellow text-nira-dark font-bold shadow-sm' : 'bg-nira-gray text-nira-text-secondary hover:bg-nira-gray-dark'}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile Filter Brand Section */}
-        <div className="mb-6">
-          <h4 className="text-xs font-black mb-3 uppercase tracking-wider text-nira-text-secondary">Brand</h4>
-          <div className="flex flex-wrap gap-2">
-            {BRANDS.map(brand => (
-              <button 
-                key={brand}
-                onClick={() => setActiveBrand(brand)}
-                className={`px-4 py-2 rounded-xl text-sm transition-all cursor-pointer ${activeBrand === brand ? 'bg-nira-dark text-white font-semibold shadow-sm' : 'border border-nira-gray-dark text-nira-text-secondary hover:border-nira-yellow'}`}
-              >
-                {brand}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile Filter Grade Section */}
-        <div className="mb-8">
-          <h4 className="text-xs font-black mb-3 uppercase tracking-wider text-nira-text-secondary">Equipment Grade</h4>
-          <div className="grid grid-cols-2 gap-3">
-            {GRADES.map(grade => (
-              <button 
-                key={grade}
-                onClick={() => setActiveGrade(grade)}
-                className={`px-4 py-3 rounded-xl text-sm text-left transition-all border flex items-center justify-between cursor-pointer ${activeGrade === grade ? 'bg-nira-yellow/10 border-nira-yellow text-nira-dark font-bold' : 'border-nira-gray-dark text-nira-text-secondary'}`}
-              >
-                <span>{grade}</span>
-                {activeGrade === grade && <Check className="w-4 h-4 text-nira-yellow" />}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile Filter Sticky Bottom Button Actions */}
-        <div className="flex gap-4 mt-6 pt-4 border-t border-nira-gray-dark sticky bottom-0 bg-white">
-          <button 
-            onClick={() => { clearAllFilters(); setIsMobileFilterOpen(false); }}
-            className="flex-1 py-3 bg-nira-gray rounded-xl text-sm font-bold text-nira-text-secondary hover:bg-nira-gray-dark transition-colors cursor-pointer"
-          >
-            Reset All
-          </button>
-          <button 
-            onClick={() => setIsMobileFilterOpen(false)}
-            className="flex-1 py-3 bg-nira-yellow text-nira-dark rounded-xl text-sm font-bold shadow-md hover:bg-nira-yellow-dark transition-colors cursor-pointer text-center"
-          >
-            Apply Filters
-          </button>
-        </div>
       </div>
     </div>
   );
