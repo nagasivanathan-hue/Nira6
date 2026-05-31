@@ -54,7 +54,12 @@ export async function POST(request: NextRequest) {
         aperture: 'f/1.8 - f/2.8',
         whiteBalance: 'Auto (AWB) or 5200K',
         focus: 'Continuous AF (Eye Tracking)',
-      }
+      },
+      tips: [
+        'Shoot during the golden hour for soft, flattering directional light.',
+        'Keep the subject\'s eyes in the upper third of the frame for a stronger composition.',
+        'Use negative space around the subject to give the portrait breathing room.'
+      ]
     };
 
     if (lower.includes('star trail') || lower.includes('astro') || lower.includes('night sky')) {
@@ -67,7 +72,12 @@ export async function POST(request: NextRequest) {
           aperture: 'f/1.4 - f/2.8 (Wide Open)',
           whiteBalance: '3800K - 4200K (Cool)',
           focus: 'Manual (Infinity ∞)',
-        }
+        },
+        tips: [
+          'Locate the North Star (Polaris) to create perfect circular star trails around a central point.',
+          'Include a strong foreground element (like a tree, tent, or mountain peak) to give the sky a sense of scale.',
+          'Avoid nights with a full moon if you want to capture the faint details of the Milky Way.'
+        ]
       };
       if (deviceType) {
         result.steps = deviceType === 'mobile' 
@@ -96,7 +106,12 @@ export async function POST(request: NextRequest) {
           aperture: 'f/8 - f/16',
           whiteBalance: 'Auto (AWB)',
           focus: 'Single AF or Manual',
-        }
+        },
+        tips: [
+          'For waterfalls, compose the shot so the water leads the viewer\'s eye from the foreground into the background.',
+          'Include stationary elements like rocks or bridges in the frame to emphasize the motion blur by contrast.',
+          'When shooting light trails, try positioning yourself low to the ground to make the trails look larger and more dynamic.'
+        ]
       };
       if (deviceType) {
         result.steps = deviceType === 'mobile'
@@ -125,7 +140,12 @@ export async function POST(request: NextRequest) {
           aperture: 'f/2.8 - f/4',
           whiteBalance: 'Auto (AWB)',
           focus: 'Continuous AF (AF-C / AI Servo)',
-        }
+        },
+        tips: [
+          'Anticipate the action. Press the shutter a fraction of a second before the peak moment occurs.',
+          'Leave empty space in front of a moving subject so it has room to "move" into the frame.',
+          'Try panning with the subject at a slightly slower shutter speed (e.g., 1/60s) to blur the background while keeping the subject sharp.'
+        ]
       };
       if (deviceType) {
         result.steps = deviceType === 'mobile'
@@ -154,7 +174,12 @@ export async function POST(request: NextRequest) {
           aperture: 'f/8 - f/11',
           whiteBalance: 'Daylight or Auto',
           focus: 'Manual or Single-Point AF',
-        }
+        },
+        tips: [
+          'Use leading lines, such as a path, river, or fence, to draw the viewer\'s eye deep into the landscape.',
+          'Include a foreground element very close to the camera to create a sense of three-dimensional depth.',
+          'Look for framing elements like overhanging branches or archways to naturally border your subject.'
+        ]
       };
       if (deviceType) {
         result.steps = deviceType === 'mobile'
@@ -183,7 +208,12 @@ export async function POST(request: NextRequest) {
           aperture: 'f/11 - f/16',
           whiteBalance: 'Flash (5500K)',
           focus: 'Manual Focus (Rock back and forth)',
-        }
+        },
+        tips: [
+          'Shoot parallel to your subject (like the wing of a butterfly) to get as much of it in focus as possible.',
+          'Backgrounds matter. Shift your angle slightly to get a clean, uncluttered background that makes the tiny subject pop.',
+          'Shoot early in the morning when insects are cold and sluggish, making them easier to photograph.'
+        ]
       };
       if (deviceType) {
         result.steps = deviceType === 'mobile'

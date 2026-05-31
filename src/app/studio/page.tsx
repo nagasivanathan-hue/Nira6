@@ -78,6 +78,7 @@ export default function CreatorStudioPage() {
       focus: string;
     };
     steps?: string[];
+    tips?: string[];
   } | null>(null);
 
   // Inventory loaded from API
@@ -402,6 +403,29 @@ export default function CreatorStudioPage() {
                                   <p className="text-xs text-neutral-300 leading-relaxed font-medium">
                                     {step}
                                   </p>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Pro Tips */}
+                        {rvResult.tips && rvResult.tips.length > 0 && (
+                          <div className="mt-4 border-t border-neutral-800 pt-4">
+                            <span className="text-[10px] font-black uppercase text-[#FFDA03] block mb-3 tracking-widest flex items-center gap-1.5">
+                              <Sparkles className="w-3 h-3" /> Pro Tips
+                            </span>
+                            <div className="space-y-2.5">
+                              {rvResult.tips.map((tip, idx) => (
+                                <motion.div 
+                                  key={idx}
+                                  initial={{ opacity: 0, y: 5 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: idx * 0.15 + 0.5 }}
+                                  className="flex items-start gap-2 text-xs text-neutral-400 leading-relaxed bg-neutral-900/40 p-2.5 rounded border border-neutral-800/50"
+                                >
+                                  <span className="text-[#FFDA03] mt-0.5">•</span>
+                                  {tip}
                                 </motion.div>
                               ))}
                             </div>
