@@ -31,7 +31,7 @@ export async function POST(
 
     // Track description mapping
     let timelineDesc = remarks || `Order status updated to ${status}`;
-    let loc = location || 'Mumbai Central Hub';
+    const loc = location || 'Mumbai Central Hub';
 
     // 1. CONFIRMED status actions
     if (status === 'confirmed') {
@@ -142,7 +142,7 @@ export async function POST(
     // 5. IN TRANSIT status actions
     else if (status === 'in_transit') {
       timelineDesc = remarks || 'Package is in transit between shipping hubs.';
-      let delivery = await Delivery.findOne({ order: order._id });
+      const delivery = await Delivery.findOne({ order: order._id });
       if (delivery) {
         delivery.status = 'in_transit';
         delivery.routeHistory.push({
@@ -158,7 +158,7 @@ export async function POST(
     // 6. OUT FOR DELIVERY status actions
     else if (status === 'out_for_delivery') {
       timelineDesc = 'Package has arrived at local hub and is out for delivery.';
-      let delivery = await Delivery.findOne({ order: order._id });
+      const delivery = await Delivery.findOne({ order: order._id });
       if (delivery) {
         delivery.status = 'out_for_delivery';
         delivery.routeHistory.push({
@@ -193,7 +193,7 @@ export async function POST(
       order.paymentStatus = 'completed';
       order.otpVerified = true;
 
-      let delivery = await Delivery.findOne({ order: order._id });
+      const delivery = await Delivery.findOne({ order: order._id });
       if (delivery) {
         delivery.status = 'delivered';
         delivery.actualDeliveryDate = new Date();

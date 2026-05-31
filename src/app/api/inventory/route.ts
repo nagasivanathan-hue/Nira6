@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     const lowStockOnly = searchParams.get('lowStock') === 'true';
 
     // Populate products
-    let query = Inventory.find({}).populate({ path: 'product', model: Product });
+    const query = Inventory.find({}).populate({ path: 'product', model: Product });
     const items = await query;
 
     let filtered = items;
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     inventory.stockLevel = Math.max(0, inventory.stockLevel + change);
 
     // Update warehouse stock
-    let whStock = inventory.warehouseStock.find(
+    const whStock = inventory.warehouseStock.find(
       (w: any) => w.warehouse.toString() === warehouseId
     );
 

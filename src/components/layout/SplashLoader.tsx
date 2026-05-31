@@ -1,206 +1,464 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Logo from './Logo';
+import { useState, useEffect, useRef } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
+
+// Exif Data
+const exifSpecs = ['f/1.8', '1/500s', 'ISO 400', 'NIRA6 OS v1.0'];
 
 export default function SplashLoader() {
+  const [phase, setPhase] = useState<number>(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [logoLoaded, setLogoLoaded] = useState(false);
+  const [exifIndex, setExifIndex] = useState(0);
+
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  function playWhirr() {
+    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(40, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 1);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.1);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.5);
+  }
+
+  function playClick() {
+    if (!audioCtxRef.current) return;
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.08);
+    
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.08);
+  }
 
   useEffect(() => {
-    // Preload the logo image so the splash shows it immediately
-    const img = new window.Image();
-    img.src = '/assets/logo.png';
-    img.onload = () => setLogoLoaded(true);
+    // TIMING SEQUENCER
+    const timeouts: NodeJS.Timeout[] = [];
+    
+    // Phase 1: Boot (0s)
+    timeouts.push(setTimeout(() => setPhase(1), 0));
+    
+    // Phase 2: Form (0.5s)
+    timeouts.push(setTimeout(() => setPhase(2), 500));
+    
+    // Phase 3: Hunt (1.5s)
+    timeouts.push(setTimeout(() => {
+      setPhase(3);
+      if (soundEnabled) playWhirr();
+    }, 1500));
+    
+    // Phase 4: Lock (3.0s)
+    timeouts.push(setTimeout(() => {
+      setPhase(4);
+      if (soundEnabled) playClick();
+    }, 3000));
+    
+    // Phase 5: Hold (3.8s)
+    timeouts.push(setTimeout(() => setPhase(5), 3800));
+    
+    // Phase 6: Exit (4.5s)
+    timeouts.push(setTimeout(() => setPhase(6), 4500));
+    
+    // Unmount (5.0s)
+    timeouts.push(setTimeout(() => setVisible(false), 5000));
+    
+    return () => timeouts.forEach(clearTimeout);
+  }, [soundEnabled]);
 
-    // Fade out the splash loader after the aperture finishes opening
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, 1400); // 1400ms instead of 2400ms
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    if (phase >= 3) {
+      const interval = setInterval(() => {
+        setExifIndex(i => Math.min(i + 1, exifSpecs.length));
+      }, 300);
+      return () => clearInterval(interval);
+    }
+  }, [phase]);
+
+  const handleSkip = () => {
+    if (phase < 6) {
+      setPhase(6);
+      setTimeout(() => setVisible(false), 500);
+    }
+  };
+
+  const initAudio = () => {
+    if (!audioCtxRef.current) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+  };
+
+  const toggleSound = () => {
+    initAudio();
+    setSoundEnabled(!soundEnabled);
+  };
+
+  if (!visible) return null;
+
+  // Render 60 tiny stars for background
+  const stars = Array.from({ length: 60 }).map((_, i) => (
+    <div key={i} className="splash-star" style={{
+      left: `${((i * 17) % 100)}%`,
+      top: `${((i * 23) % 100)}%`,
+      animationDelay: `${((i * 3) % 5)}s`,
+      opacity: ((i * 7) % 5) * 0.1 + 0.1
+    }} />
+  ));
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ 
-            opacity: 0,
-            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } // 0.6s instead of 0.8s
-          }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-neutral-950 select-none overflow-hidden"
-        >
-          {/* Ambient Radial Backdrop Lighting */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-nira-yellow/5 rounded-full blur-[160px]" />
-          </div>
+    <div className={`splash-overlay ${phase === 6 ? 'fade-out' : ''}`}>
+      <style dangerouslySetInnerHTML={{__html: `
+        .splash-overlay {
+          position: fixed; inset: 0; z-index: 99999;
+          background-color: #0A0A0A;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          font-family: 'DM Sans', sans-serif;
+          transition: opacity 0.5s ease-in-out;
+        }
+        .splash-overlay.fade-out { opacity: 0; pointer-events: none; }
+        
+        .splash-star {
+          position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%;
+          animation: twinkle 3s infinite ease-in-out alternate;
+        }
+        @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: 0.6; } }
 
-          {/* Aperture Shutter & Logo Container */}
-          <div className="relative w-64 h-64 flex items-center justify-center mx-auto my-auto">
+        /* Skip Button & Sound Toggle */
+        .splash-controls {
+          position: absolute; top: 24px; right: 24px; left: 24px;
+          display: flex; justify-content: space-between; align-items: center;
+          opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .splash-controls.show { opacity: 1; pointer-events: auto; }
+        .skip-btn {
+          color: #333; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+          background: none; border: none; cursor: pointer; transition: color 0.2s;
+        }
+        .skip-btn:hover { color: #FFDA03; }
+        .sound-toggle {
+          color: #333; cursor: pointer; transition: color 0.2s; background: none; border: none;
+        }
+        .sound-toggle:hover { color: #FFDA03; }
+
+        /* Main Shake Container */
+        .shake-container {
+          position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .shake-container.shaking {
+          animation: shake 60ms cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+          0% { transform: translate(2px, 2px) }
+          25% { transform: translate(-2px, -2px) }
+          50% { transform: translate(2px, -2px) }
+          75% { transform: translate(-2px, 2px) }
+          100% { transform: translate(0, 0) }
+        }
+
+        /* Aperture Setup */
+        .aperture-wrapper {
+          position: relative; width: 260px; height: 260px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        @media (max-width: 480px) {
+          .aperture-wrapper { width: 200px; height: 200px; }
+        }
+
+        /* Background Glow */
+        .aperture-glow {
+          position: absolute; width: 300px; height: 300px; border-radius: 50%;
+          background: radial-gradient(circle, #FFDA03 0%, transparent 70%);
+          opacity: 0; filter: blur(30px); transition: opacity 0.3s;
+        }
+        .aperture-glow.pulse-glow { opacity: 0.03; }
+        .aperture-glow.lock-glow { animation: flash-glow 0.8s ease-out forwards; }
+        @keyframes flash-glow { 0% { opacity: 0.08; transform: scale(1.1); } 100% { opacity: 0.05; transform: scale(1); } }
+
+        /* Initial Dot / Ring */
+        .boot-ring {
+          position: absolute; width: 1px; height: 1px; background: #FFDA03; border-radius: 50%;
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0;
+        }
+        .boot-ring.p1 { opacity: 1; transform: scale(1); }
+        .boot-ring.p2 { 
+          opacity: 1; width: 260px; height: 260px; background: transparent; 
+          border: 1px solid rgba(255, 218, 3, 0.3); 
+        }
+        @media (max-width: 480px) {
+          .boot-ring.p2 { width: 200px; height: 200px; }
+        }
+
+        /* SVG Aperture Rings */
+        .aperture-svg {
+          position: absolute; width: 100%; height: 100%; z-index: 10;
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .aperture-svg.show { opacity: 1; }
+        
+        .blade {
+          fill: #1A1A1A; stroke: rgba(255, 218, 3, 0.4); stroke-width: 0.5px;
+          transform-origin: 50px 50px;
+          transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        /* Blade States */
+        /* Phase 2: Open */
+        .blades-open .blade { transform: rotate(0deg); }
+        /* Phase 3: Hunt */
+        .blades-hunt .blade { animation: blade-hunt 1.5s infinite ease-in-out alternate; }
+        @keyframes blade-hunt { 0% { transform: rotate(15deg); } 100% { transform: rotate(5deg); } }
+        /* Phase 4-5: Lock */
+        .blades-lock .blade { transform: rotate(20deg); animation: none; transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* Phase 6: Close */
+        .blades-close .blade { transform: rotate(55deg); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* Logo Area clipped by center circle */
+        .logo-clip {
+          position: absolute; inset: 0; z-index: 5;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          /* Clip to center circle, which we animate via mask */
+          mask-image: radial-gradient(circle, black 35%, transparent 36%);
+          -webkit-mask-image: radial-gradient(circle, black 35%, transparent 36%);
+          transition: all 1s;
+        }
+        .blades-open ~ .logo-clip { -webkit-mask-image: radial-gradient(circle, black 45%, transparent 46%); }
+        .blades-hunt ~ .logo-clip { animation: mask-hunt 1.5s infinite ease-in-out alternate; }
+        @keyframes mask-hunt { 0% { -webkit-mask-image: radial-gradient(circle, black 32%, transparent 33%); } 100% { -webkit-mask-image: radial-gradient(circle, black 38%, transparent 39%); } }
+        .blades-lock ~ .logo-clip { -webkit-mask-image: radial-gradient(circle, black 28%, transparent 29%); transition: all 0.1s; }
+        .blades-close ~ .logo-clip { -webkit-mask-image: radial-gradient(circle, black 0%, transparent 0%); transition: all 0.4s; }
+
+        /* The actual logo content */
+        .nira-logo {
+          font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #FFDA03; line-height: 1;
+          display: flex; flex-direction: column; align-items: center;
+          opacity: 0; transition: opacity 0.3s;
+        }
+        .nira-logo.show { opacity: 1; }
+        .nira-logo.hunting {
+          transform: scale(1.15); filter: blur(12px);
+          animation: logo-hunt 1.5s infinite alternate ease-in-out;
+        }
+        @keyframes logo-hunt {
+          0% { filter: blur(12px); }
+          25% { filter: blur(4px); }
+          50% { filter: blur(8px); }
+          75% { filter: blur(2px); }
+          100% { filter: blur(6px); }
+        }
+        .nira-logo.locked {
+          transform: scale(1); filter: blur(0px);
+          transition: transform 0.1s, filter 0.1s;
+        }
+        .nira-logo.hold {
+          transform: scale(1); filter: blur(0px);
+          text-shadow: 0 0 20px rgba(255, 218, 3, 0.4);
+          transition: text-shadow 0.5s;
+        }
+        .nira-line { width: 100%; height: 2px; background: #FFDA03; margin-top: 2px; }
+        .tagline {
+          font-size: 9px; letter-spacing: 3px; color: #555; margin-top: 6px;
+          opacity: 0; transition: opacity 0.5s;
+        }
+        .tagline.show { opacity: 1; color: #FFDA03; }
+
+        /* AF Brackets */
+        .af-bracket {
+          position: absolute; width: 16px; height: 16px;
+          border: 2px solid #FFDA03; opacity: 0;
+          transition: all 0.1s; z-index: 8;
+        }
+        .af-tl { top: 25%; left: 25%; border-right: none; border-bottom: none; }
+        .af-tr { top: 25%; right: 25%; border-left: none; border-bottom: none; }
+        .af-bl { bottom: 25%; left: 25%; border-right: none; border-top: none; }
+        .af-br { bottom: 25%; right: 25%; border-left: none; border-top: none; }
+
+        .brackets-wrapper.hunting .af-bracket {
+          opacity: 0.6;
+          animation: af-flicker 0.4s infinite alternate;
+        }
+        .brackets-wrapper.hunting .af-tl { animation-delay: 0.1s; transform: translate(-2px, -2px) scale(1.05); }
+        .brackets-wrapper.hunting .af-tr { animation-delay: 0.2s; transform: translate(2px, -2px) scale(1.08); }
+        .brackets-wrapper.hunting .af-bl { animation-delay: 0.3s; transform: translate(-2px, 2px) scale(1.02); }
+        .brackets-wrapper.hunting .af-br { animation-delay: 0.4s; transform: translate(2px, 2px) scale(1.05); }
+
+        @keyframes af-flicker { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .brackets-wrapper.locked .af-bracket {
+          opacity: 1; transform: translate(0, 0) scale(1);
+          border-color: #FFDA03; box-shadow: 0 0 5px rgba(255,218,3,0.5);
+        }
+        .brackets-wrapper.hidden .af-bracket { opacity: 0; }
+
+        /* White Flash */
+        .white-flash {
+          position: fixed; inset: 0; background: white; z-index: 999999;
+          opacity: 0; pointer-events: none;
+        }
+        .white-flash.flash { animation: flash-anim 120ms ease-out forwards; }
+        @keyframes flash-anim { 0% { opacity: 0; } 50% { opacity: 0.4; } 100% { opacity: 0; } }
+
+        /* Bottom HUD */
+        .hud-wrapper {
+          position: absolute; bottom: 15%; display: flex; flex-direction: column; align-items: center; gap: 12px;
+          opacity: 0; transition: opacity 0.3s; z-index: 50;
+        }
+        .hud-wrapper.show { opacity: 1; }
+        
+        .progress-container {
+          width: 200px; height: 1px; background: #1E1E1E; position: relative; overflow: visible;
+        }
+        .progress-fill {
+          position: absolute; top: -0.5px; left: 0; height: 2px; background: #FFDA03;
+          box-shadow: 2px 0 8px #FFDA03; transition: width 1.5s linear;
+          width: 0%;
+        }
+        .progress-fill.p3 { width: 85%; }
+        .progress-fill.p4 { width: 100%; transition: width 0.1s ease-out; }
+        .progress-fill.p5 { opacity: 0; transition: opacity 0.3s; }
+
+        .status-text {
+          font-size: 10px; letter-spacing: 4px; color: #555; text-transform: uppercase;
+          transition: color 0.2s, opacity 0.2s;
+        }
+        .status-text.pulse { animation: status-pulse 1s infinite alternate; }
+        @keyframes status-pulse { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+        .status-text.locked { color: #FFDA03; animation: none; text-shadow: 0 0 10px rgba(255,218,3,0.3); }
+
+        .exif-readout {
+          font-size: 9px; letter-spacing: 2px; color: #333; display: flex; gap: 8px;
+        }
+        .exif-item { opacity: 0; animation: type-in 0.1s forwards; }
+        @keyframes type-in { to { opacity: 1; } }
+      `}} />
+
+      {/* Starfield */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {stars}
+      </div>
+
+      {/* White Flash on Lock */}
+      <div className={`white-flash ${phase === 4 ? 'flash' : ''}`} />
+
+      {/* Top Controls */}
+      <div className={`splash-controls ${phase >= 2 && phase < 6 ? 'show' : ''} z-50`}>
+        <button onClick={toggleSound} className="sound-toggle flex items-center justify-center p-2">
+          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+        </button>
+        <button onClick={handleSkip} className="skip-btn px-4 py-2 hover:bg-[#1E1E1E] rounded-md transition-colors">
+          Skip
+        </button>
+      </div>
+
+      <div className={`shake-container ${phase === 4 ? 'shaking' : ''}`}>
+        
+        {/* Glow */}
+        <div className={`aperture-glow ${phase >= 3 ? 'pulse-glow' : ''} ${phase >= 4 ? 'lock-glow' : ''}`} />
+
+        {/* Outer Ripple / Ring */}
+        <div className={`boot-ring ${phase === 1 ? 'p1' : phase >= 2 ? 'p2' : ''}`} />
+
+        <div className="aperture-wrapper">
+          {/* SVG Blades */}
+          <svg viewBox="0 0 100 100" className={`aperture-svg ${phase >= 2 ? 'show' : ''}`}>
+            <circle cx="50" cy="50" r="48" fill="none" stroke="#FFDA03" strokeWidth="1" strokeOpacity="0.3" />
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#FFDA03" strokeWidth="0.5" strokeOpacity="0.6" />
             
-            {/* 1. Centered Brand Logo (revealed behind opening aperture) */}
-            <motion.div
-              initial={{ 
-                opacity: 0, 
-                scale: 0.85,
-                filter: 'blur(10px)'
-              }}
-              animate={logoLoaded ? { 
-                opacity: 1, 
-                scale: 1,
-                filter: 'blur(0px)'
-              } : {}}
-              transition={{ 
-                delay: 0.25,
-                duration: 0.7,
-                ease: [0.16, 1, 0.3, 1] 
-              }}
-              className="absolute z-10 flex flex-col items-center justify-center text-center pointer-events-none select-none"
-            >
-              <Logo height={48} theme="dark" />
-              <span className="mt-2 text-[8px] font-bold tracking-[0.4em] text-neutral-400 uppercase">
-                CREATOR PLATFORM
-              </span>
-            </motion.div>
-
-            {/* 2. Golden caught-focus lens flare (glow effect behind shutter) */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={logoLoaded ? { 
-                opacity: [0, 0.85, 0], 
-                scale: [0.8, 1.35, 1.7] 
-              } : {}}
-              transition={{ 
-                delay: 0.15, // 0.15s instead of 0.4s
-                duration: 0.8, // 0.8s instead of 1.1s
-                ease: 'easeOut' 
-              }}
-              className="absolute w-52 h-52 rounded-full pointer-events-none z-15"
-              style={{
-                background: 'radial-gradient(circle, rgba(255,218,3,0.25) 0%, rgba(255,218,3,0.04) 50%, transparent 70%)',
-                filter: 'blur(20px)'
-              }}
-            />
-
-            {/* 3. Realistic Mechanical Shutter SVG */}
-            <svg 
-              viewBox="0 0 100 100" 
-              className="w-full h-full absolute inset-0 z-20 pointer-events-none"
-            >
-              <defs>
-                {/* 3D Brushed Metal Blade Shading */}
-                <linearGradient id="blade-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#2c2c32" />
-                  <stop offset="35%" stopColor="#1e1e22" />
-                  <stop offset="70%" stopColor="#141417" />
-                  <stop offset="100%" stopColor="#0b0b0d" />
-                </linearGradient>
-
-                {/* Micro shadow between overlapping blades */}
-                <filter id="blade-shadow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feDropShadow dx="-1.2" dy="1.8" stdDeviation="1.2" floodColor="#000000" floodOpacity="0.85" />
-                </filter>
-
-                {/* Violet-blue glass flare reflections */}
-                <radialGradient id="lens-reflection" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="rgba(255, 255, 255, 0.12)" />
-                  <stop offset="25%" stopColor="rgba(0, 180, 255, 0.06)" />
-                  <stop offset="60%" stopColor="rgba(148, 0, 211, 0.03)" />
-                  <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
-                </radialGradient>
-              </defs>
-
-              {/* Concentric glass elements & f-stop markings */}
-              <circle cx="50" cy="50" r="47.5" fill="none" stroke="#222" strokeWidth="0.8" />
-              <circle cx="50" cy="50" r="46.5" fill="none" stroke="#333" strokeWidth="0.3" opacity="0.6" />
-              <circle cx="50" cy="50" r="44.5" fill="none" stroke="#ffffff" strokeWidth="0.1" opacity="0.08" />
-              <circle cx="50" cy="50" r="38" fill="none" stroke="#ffffff" strokeWidth="0.1" opacity="0.03" />
-
-              {/* 6 Overlapping Shutter Blades */}
-              {[0, 1, 2, 3, 4, 5].map((index) => {
-                const angle = index * 60;
-                // Outward sliding vector
-                const moveAngle = angle + 30;
-                const rad = (moveAngle * Math.PI) / 180;
-                const slideDist = 34;
-                const dx = Math.cos(rad) * slideDist;
-                const dy = Math.sin(rad) * slideDist;
-
+            <g className={`
+              ${phase === 2 ? 'blades-open' : ''} 
+              ${phase === 3 ? 'blades-hunt' : ''} 
+              ${phase === 4 || phase === 5 ? 'blades-lock' : ''} 
+              ${phase === 6 ? 'blades-close' : ''}
+            `}>
+              {/* 8 Curved Blades */}
+              {[...Array(8)].map((_, i) => {
+                const angle = i * 45;
                 return (
-                  <motion.path
-                    key={index}
-                    d="M 50,50 L 89,27.5 A 45,45 0 0,1 89,72.5 Z"
-                    fill="url(#blade-grad)"
-                    stroke="#2a2a30"
-                    strokeWidth="0.4"
-                    filter="url(#blade-shadow)"
-                    initial={{ 
-                      rotate: angle, 
-                      x: 0, 
-                      y: 0,
-                      opacity: 1
+                  <path
+                    key={i}
+                    d="M50,50 L85,42 Q75,70 50,85 Z"
+                    className="blade"
+                    style={{
+                      transformOrigin: '50px 50px',
+                      // Initial rotation offsets per blade so they form an iris
+                      transform: phase === 2 ? `rotate(${angle}deg)` : 
+                                 phase === 3 ? `rotate(${angle + 10}deg)` : 
+                                 phase === 4 || phase === 5 ? `rotate(${angle + 18}deg)` : 
+                                 phase === 6 ? `rotate(${angle + 55}deg)` : `rotate(${angle}deg)`
                     }}
-                    animate={logoLoaded ? { 
-                      rotate: angle + 48,
-                      x: dx,
-                      y: dy,
-                      opacity: [1, 1, 0.9, 0] // Keep blades opaque during movement, fade out at edge
-                    } : {}}
-                    transition={{ 
-                      delay: 0.15,
-                      duration: 0.9, 
-                      ease: [0.16, 1, 0.3, 1] 
-                    }}
-                    style={{ transformOrigin: '50px 50px' }}
                   />
                 );
               })}
+            </g>
+          </svg>
 
-              {/* Glass Lens Reflection Overlay */}
-              <circle 
-                cx="50" 
-                cy="50" 
-                r="45.5" 
-                fill="url(#lens-reflection)" 
-                opacity="0.85" 
-              />
-            </svg>
+          {/* Logo Center */}
+          <div className="logo-clip">
+            <div className={`
+              nira-logo 
+              ${phase >= 3 ? 'show' : ''} 
+              ${phase === 3 ? 'hunting' : ''} 
+              ${phase === 4 ? 'locked' : ''} 
+              ${phase >= 5 ? 'hold' : ''}
+            `}>
+              NIRA6
+              <div className="nira-line" />
+              <div className={`tagline ${phase >= 5 ? 'show' : ''}`}>nira6.in</div>
+            </div>
           </div>
 
-          {/* Glowing Status Loader bar */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={logoLoaded ? { opacity: 1 } : {}}
-            transition={{ delay: 0.9, duration: 0.4 }}
-            className="mt-8 w-28 h-[3px] bg-neutral-900 rounded-full overflow-hidden relative"
-          >
-            <motion.div 
-              initial={{ x: '-100%' }}
-              animate={{ x: '200%' }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.4,
-                ease: 'easeInOut'
-              }}
-              className="absolute top-0 bottom-0 w-12 rounded-full"
-              style={{ background: 'linear-gradient(90deg, transparent, #FFDA03, transparent)' }}
-            />
-          </motion.div>
+          {/* AF Brackets */}
+          <div className={`brackets-wrapper absolute inset-0 
+            ${phase === 3 ? 'hunting' : ''} 
+            ${phase >= 4 && phase < 6 ? 'locked' : ''} 
+            ${phase < 3 || phase === 6 ? 'hidden' : ''}
+          `}>
+            <div className="af-bracket af-tl" />
+            <div className="af-bracket af-tr" />
+            <div className="af-bracket af-bl" />
+            <div className="af-bracket af-br" />
+          </div>
 
-          {/* Photography/Cinematic styled Tagline */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={logoLoaded ? { opacity: 0.4, y: 0 } : {}}
-            transition={{ delay: 1.1, duration: 0.8 }}
-            className="mt-4 flex items-center gap-2 text-[9px] font-medium tracking-[0.4em] uppercase text-neutral-400 font-mono"
-          >
-            <span>FOCUSING LENS</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-nira-yellow animate-ping" />
-            <span>F/1.8 SEC</span>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Bottom HUD */}
+      <div className={`hud-wrapper ${phase >= 3 && phase < 6 ? 'show' : ''}`}>
+        <div className="progress-container">
+          <div className={`progress-fill ${phase === 3 ? 'p3' : phase === 4 ? 'p4' : phase === 5 ? 'p5' : ''}`} />
+        </div>
+        
+        <div className={`status-text ${phase === 3 ? 'pulse' : phase >= 4 ? 'locked' : ''}`}>
+          {phase < 4 ? 'CALIBRATING...' : 'FOCUS LOCKED'}
+        </div>
+
+        <div className="exif-readout">
+          {exifSpecs.slice(0, exifIndex).map((spec, i) => (
+            <span key={i} className="exif-item flex items-center gap-2">
+              {spec}
+              {i < Math.min(exifIndex, exifSpecs.length) - 1 && <span className="text-[#222]">|</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+
+    </div>
   );
 }

@@ -29,6 +29,7 @@ export interface Product {
   createdAt: string;
   secondaryImage?: string;
   colors?: { name: string; hex: string; inStock: boolean }[];
+  affiliateUrl?: string;
 }
 
 export interface CartItem {

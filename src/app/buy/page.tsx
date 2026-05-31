@@ -87,25 +87,19 @@ const SORTS = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Viewe
 
 // --- SUB-COMPONENTS ---
 
+const STARFIELD_STARS = Array.from({ length: 100 }).map((_, i) => ({
+  id: i,
+  top: `${((i * 13) % 100)}%`,
+  left: `${((i * 17) % 100)}%`,
+  size: `${((i * 3) % 2) + 1}px`,
+  delay: `${((i * 5) % 5)}s`,
+  duration: `${((i * 7) % 3) + 2}s`,
+}));
+
 function Starfield() {
-  const [stars, setStars] = useState<{ id: number; top: string; left: string; size: string; delay: string; duration: string }[]>([]);
-
-  useEffect(() => {
-    // Generate static stars once on mount to avoid hydration mismatch
-    const generated = Array.from({ length: 100 }).map((_, i) => ({
-      id: i,
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      size: `${Math.random() * 2 + 1}px`,
-      delay: `${Math.random() * 5}s`,
-      duration: `${Math.random() * 3 + 2}s`,
-    }));
-    setStars(generated);
-  }, []);
-
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#0A0A0A]">
-      {stars.map((star) => (
+      {STARFIELD_STARS.map((star) => (
         <div
           key={star.id}
           className="absolute bg-white rounded-full opacity-0 animate-twinkle"
@@ -123,10 +117,10 @@ function Starfield() {
   );
 }
 
-const FloatCard = ({ children }: { children: React.ReactNode }) => {
-  const tilt = useMemo(() => (Math.random() * 6 - 3).toFixed(2), []); // -3deg to +3deg
-  const dur = useMemo(() => (Math.random() * 2 + 4).toFixed(2), []);  // 4s to 6s
-  const delay = useMemo(() => (Math.random() * 2).toFixed(2), []);    // 0s to 2s
+const FloatCard = ({ children, index = 0 }: { children: React.ReactNode, index?: number }) => {
+  const tilt = ((index * 7) % 6 - 3).toFixed(2); // -3deg to +3deg
+  const dur = ((index * 3) % 2 + 4).toFixed(2);  // 4s to 6s
+  const delay = ((index * 5) % 2).toFixed(2);    // 0s to 2s
 
   return (
     <div
@@ -306,8 +300,8 @@ export default function BuyGearTab() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               {filteredUsed.length > 0 ? (
-                filteredUsed.map((item) => (
-                  <FloatCard key={item.id}>
+                filteredUsed.map((item, idx) => (
+                  <FloatCard key={item.id} index={idx}>
                     <div className="relative aspect-video w-full bg-[#0A0A0A]">
                       <Image src={item.thumbnail} alt={item.title} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                       <div className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${getConditionColor(item.condition)}`}>
@@ -359,8 +353,8 @@ export default function BuyGearTab() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredNew.length > 0 ? (
-                  filteredNew.map((item) => (
-                    <FloatCard key={item.id}>
+                  filteredNew.map((item, idx) => (
+                    <FloatCard key={item.id} index={idx}>
                       {/* Affiliate Badges */}
                       <div className="absolute top-3 left-3 z-10 flex gap-2">
                         <span className="bg-[#111111]/80 backdrop-blur border border-[#1E1E1E] text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">

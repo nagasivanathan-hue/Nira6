@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 'use client';
 import Link from 'next/link';
 import { Star, MapPin, CheckCircle, ChevronRight } from 'lucide-react';

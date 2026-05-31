@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 'use client';
 import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';

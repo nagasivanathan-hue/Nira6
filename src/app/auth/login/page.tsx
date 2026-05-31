@@ -11,14 +11,15 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
-type Role = 'buyer' | 'seller' | 'service_pro' | 'creator';
+type Role = 'buyer' | 'seller' | 'service_pro' | 'creator' | 'rental';
 type Step = 'role' | 'method' | 'form' | '2fa' | 'success';
 
 const ROLES = [
   { id: 'buyer', label: 'Buyer', desc: 'I want to buy gear', icon: ShoppingCart },
   { id: 'seller', label: 'Seller', desc: 'I want to sell my gear', icon: Package },
-  { id: 'service_pro', label: 'Service Pro', desc: 'I offer repair / rental services', icon: Wrench },
+  { id: 'service_pro', label: 'Service Pro', desc: 'I offer repair services', icon: Wrench },
   { id: 'creator', label: 'Creator', desc: 'I create content / reviews', icon: Video },
+  { id: 'rental', label: 'Rental House', desc: 'I rent out my gear', icon: Package },
 ] as const;
 
 export default function NIRA6AuthPage() {

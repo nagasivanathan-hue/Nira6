@@ -4,6 +4,9 @@ import { Plus, Image as ImageIcon, UploadCloud, X, CheckCircle, Calculator, Info
 import Image from 'next/image';
 import { Product } from '@/types';
 
+const generateId = () => `prod-sell-${Date.now()}`;
+const generateSku = () => `SKU-${Date.now().toString().slice(-6)}`;
+
 interface ProductListingFormProps {
   onSuccess: (product: Product) => void;
   sellerName: string;
@@ -83,7 +86,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
     const finalImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1495707902641-75cac588d2e9?w=500&auto=format&fit=crop&q=60';
     
     const created: Product = {
-      id: `prod-sell-${Date.now()}`,
+      id: generateId(),
       name: formData.name,
       brand: formData.brand || 'Generic',
       category: formData.category,
@@ -99,7 +102,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
       reviewCount: 0,
       sellerName: sellerName,
       sellerRating: 5.0,
-      specs: { 'SKU': formData.sku || `SKU-${Date.now().toString().slice(-6)}` },
+      specs: { 'SKU': formData.sku || generateSku() },
       description: formData.description,
       emiAvailable: suggestedPrice > 10000,
       inStock: Number(formData.stock) > 0,

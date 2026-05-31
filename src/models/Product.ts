@@ -32,6 +32,7 @@ const productSchema = new mongoose.Schema({
     height: { type: Number, default: 10 }
   },
   description: { type: String },
+  affiliateUrl: { type: String },
   seller: { type: String, default: 'NIRA6 Certified' },
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   warranty: { type: String, default: '6 Months NIRA6 Warranty' },

@@ -102,6 +102,18 @@ const MOCK_REELS = [
 
 const CATEGORIES = ["All", "Camera", "Lens", "Lighting", "Audio", "Drone", "Accessories"];
 
+const STARFIELD_CSS = Array.from({length: 50}).map((_, i) => `
+  .star:nth-child(${i + 1}) {
+    left: ${Math.random() * 100}%;
+    top: ${Math.random() * 100}%;
+    width: ${Math.random() * 2 + 1}px;
+    height: ${Math.random() * 2 + 1}px;
+    --duration: ${Math.random() * 3 + 2}s;
+    --delay: ${Math.random() * 5}s;
+    background: ${Math.random() > 0.8 ? '#FFDA03' : 'white'};
+  }
+`).join('\n');
+
 // --- REEL CARD COMPONENT ---
 const ReelCard = ({ 
   reel, 
@@ -138,7 +150,7 @@ const ReelCard = ({
       }
     } else {
       videoRef.current.pause();
-      setIsPlaying(false);
+      setTimeout(() => setIsPlaying(false), 0);
     }
   }, [isActive]);
 
@@ -185,9 +197,9 @@ const ReelCard = ({
     }
   };
 
-  // Randomized tilt for antigravity effect
-  const randomTilt = useRef((Math.random() * 10 - 5).toFixed(2));
-  const delay = useRef((Math.random() * 2).toFixed(2));
+  // Pseudo-random tilt based on reel ID for purity
+  const randomTilt = ((reel.id * 7) % 10 - 5).toFixed(2);
+  const delay = ((reel.id * 3) % 2).toFixed(2);
 
   return (
     <div 
@@ -196,8 +208,8 @@ const ReelCard = ({
       <div 
         className={`reel-card group relative w-[92%] sm:w-full aspect-[9/16] bg-neutral-900 rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 ${isActive ? 'active-reel' : 'inactive-reel'}`}
         style={{ 
-          '--tilt': `${randomTilt.current}deg`, 
-          '--delay': `${delay.current}s` 
+          '--tilt': `${randomTilt}deg`, 
+          '--delay': `${delay}s` 
         } as React.CSSProperties}
         onDoubleClick={handleDoubleTap}
         onClick={togglePlay}
@@ -378,15 +390,17 @@ export default function NIRA6ReelsTab() {
     : MOCK_REELS.filter(r => r.category === activeCategory);
 
   useEffect(() => {
-    setVisibleReels(filteredReels.slice(0, 4));
-    // Reset active reel to the first one of the new filter
-    if (filteredReels.length > 0) {
-      setActiveReelId(filteredReels[0].id);
-      // Scroll to top of container smoothly if ref exists
-      if (containerRef.current) {
-        containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      setVisibleReels(filteredReels.slice(0, 4));
+      // Reset active reel to the first one of the new filter
+      if (filteredReels.length > 0) {
+        setActiveReelId(filteredReels[0].id);
+        // Scroll to top of container smoothly if ref exists
+        if (containerRef.current) {
+          containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       }
-    }
+    }, 0);
   }, [activeCategory]);
 
   // Intersection Observer to detect which card is playing
@@ -481,17 +495,7 @@ export default function NIRA6ReelsTab() {
         }
 
         /* Generate 50 stars using nth-child pseudo-randomness in CSS */
-        ${Array.from({length: 50}).map((_, i) => `
-          .star:nth-child(${i + 1}) {
-            left: ${Math.random() * 100}%;
-            top: ${Math.random() * 100}%;
-            width: ${Math.random() * 2 + 1}px;
-            height: ${Math.random() * 2 + 1}px;
-            --duration: ${Math.random() * 3 + 2}s;
-            --delay: ${Math.random() * 5}s;
-            background: ${Math.random() > 0.8 ? '#FFDA03' : 'white'};
-          }
-        `).join('\n')}
+        ${STARFIELD_CSS}
 
         /* Custom Scrollbar for Container */
         .snap-container::-webkit-scrollbar {

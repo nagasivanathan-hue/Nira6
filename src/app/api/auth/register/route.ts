@@ -59,17 +59,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'Invalid user data' }, { status: 400 });
       }
     } catch (dbErr: any) {
-      console.warn("Database connection failed in register, using mock registration fallback:", dbErr.message);
-      
-      // Fallback: simulate successful registration locally
-      const mockId = 'mock_' + Date.now();
-      return NextResponse.json({
-        _id: mockId,
-        name: name,
-        email: email,
-        role: role,
-        token: generateToken(mockId),
-      }, { status: 201 });
+      console.error("Database connection failed in register:", dbErr.message);
+      return NextResponse.json({ message: 'Database connection failed' }, { status: 500 });
     }
   } catch (err) {
     const error = err as Error;

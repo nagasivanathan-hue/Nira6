@@ -57,20 +57,28 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Quality Grade Pill Badges & Urgency */}
+        {/* Quality Grade Pill Badges / Affiliate Badges & Urgency */}
         <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
-          <span 
-            className={`px-3 py-1 text-[10px] font-extrabold rounded-full text-white shadow-sm flex items-center gap-1 ${gradeInfo.colorClass}`}
-          >
-            <Shield className="w-3 h-3" />
-            Grade {product.grade}
-          </span>
+          {product.affiliateUrl ? (
+            <div className="flex gap-1.5">
+              <span className="bg-[#FF9900] text-black px-2 py-0.5 rounded text-[10px] font-black lowercase shadow-sm">
+                amazon
+              </span>
+            </div>
+          ) : (
+            <span 
+              className={`px-3 py-1 text-[10px] font-extrabold rounded-full text-white shadow-sm flex items-center gap-1 ${gradeInfo.colorClass}`}
+            >
+              <Shield className="w-3 h-3" />
+              Grade {product.grade}
+            </span>
+          )}
           {product.discount > 20 && (
             <span className="px-3 py-1 text-[10px] font-extrabold rounded-full bg-red-500 text-white shadow-sm w-fit">
               {product.discount}% OFF
             </span>
           )}
-          {product.discount > 30 && (
+          {product.discount > 30 && !product.affiliateUrl && (
             <span className="px-2 py-0.5 text-[9px] font-extrabold rounded-full bg-orange-100 text-orange-600 border border-orange-200 shadow-sm w-fit mt-0.5">
               Only 2 left!
             </span>
@@ -96,18 +104,31 @@ export default function ProductCard({ product }: { product: Product }) {
             <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-nira-dark' : ''}`} />
           </button>
 
-          {/* Quick Add To Cart Button */}
-          <button
-            onClick={(e) => { 
-              e.preventDefault(); 
-              e.stopPropagation();
-              dispatch(addToCart(product)); 
-            }}
-            className="w-9 h-9 bg-nira-dark text-white rounded-full flex items-center justify-center hover:bg-nira-yellow hover:text-nira-dark transition-all duration-300 shadow-md transform lg:translate-y-2 lg:group-hover:translate-y-0"
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="w-4 h-4" />
-          </button>
+          {/* Quick Add To Cart Button / Amazon Affiliate */}
+          {product.affiliateUrl ? (
+            <a
+              href={product.affiliateUrl}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              onClick={(e) => { e.stopPropagation(); }}
+              className="w-9 h-9 bg-[#FF9900] text-black rounded-full flex items-center justify-center hover:bg-[#E48A00] transition-all duration-300 shadow-md transform lg:translate-y-2 lg:group-hover:translate-y-0"
+              aria-label="Buy on Amazon"
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </a>
+          ) : (
+            <button
+              onClick={(e) => { 
+                e.preventDefault(); 
+                e.stopPropagation();
+                dispatch(addToCart(product)); 
+              }}
+              className="w-9 h-9 bg-nira-dark text-white rounded-full flex items-center justify-center hover:bg-nira-yellow hover:text-nira-dark transition-all duration-300 shadow-md transform lg:translate-y-2 lg:group-hover:translate-y-0"
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </Link>
 
@@ -151,10 +172,12 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* Nira Certified Trust Badge */}
-        <div className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-emerald-700 mb-3.5 bg-emerald-50/60 px-2.5 py-1 rounded-lg border border-emerald-100/80 w-fit">
-          <Shield className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/10" />
-          <span>NIRA CERTIFIED • 30-POINT DIAGNOSED</span>
-        </div>
+        {!product.affiliateUrl && (
+          <div className="flex items-center gap-1.5 text-[9px] font-black tracking-wide text-emerald-700 mb-3.5 bg-emerald-50/60 px-2.5 py-1 rounded-lg border border-emerald-100/80 w-fit">
+            <Shield className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600/10" />
+            <span>NIRA CERTIFIED • 30-POINT DIAGNOSED</span>
+          </div>
+        )}
 
         {/* Pricing Segment */}
         <div className="border-t border-neutral-100 pt-3.5 flex flex-col gap-1.5 mt-auto">
