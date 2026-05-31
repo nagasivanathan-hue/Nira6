@@ -11,7 +11,7 @@ export default function MobileBottomNav() {
 
   // If we are in an auth page or inside a dynamic view where we want full canvas, we can hide it.
   // But generally, having it on standard client pages is premium.
-  const hidePaths = ['/auth/login', '/auth/signup', '/auth/forgot-password'];
+  const hidePaths = ['/auth', '/auth/login', '/auth/signup', '/auth/forgot-password'];
   if (hidePaths.includes(pathname || '')) {
     return null;
   }
@@ -40,7 +40,7 @@ export default function MobileBottomNav() {
     {
       label: 'Account',
       icon: User,
-      href: isAuthenticated ? '/dashboard' : '/auth/login'
+      href: isAuthenticated ? '/dashboard' : '/auth'
     }
   ];
 

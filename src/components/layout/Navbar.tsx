@@ -671,7 +671,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Link
-                  href="/auth/login"
+                  href="/auth"
                   className="hidden sm:flex items-center gap-2 px-4 py-2 bg-nira-dark text-white text-sm font-medium rounded-xl hover:bg-nira-dark/90 transition-colors"
                 >
                   <User className="w-4 h-4" />
@@ -785,7 +785,7 @@ export default function Navbar() {
                   </Link>
                 ) : (
                   <Link
-                    href="/auth/login"
+                    href="/auth"
                     onClick={() => dispatch(closeMobileMenu())}
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-nira-dark text-white font-medium rounded-xl"
                   >
