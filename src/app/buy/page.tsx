@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BadgeCheck, ExternalLink, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { affiliateProducts } from '@/lib/amazonData';
 
 // --- DATA STRUCTURES (MOCKED) ---
 
@@ -79,56 +80,7 @@ const mockUsedListings = [
 ];
 
 // 2. Buy New (Amazon Affiliate)
-/*
-  Affiliate swap: 
-  Replace 'affiliate_url' with real Amazon Associates link
-*/
-const mockAffiliateProducts = [
-  {
-    id: "aff-001",
-    title: "Sony Alpha ILCE-7M3 (A7III) Full-Frame",
-    category: "Camera",
-    image: "https://picsum.photos/seed/a7m3/400/300",
-    rating: 4.7,
-    reviews: 2840,
-    price: 139990,
-    original: 167990,
-    affiliate_url: "https://www.amazon.in/dp/B07B4L1PQ8?tag=nira6-21"
-  },
-  {
-    id: "aff-002",
-    title: "Sigma 24-70mm F2.8 DG DN Art for Sony E",
-    category: "Lens",
-    image: "https://picsum.photos/seed/sigma/400/300",
-    rating: 4.8,
-    reviews: 1420,
-    price: 94990,
-    original: 105000,
-    affiliate_url: "https://www.amazon.in/dp/B082T2V1JD?tag=nira6-21"
-  },
-  {
-    id: "aff-003",
-    title: "DJI Mini 3 Pro with DJI RC",
-    category: "Drone",
-    image: "https://picsum.photos/seed/mini3/400/300",
-    rating: 4.6,
-    reviews: 3105,
-    price: 89990,
-    original: 99990,
-    affiliate_url: "https://www.amazon.in/dp/B09WDBDGBK?tag=nira6-21"
-  },
-  {
-    id: "aff-004",
-    title: "Sennheiser MKE 600 Shotgun Microphone",
-    category: "Audio",
-    image: "https://picsum.photos/seed/sennheiser/400/300",
-    rating: 4.5,
-    reviews: 890,
-    price: 24990,
-    original: 32000,
-    affiliate_url: "https://www.amazon.in/dp/B00B4UHEBA?tag=nira6-21"
-  }
-];
+// Affiliate products imported from amazonData.ts
 
 const CATEGORIES = ['All', 'Camera', 'Lens', 'Lighting', 'Audio', 'Drone', 'Accessories'];
 const SORTS = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Viewed'];
@@ -205,7 +157,7 @@ export default function BuyGearTab() {
       return 0; // Newest logic would go here
     });
 
-  const filteredNew = mockAffiliateProducts
+  const filteredNew = affiliateProducts
     .filter(item => activeCategory === 'All' || item.category === activeCategory)
     .sort((a, b) => {
       if (sortBy === 'Price: Low to High') return a.price - b.price;
@@ -299,7 +251,7 @@ export default function BuyGearTab() {
                   : 'text-[#555555] hover:text-white'
               }`}
             >
-              Buy New on Amazon ({mockAffiliateProducts.length})
+              Buy New on Amazon ({affiliateProducts.length})
             </button>
           </div>
         </div>
