@@ -28,7 +28,7 @@ export async function POST(
     }
 
     // Verify order owner
-    if (order.user.toString() !== user._id.toString()) {
+    if (!order.user || order.user.toString() !== user._id.toString()) {
       return NextResponse.json({ message: 'Not authorized to modify this order' }, { status: 403 });
     }
 

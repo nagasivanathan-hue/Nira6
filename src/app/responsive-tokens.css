@@ -1,0 +1,63 @@
+/* Fluid Typography and Spacing Tokens */
+:root {
+  /* Font Sizes */
+  --text-hero: clamp(32px, 6vw, 96px);
+  --text-section: clamp(28px, 4vw, 64px);
+  --text-card-title: clamp(16px, 2vw, 24px);
+  --text-body: clamp(14px, 1.2vw, 18px);
+  --text-muted: clamp(11px, 0.9vw, 14px);
+  --text-price: clamp(22px, 3vw, 42px);
+  --text-input: max(16px, clamp(14px, 1.2vw, 18px)); /* Minimum 16px to prevent iOS Zoom */
+
+  /* Line Heights */
+  --leading-body: clamp(1.4, 2vw, 1.7);
+  --leading-tight: 1.1;
+
+  /* Spacing */
+  --space-page-x: clamp(16px, 4vw, 120px);
+  --space-section-y: clamp(48px, 8vh, 120px);
+  --space-card: clamp(12px, 2vw, 28px);
+  --gap-grid: clamp(8px, 2vw, 32px);
+  --space-component: clamp(24px, 4vw, 64px);
+}
+
+/* Base application of typography tokens */
+body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+h1.hero-heading {
+  font-size: var(--text-hero);
+  line-height: var(--leading-tight);
+}
+
+h2.section-heading {
+  font-size: var(--text-section);
+  line-height: var(--leading-tight);
+}
+
+.text-fluid-body { font-size: var(--text-body); line-height: var(--leading-body); }
+.text-fluid-muted { font-size: var(--text-muted); color: #777777; }
+.text-fluid-price { font-size: var(--text-price); font-family: var(--font-family-heading); }
+.text-fluid-card { font-size: var(--text-card-title); line-height: var(--leading-tight); font-weight: 700; }
+
+/* Global text handling */
+* {
+  word-break: break-word;
+}
+
+/* Fluid Spacing Utility Classes */
+.fluid-px { padding-left: var(--space-page-x); padding-right: var(--space-page-x); }
+.fluid-py { padding-top: var(--space-section-y); padding-bottom: var(--space-section-y); }
+.fluid-p { padding: var(--space-card); }
+.fluid-gap { gap: var(--gap-grid); }
+.fluid-mb { margin-bottom: var(--space-component); }
+
+/* Form inputs font-size guard */
+input, select, textarea {
+  font-size: var(--text-input) !important;
+}
+
+.grid-fluid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 25vw, 320px), 1fr)); }
+

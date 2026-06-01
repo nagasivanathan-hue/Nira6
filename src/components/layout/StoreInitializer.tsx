@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { fetchWishlist } from '@/store/wishlistSlice';
 import { createClient } from '@/lib/supabase/client';
-import { setAuth } from '@/store/authSlice';
+import { setAuth, isKeepLoggedIn, setKeepLoggedIn } from '@/store/authSlice';
 
 export default function StoreInitializer({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -15,6 +15,10 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
     // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
+        // Supabase session found — default to persistent login (Google OAuth, etc.)
+        if (!isKeepLoggedIn()) {
+          setKeepLoggedIn(true);
+        }
         dispatch(setAuth({
           id: session.user.id,
           email: session.user.email || '',
@@ -27,7 +31,8 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
           token: session.access_token
         }));
       } else {
-        const stored = localStorage.getItem('userInfo');
+        // No Supabase session — try localStorage first, then sessionStorage
+        const stored = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
         if (stored) {
           try {
             dispatch(setAuth(JSON.parse(stored)));
@@ -57,7 +62,7 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
         if (event === 'SIGNED_OUT') {
           dispatch(setAuth(null));
         } else {
-          const stored = localStorage.getItem('userInfo');
+          const stored = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
           if (stored) {
             try {
               dispatch(setAuth(JSON.parse(stored)));

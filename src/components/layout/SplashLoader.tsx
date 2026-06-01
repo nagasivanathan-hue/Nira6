@@ -1,9 +1,12 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 
 // Exif Data
 const exifSpecs = ['f/1.8', '1/500s', 'ISO 400', 'NIRA6 OS v1.0'];
+
+// Auto-skip timeout (7 seconds) — ensures users on slow 3G are never stuck
+const AUTO_SKIP_MS = 7000;
 
 export default function SplashLoader() {
   const [phase, setPhase] = useState<number>(0);
@@ -50,6 +53,17 @@ export default function SplashLoader() {
     osc.stop(ctx.currentTime + 0.08);
   }
 
+  // BUG-003: Extracted skip logic into a stable callback so both button and timeout use the same function
+  const handleSkip = useCallback(() => {
+    setPhase((currentPhase) => {
+      if (currentPhase < 6) {
+        setTimeout(() => setVisible(false), 500);
+        return 6;
+      }
+      return currentPhase;
+    });
+  }, []);
+
   useEffect(() => {
     // TIMING SEQUENCER
     const timeouts: NodeJS.Timeout[] = [];
@@ -84,6 +98,15 @@ export default function SplashLoader() {
     return () => timeouts.forEach(clearTimeout);
   }, [soundEnabled]);
 
+  // BUG-004: Auto-skip fallback after 7 seconds — safety net for slow connections
+  useEffect(() => {
+    const autoSkipTimer = setTimeout(() => {
+      handleSkip();
+    }, AUTO_SKIP_MS);
+
+    return () => clearTimeout(autoSkipTimer);
+  }, [handleSkip]);
+
   useEffect(() => {
     if (phase >= 3) {
       const interval = setInterval(() => {
@@ -92,13 +115,6 @@ export default function SplashLoader() {
       return () => clearInterval(interval);
     }
   }, [phase]);
-
-  const handleSkip = () => {
-    if (phase < 6) {
-      setPhase(6);
-      setTimeout(() => setVisible(false), 500);
-    }
-  };
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
@@ -125,7 +141,7 @@ export default function SplashLoader() {
   ));
 
   return (
-    <div className={`splash-overlay ${phase === 6 ? 'fade-out' : ''}`}>
+    <div className={`splash-overlay ${phase === 6 ? 'fade-out' : ''}`} role="dialog" aria-label="NIRA6 loading screen">
       <style dangerouslySetInnerHTML={{__html: `
         .splash-overlay {
           position: fixed; inset: 0; z-index: 99999;
@@ -150,14 +166,28 @@ export default function SplashLoader() {
         }
         .splash-controls.show { opacity: 1; pointer-events: auto; }
         .skip-btn {
-          color: #333; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
-          background: none; border: none; cursor: pointer; transition: color 0.2s;
+          color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+          background: none; border: none; cursor: pointer; transition: color 0.2s, box-shadow 0.2s;
         }
         .skip-btn:hover { color: #FFDA03; }
+        .skip-btn:focus { outline: none; }
+        .skip-btn:focus-visible {
+          outline: 2px solid #FFDA03;
+          outline-offset: 4px;
+          color: #FFDA03;
+          border-radius: 4px;
+        }
         .sound-toggle {
-          color: #333; cursor: pointer; transition: color 0.2s; background: none; border: none;
+          color: #888; cursor: pointer; transition: color 0.2s, box-shadow 0.2s; background: none; border: none;
         }
         .sound-toggle:hover { color: #FFDA03; }
+        .sound-toggle:focus { outline: none; }
+        .sound-toggle:focus-visible {
+          outline: 2px solid #FFDA03;
+          outline-offset: 4px;
+          color: #FFDA03;
+          border-radius: 4px;
+        }
 
         /* Main Shake Container */
         .shake-container {
@@ -334,6 +364,23 @@ export default function SplashLoader() {
         .progress-fill.p4 { width: 100%; transition: width 0.1s ease-out; }
         .progress-fill.p5 { opacity: 0; transition: opacity 0.3s; }
 
+        /* BUG-004: Auto-skip safety progress bar (7s duration) */
+        .auto-skip-progress {
+          position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+          background: rgba(255, 218, 3, 0.08);
+          overflow: hidden;
+        }
+        .auto-skip-bar {
+          height: 100%;
+          width: 0%;
+          background: linear-gradient(90deg, transparent, rgba(255, 218, 3, 0.25));
+          animation: auto-skip-fill ${AUTO_SKIP_MS}ms linear forwards;
+        }
+        @keyframes auto-skip-fill {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+
         .status-text {
           font-size: 10px; letter-spacing: 4px; color: #555; text-transform: uppercase;
           transition: color 0.2s, opacity 0.2s;
@@ -359,10 +406,19 @@ export default function SplashLoader() {
 
       {/* Top Controls */}
       <div className={`splash-controls ${phase >= 2 && phase < 6 ? 'show' : ''} z-50`}>
-        <button onClick={toggleSound} className="sound-toggle flex items-center justify-center p-2">
+        <button
+          onClick={toggleSound}
+          className="sound-toggle flex items-center justify-center p-2"
+          aria-label={soundEnabled ? "Mute intro sound" : "Enable intro sound"}
+        >
           {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
         </button>
-        <button onClick={handleSkip} className="skip-btn px-4 py-2 hover:bg-[#1E1E1E] rounded-md transition-colors">
+        <button
+          onClick={handleSkip}
+          className="skip-btn px-4 py-2 hover:bg-[#1E1E1E] rounded-md transition-colors"
+          aria-label="Skip intro and enter site"
+          tabIndex={0}
+        >
           Skip
         </button>
       </div>
@@ -377,7 +433,7 @@ export default function SplashLoader() {
 
         <div className="aperture-wrapper">
           {/* SVG Blades */}
-          <svg viewBox="0 0 100 100" className={`aperture-svg ${phase >= 2 ? 'show' : ''}`}>
+          <svg viewBox="0 0 100 100" className={`aperture-svg ${phase >= 2 ? 'show' : ''}`} aria-hidden="true">
             <circle cx="50" cy="50" r="48" fill="none" stroke="#FFDA03" strokeWidth="1" strokeOpacity="0.3" />
             <circle cx="50" cy="50" r="45" fill="none" stroke="#FFDA03" strokeWidth="0.5" strokeOpacity="0.6" />
             
@@ -457,6 +513,11 @@ export default function SplashLoader() {
             </span>
           ))}
         </div>
+      </div>
+
+      {/* BUG-004: Subtle auto-skip progress bar at bottom of screen */}
+      <div className="auto-skip-progress">
+        <div className="auto-skip-bar" />
       </div>
 
     </div>

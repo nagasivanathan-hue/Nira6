@@ -8,7 +8,11 @@ import { Resend } from 'resend';
 
 // ── Generate a cryptographically secure 6-digit code ──
 export function generateOTP(): string {
-  return crypto.randomInt(100000, 999999).toString();
+  const code = crypto.randomInt(100000, 999999).toString();
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`\n[OTP DEBUG] Generated OTP Code: ${code}\n`);
+  }
+  return code;
 }
 
 // ── Send OTP via Email (Resend) ──

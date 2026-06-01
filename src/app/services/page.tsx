@@ -87,13 +87,10 @@ export default function ServicesPage() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-2" role="tablist" aria-label="Service Categories">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-2" aria-label="Service Categories">
           {categories.map((cat) => (
             <button 
               key={cat} 
-              role="tab"
-              aria-selected={activeCategory === cat ? 'true' : 'false'}
-              aria-controls={'panel-' + cat.replace(/\s+/g, '-')}
               onClick={() => setActiveCategory(cat)} 
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeCategory === cat ? 'bg-nira-dark text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-gray-dark'}`}
             >

@@ -1,0 +1,62 @@
+/* Accessibility and WCAG 2.1 AA Compliance Styles */
+
+/* Strict Focus States for Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid #FFDA03 !important;
+  outline-offset: 3px !important;
+  border-radius: 4px;
+}
+
+/* Remove ugly default only if custom applied */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen Reader Only Utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus,
+.focus\:not-sr-only:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Ensure minimum touch target sizes on touch devices */
+@media (pointer: coarse) {
+  button, a, [role="button"], input, select {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Base Contrast Adjustments */
+/* Replaces any weak gray #555555 with #777777 for contrast ratio compliance */
+.text-muted, .text-[#555555], .text-neutral-600 {
+  color: #777777 !important;
+}
+
+/* ARIA Base */
+[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[aria-hidden="true"] {
+  display: none !important;
+}

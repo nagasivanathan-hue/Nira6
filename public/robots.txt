@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.nira6.in/sitemap.xml

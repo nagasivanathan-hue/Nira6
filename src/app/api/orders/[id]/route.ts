@@ -23,6 +23,22 @@ export async function GET(
       return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
 
+    // Security check: If order has a registered user, check if the authenticated user is the owner or an admin
+    if (order.user) {
+      let user = null;
+      try {
+        user = await verifyAuth(req);
+      } catch {
+        // Not authenticated
+      }
+      if (!user) {
+        return NextResponse.json({ message: 'Authentication required to view this order' }, { status: 401 });
+      }
+      if (order.user.toString() !== user._id.toString() && user.role !== 'admin') {
+        return NextResponse.json({ message: 'Access denied: You are not authorized to view this order' }, { status: 403 });
+      }
+    }
+
     // Try to find if there is a corresponding delivery
     const delivery = await Delivery.findOne({ order: order._id });
 

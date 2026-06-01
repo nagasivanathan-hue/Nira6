@@ -13,9 +13,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check if auth is valid (support admins for status changes)
     const user = await verifyAuth(req);
-    const isAdmin = user && user.role === 'admin';
+    if (!user) {
+      return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
+    }
 
     await dbConnect();
     const { id } = await params;
@@ -24,6 +25,23 @@ export async function POST(
     const order = await Order.findById(id).populate('items.product');
     if (!order) {
       return NextResponse.json({ message: 'Order not found' }, { status: 404 });
+    }
+
+    const isAdmin = user.role === 'admin';
+    const isOwner = order.user && order.user.toString() === user._id.toString();
+
+    // Authorization check
+    if (!isAdmin) {
+      if (!isOwner) {
+        return NextResponse.json({ message: 'Access denied: You are not authorized to update this order' }, { status: 403 });
+      }
+      if (status !== 'cancelled') {
+        return NextResponse.json({ message: 'Access denied: Non-admin users can only transition their own orders to cancelled status' }, { status: 403 });
+      }
+      const cancelableStatuses = ['pending', 'confirmed', 'processing', 'packed'];
+      if (!cancelableStatuses.includes(order.orderStatus)) {
+        return NextResponse.json({ message: 'Order cannot be cancelled because it has already been shipped' }, { status: 400 });
+      }
     }
 
     const previousStatus = order.orderStatus;
@@ -45,7 +63,7 @@ export async function POST(
       // Auto-decrement inventory stock levels
       for (const item of order.items) {
         // Find by variant SKU or parent SKU
-        const itemSku = item.sku || (item.product as any).sku;
+        const itemSku = item.sku || (item.product as { sku?: string }).sku;
         if (itemSku) {
           const inv = await Inventory.findOne({ sku: itemSku });
           if (inv) {
@@ -53,7 +71,7 @@ export async function POST(
             // decrement warehouse specific stock if warehouse assigned
             if (order.warehouse) {
               const whStock = inv.warehouseStock.find(
-                (w: any) => w.warehouse.toString() === order.warehouse.toString()
+                (w: { warehouse: { toString(): string }; stock: number }) => w.warehouse.toString() === order.warehouse.toString()
               );
               if (whStock) {
                 whStock.stock = Math.max(0, whStock.stock - item.quantity);
@@ -224,14 +242,14 @@ export async function POST(
       
       // Restore stock levels
       for (const item of order.items) {
-        const itemSku = item.sku || (item.product as any).sku;
+        const itemSku = item.sku || (item.product as { sku?: string }).sku;
         if (itemSku) {
           const inv = await Inventory.findOne({ sku: itemSku });
           if (inv) {
             inv.stockLevel = inv.stockLevel + item.quantity;
             if (order.warehouse) {
               const whStock = inv.warehouseStock.find(
-                (w: any) => w.warehouse.toString() === order.warehouse.toString()
+                (w: { warehouse: { toString(): string }; stock: number }) => w.warehouse.toString() === order.warehouse.toString()
               );
               if (whStock) {
                 whStock.stock = whStock.stock + item.quantity;
@@ -308,14 +326,14 @@ export async function POST(
 
       // Restore inventory
       for (const item of order.items) {
-        const itemSku = item.sku || (item.product as any).sku;
+        const itemSku = item.sku || (item.product as { sku?: string }).sku;
         if (itemSku) {
           const inv = await Inventory.findOne({ sku: itemSku });
           if (inv) {
             inv.stockLevel = inv.stockLevel + item.quantity;
             if (order.warehouse) {
               const whStock = inv.warehouseStock.find(
-                (w: any) => w.warehouse.toString() === order.warehouse.toString()
+                (w: { warehouse: { toString(): string }; stock: number }) => w.warehouse.toString() === order.warehouse.toString()
               );
               if (whStock) {
                 whStock.stock = whStock.stock + item.quantity;

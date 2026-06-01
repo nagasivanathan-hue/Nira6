@@ -1,0 +1,39 @@
+/* Breakpoint Variables */
+:root {
+  --xs: 320px;
+  --sm: 480px;
+  --md: 768px;
+  --lg: 1024px;
+  --xl: 1280px;
+  --2xl: 1536px;
+}
+
+/* Custom Media Queries for Future Standard (Draft) / Tailwind Usage */
+@custom-media --xs-only (width < 480px);
+@custom-media --sm-only (480px <= width < 768px);
+@custom-media --md-only (768px <= width < 1024px);
+@custom-media --lg-only (1024px <= width < 1280px);
+@custom-media --xl-only (1280px <= width < 1536px);
+@custom-media --2xl-only (width >= 1536px);
+
+@custom-media --mobile (width < 768px);
+@custom-media --tablet (768px <= width < 1024px);
+@custom-media --desktop (width >= 1024px);
+
+/* Orientation & Pointer Types */
+@custom-media --touch-device (pointer: coarse);
+@custom-media --mouse-device (pointer: fine);
+@custom-media --hover-supported (hover: hover);
+@custom-media --hover-unsupported (hover: none);
+
+/* Base App Shell configuration with Safe Areas */
+.app-shell {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

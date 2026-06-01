@@ -616,7 +616,7 @@ export default function NIRA6ReelsTab() {
               
               <div className="px-6 pb-3 border-b border-neutral-800 flex items-center justify-between">
                 <h3 className="font-heading font-black text-lg">Comments ({selectedReelForComments.comments.length})</h3>
-                <button onClick={() => setSelectedReelForComments(null)} className="p-1 text-neutral-400 hover:text-white">
+                <button onClick={() => setSelectedReelForComments(null)} aria-label="Close Comments" title="Close Comments" className="p-1 text-neutral-400 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
               </div>

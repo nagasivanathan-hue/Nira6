@@ -1,0 +1,83 @@
+/* Performance & Animation Guards */
+
+/* Only run heavy animations on capable devices */
+@media (prefers-reduced-motion: no-preference) and (pointer: fine) and (min-width: 1024px) {
+  .gear-card { 
+    animation: float 5s ease-in-out infinite; 
+  }
+  .starfield-dot { 
+    animation: twinkle 3s ease-in-out infinite; 
+  }
+}
+
+/* Reduced motion: zero animation */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Base image styling */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Orientation helpers */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Phone landscape — very constrained height */
+  .hero { 
+    flex-direction: row !important; 
+    min-height: auto !important; 
+  }
+  .reel-card { 
+    width: 50vw !important; 
+    height: 100dvh !important; 
+  }
+  .aperture-wrapper { 
+    width: 140px !important; 
+    height: 140px !important; 
+  }
+  .auth-panel { 
+    flex-direction: row !important; 
+  }
+  .bottom-tabs {
+    flex-direction: column !important;
+    width: 64px !important;
+    height: 100% !important;
+    bottom: 0 !important; 
+    left: 0 !important;
+    top: 0 !important;
+  }
+}
+
+/* Scroll Behavior globally */
+html { 
+  scroll-behavior: smooth; 
+}
+
+/* Momentum scroll on touch (iOS) */
+.scroll-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Horizontal scroll areas */
+.horizontal-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+}
+.horizontal-scroll::-webkit-scrollbar { display: none; }
+
+/* Snap items */
+.snap-item { scroll-snap-align: start; }
+
+/* Prevent pull-to-refresh on reels only */
+.reels-container {
+  overscroll-behavior-y: none;
+}

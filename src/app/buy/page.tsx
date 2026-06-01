@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BadgeCheck, ExternalLink, Search } from 'lucide-react';
@@ -117,20 +117,9 @@ function Starfield() {
   );
 }
 
-const FloatCard = ({ children, index = 0 }: { children: React.ReactNode, index?: number }) => {
-  const tilt = ((index * 7) % 6 - 3).toFixed(2); // -3deg to +3deg
-  const dur = ((index * 3) % 2 + 4).toFixed(2);  // 4s to 6s
-  const delay = ((index * 5) % 2).toFixed(2);    // 0s to 2s
-
+const FloatCard = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div
-      className="gear-card relative bg-[#111111] border border-[#1E1E1E] rounded-2xl overflow-hidden transition-all duration-300 ease-out flex flex-col group z-10"
-      style={{
-        '--tilt': `${tilt}deg`,
-        '--dur': `${dur}s`,
-        '--delay': `${delay}s`,
-      } as React.CSSProperties}
-    >
+    <div className="gear-card relative bg-[#111111] border border-[#1E1E1E] rounded-2xl overflow-hidden transition-all duration-300 ease-out flex flex-col group z-10">
       {children}
     </div>
   );
@@ -140,10 +129,20 @@ export default function BuyGearTab() {
   const [activeTab, setActiveTab] = useState<'used' | 'new'>('used');
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('Newest');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Filter & Sort Logic
   const filteredUsed = mockUsedListings
     .filter(item => activeCategory === 'All' || item.category === activeCategory)
+    .filter(item => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        item.title.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.condition.toLowerCase().includes(q)
+      );
+    })
     .sort((a, b) => {
       if (sortBy === 'Price: Low to High') return a.price - b.price;
       if (sortBy === 'Price: High to Low') return b.price - a.price;
@@ -153,6 +152,14 @@ export default function BuyGearTab() {
 
   const filteredNew = affiliateProducts
     .filter(item => activeCategory === 'All' || item.category === activeCategory)
+    .filter(item => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        item.title.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
+      );
+    })
     .sort((a, b) => {
       if (sortBy === 'Price: Low to High') return a.price - b.price;
       if (sortBy === 'Price: High to Low') return b.price - a.price;
@@ -180,11 +187,6 @@ export default function BuyGearTab() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white font-sans relative">
       <style>{`
-        @keyframes float {
-          0%   { transform: translateY(0px) rotate(var(--tilt)); }
-          50%  { transform: translateY(-10px) rotate(var(--tilt)); }
-          100% { transform: translateY(0px) rotate(var(--tilt)); }
-        }
         @keyframes twinkle {
           0%, 100% { opacity: 0; transform: scale(0.5); }
           50% { opacity: 0.8; transform: scale(1); }
@@ -193,18 +195,13 @@ export default function BuyGearTab() {
           animation: twinkle linear infinite;
         }
         .gear-card {
-          --tilt: 0deg;
-          --dur: 5s;
-          --delay: 0s;
-          animation: float var(--dur) ease-in-out infinite;
-          animation-delay: var(--delay);
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           will-change: transform;
         }
         .gear-card:hover {
-          animation-play-state: paused !important;
-          transform: scale(1.04) rotate(0deg) !important;
+          transform: scale(1.03) !important;
           border-color: #FFDA03 !important;
-          box-shadow: 0 0 30px rgba(255, 218, 3, 0.2), 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+          box-shadow: 0 0 30px rgba(255, 218, 3, 0.15), 0 20px 50px rgba(0, 0, 0, 0.7) !important;
           z-index: 20;
         }
       `}</style>
@@ -271,10 +268,23 @@ export default function BuyGearTab() {
               ))}
             </div>
 
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-xs md:max-w-md w-full">
+              <input
+                type="text"
+                placeholder="Search gear by name, category..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-[#111111] border border-[#1E1E1E] rounded-full text-xs text-white focus:outline-none focus:border-[#FFDA03] placeholder-[#555555] transition-all"
+              />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#555555]" />
+            </div>
+
             {/* Sort Dropdown */}
             <div className="flex items-center gap-3 shrink-0">
               <span className="text-xs font-bold uppercase tracking-widest text-[#555555]">Sort:</span>
               <select
+                title="Sort By"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-[#111111] border border-[#1E1E1E] text-white text-xs font-bold px-3 py-2 rounded-lg focus:outline-none focus:border-[#FFDA03] cursor-pointer"
@@ -300,8 +310,8 @@ export default function BuyGearTab() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
               {filteredUsed.length > 0 ? (
-                filteredUsed.map((item, idx) => (
-                  <FloatCard key={item.id} index={idx}>
+                filteredUsed.map(item => (
+                  <FloatCard key={item.id}>
                     <div className="relative aspect-video w-full bg-[#0A0A0A]">
                       <Image src={item.thumbnail} alt={item.title} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                       <div className={`absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${getConditionColor(item.condition)}`}>
@@ -353,8 +363,8 @@ export default function BuyGearTab() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredNew.length > 0 ? (
-                  filteredNew.map((item, idx) => (
-                    <FloatCard key={item.id} index={idx}>
+                  filteredNew.map(item => (
+                    <FloatCard key={item.id}>
                       {/* Affiliate Badges */}
                       <div className="absolute top-3 left-3 z-10 flex gap-2">
                         <span className="bg-[#111111]/80 backdrop-blur border border-[#1E1E1E] text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">

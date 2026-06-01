@@ -1,11 +1,10 @@
 'use client';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { useParams } from 'next/navigation';
 import { 
-  Package, Truck, MapPin, CheckCircle, FileText, 
-  ArrowLeft, Shield, Clock, AlertTriangle, User, Phone, CheckCircle2 
+  Truck, MapPin, FileText, 
+  ArrowLeft, Shield, Clock, AlertTriangle, User, CheckCircle2 
 } from 'lucide-react';
 import api from '@/services/api';
 import { formatPrice } from '@/lib/utils';
@@ -84,7 +83,6 @@ const statusSteps = [
 ];
 
 export default function OrderTrackingPage() {
-  const router = useRouter();
   const { id } = useParams() as { id: string };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +90,7 @@ export default function OrderTrackingPage() {
   const [deliveryData, setDeliveryData] = useState<DeliveryDetails | null>(null);
   const [returnReason, setReturnReason] = useState('');
   const [submittingReturn, setSubmittingReturn] = useState(false);
+  const [submittingCancel, setSubmittingCancel] = useState(false);
 
   const handleInitiateReturn = async () => {
     if (!returnReason.trim()) {
@@ -122,7 +121,37 @@ export default function OrderTrackingPage() {
     }
   };
 
-  const fetchTracking = async () => {
+  const handleCancelOrder = async () => {
+    const confirmed = window.confirm('Are you sure you want to cancel this order? This action cannot be undone and will restore inventory & refund the total amount to your NIRA Loyalty Wallet.');
+    if (!confirmed) return;
+
+    setSubmittingCancel(true);
+    try {
+      const { data } = await api.post(`/orders/${id}/status`, { 
+        status: 'cancelled',
+        remarks: 'Cancelled by customer'
+      });
+      alert(data.message || 'Order cancelled successfully!');
+      
+      // Notify
+      window.dispatchEvent(new CustomEvent('nira_notification', {
+        detail: {
+          type: 'push',
+          title: '⚠️ Order Cancelled!',
+          content: `Order #${id.slice(-8).toUpperCase()} was successfully cancelled. Refund credited back to wallet.`
+        }
+      }));
+      
+      fetchTracking(); // Refresh timeline status
+    } catch (err) {
+      console.error(err);
+      alert('Failed to cancel order.');
+    } finally {
+      setSubmittingCancel(false);
+    }
+  };
+
+  const fetchTracking = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await api.get(`/orders/${id}`);
@@ -135,13 +164,13 @@ export default function OrderTrackingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) {
       fetchTracking();
     }
-  }, [id]);
+  }, [id, fetchTracking]);
 
   if (loading) {
     return (
@@ -464,6 +493,21 @@ export default function OrderTrackingPage() {
                     {submittingReturn ? 'Submitting Return...' : 'Request Return & Refund'}
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* Cancel Order Card */}
+            {['pending', 'confirmed', 'processing', 'packed'].includes(orderData.orderStatus) && (
+              <div className="bg-white rounded-3xl p-6 border border-nira-gray-dark shadow-sm">
+                <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-nira-dark mb-4 border-b border-nira-gray-dark pb-2">Cancel Order</h3>
+                <p className="text-[11px] text-nira-text-secondary mb-4">You can cancel this order before dispatch. Funds will be refunded to your NIRA Wallet.</p>
+                <button
+                  onClick={handleCancelOrder}
+                  disabled={submittingCancel}
+                  className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50 cursor-pointer text-center"
+                >
+                  {submittingCancel ? 'Cancelling Order...' : 'Cancel Order'}
+                </button>
               </div>
             )}
 

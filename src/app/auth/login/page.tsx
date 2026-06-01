@@ -10,6 +10,7 @@ import {
   ShieldCheck, ShieldAlert, Loader2, KeyRound, User, Phone, MapPin, Building, Play, Plus, Hash
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { setKeepLoggedIn } from '@/store/authSlice';
 
 type Role = 'buyer' | 'seller' | 'service_pro' | 'creator' | 'rental';
 type Step = 'role' | 'method' | 'form' | '2fa' | 'success';
@@ -59,6 +60,7 @@ export default function NIRA6AuthPage() {
   const [otpLogin, setOtpLogin] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
+  const [keepLoggedIn, setKeepLoggedInState] = useState(true);
 
   // Password Strength
   const pwdScore = React.useMemo(() => {
@@ -182,6 +184,9 @@ export default function NIRA6AuthPage() {
           return;
         }
       }
+
+      // Save "keep me logged in" preference before authentication
+      setKeepLoggedIn(keepLoggedIn);
 
       // Supabase Password Login
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -418,6 +423,23 @@ export default function NIRA6AuthPage() {
             </div>
           )}
 
+          {mode === 'login' && (
+            <label className="flex items-center gap-3 mt-4 cursor-pointer group select-none">
+              <div className="relative flex items-center justify-center w-5 h-5 rounded border border-[#1E1E1E] group-hover:border-[#FFDA03] transition-colors">
+                <input
+                  type="checkbox"
+                  checked={keepLoggedIn}
+                  onChange={(e) => setKeepLoggedInState(e.target.checked)}
+                  className="opacity-0 absolute inset-0 cursor-pointer"
+                />
+                {keepLoggedIn && <CheckCircle2 className="w-3 h-3 text-[#FFDA03]" />}
+              </div>
+              <span className="text-xs text-[#888888] group-hover:text-white transition-colors">
+                Keep me logged in for 7 days
+              </span>
+            </label>
+          )}
+
           {mode === 'signup' && (
             <>
               <div className="relative group mt-6">
@@ -472,7 +494,7 @@ export default function NIRA6AuthPage() {
                     </div>
                     <div className="relative group">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#555555] group-focus-within:text-[#FFDA03]" />
-                      <select name="city" required value={formData.city} onChange={handleInputChange} className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 pl-12 pr-4 text-white text-sm outline-none appearance-none">
+                      <select name="city" required value={formData.city} onChange={handleInputChange} aria-label="Select City" title="Select City" className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 pl-12 pr-4 text-white text-sm outline-none appearance-none">
                         <option value="" disabled>Select City</option>
                         <option value="Mumbai">Mumbai</option>
                         <option value="Delhi">Delhi</option>
@@ -517,14 +539,14 @@ export default function NIRA6AuthPage() {
                       <input type="text" name="handle" placeholder="Social Handle (@)" required value={formData.handle} onChange={handleInputChange} className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 pl-12 pr-4 text-white text-sm outline-none" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <select name="platform" required value={formData.platform} onChange={handleInputChange} className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 px-4 text-white text-sm outline-none appearance-none">
+                      <select name="platform" required value={formData.platform} onChange={handleInputChange} aria-label="Primary Platform" title="Primary Platform" className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 px-4 text-white text-sm outline-none appearance-none">
                         <option value="" disabled>Primary Platform</option>
                         <option value="Instagram">Instagram</option>
                         <option value="YouTube">YouTube</option>
                         <option value="Both">Both</option>
                         <option value="Other">Other</option>
                       </select>
-                      <select name="followers" required value={formData.followers} onChange={handleInputChange} className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 px-4 text-white text-sm outline-none appearance-none">
+                      <select name="followers" required value={formData.followers} onChange={handleInputChange} aria-label="Followers" title="Followers" className="w-full bg-[#111111] border border-[#1E1E1E] focus:border-[#FFDA03] rounded-xl py-3.5 px-4 text-white text-sm outline-none appearance-none">
                         <option value="" disabled>Followers</option>
                         <option value="0-10k">0 - 10k</option>
                         <option value="10k-50k">10k - 50k</option>
@@ -665,6 +687,9 @@ export default function NIRA6AuthPage() {
           opacity: 0.03;
           pointer-events: none;
         }
+        .gear-spin {
+          animation: spin 20s linear infinite;
+        }
       `}</style>
 
       {/* BACKGROUND EFFECTS */}
@@ -686,7 +711,7 @@ export default function NIRA6AuthPage() {
         {/* Decorative Gear animation */}
         <div className="hidden md:flex flex-1 items-center justify-center relative">
           <div className="absolute w-64 h-64 border border-[#1E1E1E] rounded-full flex items-center justify-center">
-            <div className="w-48 h-48 border border-[#FFDA03]/20 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
+            <div className="w-48 h-48 border border-[#FFDA03]/20 rounded-full gear-spin"></div>
             <Video className="absolute w-16 h-16 text-[#FFDA03]/10" />
           </div>
         </div>

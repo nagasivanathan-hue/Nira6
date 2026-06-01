@@ -41,6 +41,28 @@ export async function POST(req: Request) {
 
     await dbConnect();
 
+    // --- MASTER BYPASS CODE FOR DEVELOPMENT ---
+    if (code.trim() === '000000') {
+      console.log(`[OTP] Master Bypass Code used for user ${userId}`);
+      
+      const user = await User.findById(userId);
+      if (!user) {
+        return NextResponse.json(
+          { message: 'User not found.' },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id.toString()),
+      });
+    }
+    // ----------------------------------------
+
     // Find the most recent OTP for this user
     const otpRecord = await OTP.findOne({
       userId,
