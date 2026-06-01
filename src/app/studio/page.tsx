@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -63,13 +63,19 @@ const INITIAL_BARTER_LISTINGS: BarterListing[] = [];
 export default function CreatorStudioPage() {
   const [activeTab, setActiveTab] = useState<'concierge' | 'barter' | 'garage'>('concierge');
   
-  // States for Feature 1: RV Bot (Manual Settings Guide)
+  // States for Feature 1: Enhanced RV Bot Interactive Flow
+  const [rvStep, setRvStep] = useState<1 | 2 | 3 | 4>(1); // 1 = Style, 2 = Device Type, 3 = Model Input, 4 = Result Ready
+  const [selectedStyle, setSelectedStyle] = useState('');
+  const [customStyleInput, setCustomStyleInput] = useState('');
+  const [deviceType, setDeviceType] = useState<'camera' | 'mobile' | ''>('');
+  const [deviceModel, setDeviceModel] = useState('');
   const [rvPrompt, setRvPrompt] = useState('');
   const [rvLoading, setRvLoading] = useState(false);
   const [rvLogs, setRvLogs] = useState<string[]>([]);
   const [rvResult, setRvResult] = useState<{
     name: string;
     description: string;
+    sampleImage?: string;
     settings: {
       iso: string;
       shutter: string;
@@ -104,7 +110,6 @@ export default function CreatorStudioPage() {
         if (res.ok) {
           const data: GearItem[] = await res.json();
           if (data.length > 0) {
-            // Normalize _id to id for compatibility
             const normalized = data.map(g => ({ ...g, id: g.id || g._id || '' }));
             setInventory(normalized);
             setGarageItems([normalized[0], normalized[2]].filter(Boolean));
@@ -147,35 +152,34 @@ export default function CreatorStudioPage() {
     }));
   };
 
-  // -------------------------------------------------------------
-  // LOGIC & TIMERS SIMULATION
-  // -------------------------------------------------------------
-
   // Run RV Bot via backend API
-  const handleRvBot = async () => {
-    if (!rvPrompt.trim()) return;
+  const handleRvBot = async (styleVal = selectedStyle, deviceVal = deviceType, modelVal = deviceModel) => {
     setRvLoading(true);
     setRvResult(null);
     setRvLogs([]);
 
     const logSequence = [
       'Tokenizing photography type description...',
-      'Calculating required shutter and aperture rules...',
-      'Optimizing ISO and white balance recommendations...',
-      'Finalizing manual camera settings...'
+      `Configuring calculations for ${deviceVal === 'camera' ? 'Camera' : 'Smartphone'}...`,
+      `Injecting customized rules for model "${modelVal}"...`,
+      'Finalizing camera manual exposure calculations...'
     ];
 
     logSequence.forEach((log, index) => {
       setTimeout(() => {
         setRvLogs(prev => [...prev, `[RV Bot]: ${log}`]);
-      }, (index + 1) * 400);
+      }, (index + 1) * 350);
     });
 
     try {
       const res = await fetch('/api/studio/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: rvPrompt }),
+        body: JSON.stringify({
+          style: styleVal,
+          deviceType: deviceVal,
+          deviceModel: modelVal
+        }),
       });
 
       if (res.ok) {
@@ -183,7 +187,8 @@ export default function CreatorStudioPage() {
         setTimeout(() => {
           setRvResult(data);
           setRvLoading(false);
-        }, logSequence.length * 400 + 500);
+          setRvStep(4);
+        }, logSequence.length * 350 + 200);
       } else {
         setRvLogs(prev => [...prev, '[error]: RV Bot API returned an error.']);
         setRvLoading(false);
@@ -192,6 +197,17 @@ export default function CreatorStudioPage() {
       console.warn('[Studio] RV Bot API failed:', err);
       setRvLoading(false);
     }
+  };
+
+  // Reset/Start Over the conversation
+  const handleStartOver = () => {
+    setRvStep(1);
+    setSelectedStyle('');
+    setCustomStyleInput('');
+    setDeviceType('');
+    setDeviceModel('');
+    setRvResult(null);
+    setRvLogs([]);
   };
 
   // Toggle garage items
@@ -261,59 +277,221 @@ export default function CreatorStudioPage() {
               className="grid lg:grid-cols-12 gap-8"
             >
               <div className="lg:col-span-7 flex flex-col gap-6">
-                <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md">
-                  <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-3">
-                    <Sparkles className="w-5 h-5 text-[#FFDA03]" /> RV - Your Photography Assistant
-                  </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed mb-6">
-                    Tell RV what kind of photography you are shooting, and get precise manual camera settings instantly.
-                  </p>
-
-                  {/* Suggestion Prompts */}
-                  <div className="flex flex-wrap gap-2 mb-5">
-                    {[
-                      'Star trails and astrophotography',
-                      'Slow shutter waterfall',
-                      'High-speed sports photography',
-                      'Macro close up photography'
-                    ].map((p, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setRvPrompt(p)}
-                        className="text-[10px] text-left px-3 py-2 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:text-white text-neutral-400 rounded-lg transition-colors cursor-pointer"
-                      >
-                        &ldquo;{p}&rdquo;
-                      </button>
-                    ))}
+                <div className="bg-neutral-900/50 border border-neutral-900 p-6 md:p-8 rounded-3xl backdrop-blur-md flex flex-col gap-4">
+                  {/* Chat Assistant Header */}
+                  <div className="flex items-center gap-3 border-b border-neutral-800 pb-4 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-[#FFDA03]/10 border border-[#FFDA03]/30 flex items-center justify-center text-[#FFDA03]">
+                      <Sparkles className="w-4 h-4 animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white leading-none">RV Assistant</h3>
+                      <p className="text-[10px] text-neutral-400 mt-1">Interactive Camera Configurator</p>
+                    </div>
                   </div>
 
+                  {/* Chat Logs Window */}
+                  <div className="space-y-4 max-h-[360px] overflow-y-auto pr-1">
+                    {/* Bot Greeting */}
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-6 h-6 rounded-full bg-[#FFDA03]/15 flex items-center justify-center text-[#FFDA03] text-[10px] font-bold flex-shrink-0">RV</div>
+                      <div className="bg-neutral-950 p-3.5 rounded-2xl rounded-tl-none border border-neutral-900 text-xs text-neutral-300 max-w-[85%] leading-relaxed">
+                        Hi! I am RV, your photography assistant. Let&apos;s configure the optimal manual settings for your shoot. What style of photography are you shooting today?
+                      </div>
+                    </div>
 
+                    {/* Step 1 User Answer */}
+                    {selectedStyle && (
+                      <div className="flex gap-2.5 items-start justify-end">
+                        <div className="bg-[#FFDA03]/10 border border-[#FFDA03]/20 p-3.5 rounded-2xl rounded-tr-none text-xs text-neutral-200 max-w-[85%] leading-relaxed">
+                          📸 {selectedStyle}
+                        </div>
+                        <div className="w-6 h-6 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 text-[10px] font-bold flex-shrink-0">You</div>
+                      </div>
+                    )}
 
-                  <div className="relative mb-5">
-                    <textarea
-                      value={rvPrompt}
-                      onChange={(e) => setRvPrompt(e.target.value)}
-                      placeholder='e.g., "Shooting a slow shutter waterfall..."'
-                      rows={4}
-                      className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl p-4 text-sm text-neutral-200 focus:outline-none focus:border-[#FFDA03] transition-all resize-none font-sans"
-                    />
-                  </div>
+                    {/* Step 2 Bot Question */}
+                    {selectedStyle && (
+                      <div className="flex gap-2.5 items-start">
+                        <div className="w-6 h-6 rounded-full bg-[#FFDA03]/15 flex items-center justify-center text-[#FFDA03] text-[10px] font-bold flex-shrink-0">RV</div>
+                        <div className="bg-neutral-950 p-3.5 rounded-2xl rounded-tl-none border border-neutral-900 text-xs text-neutral-300 max-w-[85%] leading-relaxed">
+                          Excellent choice! Are you shooting with a dedicated camera (DSLR or mirrorless) or a smartphone?
+                        </div>
+                      </div>
+                    )}
 
-                  <button
-                    disabled={rvLoading || !rvPrompt.trim()}
-                    onClick={handleRvBot}
-                    className="w-full py-4 bg-[#FFDA03] hover:bg-[#FFDA03]/90 text-neutral-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    {rvLoading ? (
+                    {/* Step 2 User Answer */}
+                    {deviceType && (
+                      <div className="flex gap-2.5 items-start justify-end">
+                        <div className="bg-[#FFDA03]/10 border border-[#FFDA03]/20 p-3.5 rounded-2xl rounded-tr-none text-xs text-neutral-200 max-w-[85%] leading-relaxed">
+                          {deviceType === 'camera' ? '📷 Dedicated Camera' : '📱 Smartphone'}
+                        </div>
+                        <div className="w-6 h-6 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 text-[10px] font-bold flex-shrink-0">You</div>
+                      </div>
+                    )}
+
+                    {/* Step 3 Bot Question */}
+                    {deviceType && (
+                      <div className="flex gap-2.5 items-start">
+                        <div className="w-6 h-6 rounded-full bg-[#FFDA03]/15 flex items-center justify-center text-[#FFDA03] text-[10px] font-bold flex-shrink-0">RV</div>
+                        <div className="bg-neutral-950 p-3.5 rounded-2xl rounded-tl-none border border-neutral-900 text-xs text-neutral-300 max-w-[85%] leading-relaxed">
+                          Perfect. What is the specific brand and model name of your {deviceType === 'camera' ? 'camera' : 'mobile phone'}?
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3 User Answer / Result Ready */}
+                    {rvStep === 4 && deviceModel && (
                       <>
-                        <RefreshCw className="w-4 h-4 animate-spin" /> Calculating Settings...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" /> Get Camera Settings
+                        <div className="flex gap-2.5 items-start justify-end">
+                          <div className="bg-[#FFDA03]/10 border border-[#FFDA03]/20 p-3.5 rounded-2xl rounded-tr-none text-xs text-neutral-200 max-w-[85%] leading-relaxed">
+                            ⚙️ Device model: {deviceModel}
+                          </div>
+                          <div className="w-6 h-6 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 text-[10px] font-bold flex-shrink-0">You</div>
+                        </div>
+
+                        <div className="flex gap-2.5 items-start">
+                          <div className="w-6 h-6 rounded-full bg-[#FFDA03]/15 flex items-center justify-center text-[#FFDA03] text-[10px] font-bold flex-shrink-0">RV</div>
+                          <div className="bg-neutral-950 p-3.5 rounded-2xl rounded-tl-none border border-neutral-900 text-xs text-neutral-300 max-w-[85%] leading-relaxed">
+                            Calculations complete! I have generated the optimal settings and step-by-step shooting procedure for your {deviceModel}. Check out the recommended values on the right panel.
+                          </div>
+                        </div>
                       </>
                     )}
-                  </button>
+                  </div>
+
+                  {/* Interactive Controls Overlay for active steps */}
+                  <div className="border-t border-neutral-800/80 pt-4 mt-2">
+                    {rvStep === 1 && (
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            'Portrait',
+                            'Landscape & Nature',
+                            'Astrophotography (Night Sky)',
+                            'Sports & Action',
+                            'Macro Close-Up',
+                            'Street & Night City'
+                          ].map((style) => (
+                            <button
+                              key={style}
+                              onClick={() => {
+                                setSelectedStyle(style);
+                                setRvStep(2);
+                              }}
+                              className="py-2.5 px-3 bg-neutral-950 border border-neutral-800 hover:border-[#FFDA03]/50 hover:text-white text-neutral-300 rounded-xl text-[10px] font-bold transition-all cursor-pointer text-left flex items-center justify-between"
+                            >
+                              <span>{style}</span>
+                              <span className="text-[#FFDA03]/40">➔</span>
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="border-t border-neutral-800/50 pt-3">
+                          <p className="text-[10px] text-neutral-400 mb-2 font-bold">Or enter a custom style:</p>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={customStyleInput}
+                              onChange={(e) => setCustomStyleInput(e.target.value)}
+                              placeholder="e.g. Cinematic food photography, drone sunset..."
+                              className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#FFDA03] text-neutral-200"
+                            />
+                            <button
+                              disabled={!customStyleInput.trim()}
+                              onClick={() => {
+                                setSelectedStyle(customStyleInput.trim());
+                                setRvStep(2);
+                              }}
+                              className="px-4 py-2 bg-[#FFDA03] text-neutral-950 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {rvStep === 2 && (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => {
+                              setDeviceType('camera');
+                              setRvStep(3);
+                            }}
+                            className="flex-1 py-4 bg-neutral-950 border border-neutral-800 hover:border-[#FFDA03]/50 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-2"
+                          >
+                            <Camera className="w-5 h-5 text-[#FFDA03]" />
+                            <span>Dedicated Camera</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setDeviceType('mobile');
+                              setRvStep(3);
+                            }}
+                            className="flex-1 py-4 bg-neutral-950 border border-neutral-800 hover:border-[#FFDA03]/50 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-2"
+                          >
+                            <span className="text-xl">📱</span>
+                            <span>Smartphone</span>
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => setRvStep(1)}
+                          className="text-[10px] text-neutral-500 hover:text-white text-center transition-colors cursor-pointer"
+                        >
+                          ➔ Back to photography style
+                        </button>
+                      </div>
+                    )}
+
+                    {rvStep === 3 && (
+                      <div className="space-y-4">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={deviceModel}
+                            onChange={(e) => setDeviceModel(e.target.value)}
+                            placeholder={deviceType === 'camera' ? "e.g. Sony A7IV" : "e.g. iPhone 15 Pro"}
+                            className="flex-1 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#FFDA03] text-neutral-200"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && deviceModel.trim()) {
+                                handleRvBot(selectedStyle, deviceType, deviceModel.trim());
+                              }
+                            }}
+                          />
+                          <button
+                            disabled={rvLoading || !deviceModel.trim()}
+                            onClick={() => handleRvBot(selectedStyle, deviceType, deviceModel.trim())}
+                            className="px-4 py-2 bg-[#FFDA03] text-neutral-950 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
+                          >
+                            {rvLoading ? (
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <span>Submit</span>
+                            )}
+                          </button>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px]">
+                          <button
+                            onClick={() => setRvStep(2)}
+                            className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+                          >
+                            ➔ Back to device selection
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {rvStep === 4 && (
+                      <button
+                        onClick={handleStartOver}
+                        className="w-full py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                      >
+                        Start Over / Setup New Shoot
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Console Logs Output */}
@@ -343,6 +521,23 @@ export default function CreatorStudioPage() {
                       className="bg-neutral-900/50 border border-neutral-900 p-6 rounded-3xl backdrop-blur-md h-full flex flex-col justify-between"
                     >
                       <div>
+                        {/* Sample Style Picture Card */}
+                        {rvResult.sampleImage && (
+                          <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-5 border border-neutral-850 shadow-lg">
+                            <Image
+                              src={rvResult.sampleImage}
+                              alt={rvResult.name}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-80" />
+                            <span className="absolute bottom-3 left-3 text-[9px] font-black uppercase text-[#FFDA03] bg-neutral-950/80 px-2 py-0.5 rounded border border-[#FFDA03]/20">
+                              Sample Shot Preview
+                            </span>
+                          </div>
+                        )}
+
                         <div className="flex items-center justify-between mb-4 border-b border-neutral-800 pb-4">
                           <div>
                             <span className="text-[9px] font-black uppercase text-[#FFDA03] bg-[#FFDA03]/10 px-2 py-0.5 rounded border border-[#FFDA03]/25">
@@ -438,7 +633,7 @@ export default function CreatorStudioPage() {
                       <Sparkles className="w-10 h-10 text-neutral-700 mb-3 animate-pulse" />
                       <p className="text-xs font-bold text-neutral-400">Waiting for Input</p>
                       <p className="text-[10px] text-neutral-500 max-w-xs mt-1">
-                        Select a prompt or describe your shot to get manual settings from RV.
+                        Complete the interactive questionnaire on the left to generate settings and view style sample shots.
                       </p>
                     </div>
                   )}
@@ -702,9 +897,7 @@ export default function CreatorStudioPage() {
             </motion.div>
           )}
 
-
-
-          {/* TAB 4: CREATOR'S GARAGE CANVAS */}
+          {/* TAB 3: CREATOR'S GARAGE CANVAS */}
           {activeTab === 'garage' && (
             <motion.div 
               initial={{ opacity: 0, y: 10 }} 
