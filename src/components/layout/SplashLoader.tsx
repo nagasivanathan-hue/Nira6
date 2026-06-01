@@ -52,7 +52,7 @@ export default function SplashLoader() {
           position: fixed;
           inset: 0;
           z-index: 99999;
-          background-color: #0A0A0A;
+          background-color: #ecc007;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -71,7 +71,7 @@ export default function SplashLoader() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #0A0A0A;
+          background-color: #ecc007;
           overflow: hidden;
         }
 
@@ -80,7 +80,7 @@ export default function SplashLoader() {
           height: 100%;
         }
 
-        /* Skip Button & Sound Toggle */
+        /* Skip Button & Sound Toggle styled dark to pop against yellow */
         .splash-controls {
           position: absolute;
           top: 24px;
@@ -92,12 +92,13 @@ export default function SplashLoader() {
           z-index: 100;
         }
         .skip-btn {
-          color: #888;
+          color: #0A0A0A;
+          font-weight: 700;
           font-size: 11px;
           text-transform: uppercase;
           letter-spacing: 2px;
-          background: rgba(10, 10, 10, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(10, 10, 10, 0.08);
+          border: 1px solid rgba(10, 10, 10, 0.15);
           padding: 8px 16px;
           border-radius: 20px;
           cursor: pointer;
@@ -105,23 +106,23 @@ export default function SplashLoader() {
           transition: all 0.2s;
         }
         .skip-btn:hover {
-          color: #FFDA03;
-          border-color: #FFDA03;
-          background: rgba(10, 10, 10, 0.7);
+          color: #000;
+          border-color: #000;
+          background: rgba(10, 10, 10, 0.18);
         }
         .skip-btn:focus {
           outline: none;
         }
         .skip-btn:focus-visible {
-          outline: 2px solid #FFDA03;
+          outline: 2px solid #000;
           outline-offset: 4px;
         }
         
         .sound-toggle {
-          color: #888;
+          color: #0A0A0A;
           cursor: pointer;
-          background: rgba(10, 10, 10, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(10, 10, 10, 0.08);
+          border: 1px solid rgba(10, 10, 10, 0.15);
           padding: 8px;
           border-radius: 50%;
           backdrop-filter: blur(8px);
@@ -131,15 +132,15 @@ export default function SplashLoader() {
           justify-content: center;
         }
         .sound-toggle:hover {
-          color: #FFDA03;
-          border-color: #FFDA03;
-          background: rgba(10, 10, 10, 0.7);
+          color: #000;
+          border-color: #000;
+          background: rgba(10, 10, 10, 0.18);
         }
         .sound-toggle:focus {
           outline: none;
         }
         .sound-toggle:focus-visible {
-          outline: 2px solid #FFDA03;
+          outline: 2px solid #000;
           outline-offset: 4px;
         }
 
@@ -150,14 +151,14 @@ export default function SplashLoader() {
           left: 0;
           width: 100%;
           height: 3px;
-          background: rgba(255, 218, 3, 0.08);
+          background: rgba(10, 10, 10, 0.05);
           overflow: hidden;
           z-index: 100;
         }
         .auto-skip-bar {
           height: 100%;
           width: 0%;
-          background: linear-gradient(90deg, transparent, rgba(255, 218, 3, 0.6));
+          background: linear-gradient(90deg, transparent, rgba(10, 10, 10, 0.3));
           animation: auto-skip-fill ${AUTO_SKIP_MS}ms linear forwards;
         }
         @keyframes auto-skip-fill {
@@ -192,7 +193,7 @@ export default function SplashLoader() {
           viewBox="0 0 1280 720"
           width="100%"
           height="100%"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMid meet"
           className="loader-svg"
           aria-hidden="true"
         >
@@ -204,8 +205,8 @@ export default function SplashLoader() {
               playsInline
               muted={!soundEnabled}
               onEnded={handleSkip}
-              className="w-full h-full object-cover"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              className="w-full h-full object-contain"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </foreignObject>
           {/* Cover Rect to hide the Gemini spark logo in the bottom-right corner */}
@@ -214,7 +215,7 @@ export default function SplashLoader() {
             y="545"
             width="130"
             height="175"
-            fill="#EDC108"
+            fill="#ecc007"
             stroke="none"
           />
         </svg>
