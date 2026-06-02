@@ -6,7 +6,6 @@ import ReduxProvider from "@/store/ReduxProvider";
 import StoreInitializer from "@/components/layout/StoreInitializer";
 import AuthGate from "@/components/layout/AuthGate";
 import PwaRegister from "@/components/layout/PwaRegister";
-import SplashLoader from "@/components/layout/SplashLoader";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 
 const inter = Inter({
@@ -85,7 +84,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         <ReduxProvider>
           <StoreInitializer>
-            <SplashLoader />
             <PwaRegister />
             <ErrorBoundary>
               <AuthGate>
