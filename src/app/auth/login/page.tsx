@@ -234,11 +234,11 @@ export default function NIRA6AuthPage() {
 
   const handleRedirect = () => {
     switch (selectedRole) {
-      case 'seller': router.push('/dashboard/seller'); break;
-      case 'service_pro': router.push('/dashboard/pro'); break;
+      case 'seller': router.push('/dashboard'); break;
+      case 'service_pro': router.push('/dashboard'); break;
       case 'creator': router.push('/dashboard/creator'); break;
       case 'buyer': 
-      default: router.push('/browse'); break;
+      default: router.push('/buy'); break;
     }
   };
 

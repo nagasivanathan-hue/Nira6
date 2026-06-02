@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 
-const AUTO_SKIP_MS = 11000; // 11-second safety fallback
+const AUTO_SKIP_MS = 3000; // 3-second display duration for loading page
 
 export default function SplashLoader() {
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [visible, setVisible] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleSkip = useCallback(() => {
     setIsFadingOut(true);
@@ -18,14 +15,7 @@ export default function SplashLoader() {
     }, 600); // Allow time for CSS fade-out animation
   }, []);
 
-  // Sync mute state of the video element with the soundEnabled state
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = !soundEnabled;
-    }
-  }, [soundEnabled]);
-
-  // Safety net auto-skip timer
+  // Auto-skip timer to transition out of the loading screen
   useEffect(() => {
     const autoSkipTimer = setTimeout(() => {
       handleSkip();
@@ -33,10 +23,6 @@ export default function SplashLoader() {
 
     return () => clearTimeout(autoSkipTimer);
   }, [handleSkip]);
-
-  const toggleSound = () => {
-    setSoundEnabled((prev) => !prev);
-  };
 
   if (!visible) return null;
 
@@ -52,7 +38,7 @@ export default function SplashLoader() {
           position: fixed;
           inset: 0;
           z-index: 99999;
-          background-color: #ecc007;
+          background-color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -63,7 +49,7 @@ export default function SplashLoader() {
           pointer-events: none;
         }
         
-        .video-container {
+        .image-container {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -71,160 +57,27 @@ export default function SplashLoader() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #ecc007;
+          background-color: #ffffff;
           overflow: hidden;
         }
 
-        .loader-svg {
+        .loader-img {
           width: 100%;
           height: 100%;
-        }
-
-        /* Skip Button & Sound Toggle styled dark to pop against yellow */
-        .splash-controls {
-          position: absolute;
-          top: 24px;
-          right: 24px;
-          left: 24px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          z-index: 100;
-        }
-        .skip-btn {
-          color: #0A0A0A;
-          font-weight: 700;
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          background: rgba(10, 10, 10, 0.08);
-          border: 1px solid rgba(10, 10, 10, 0.15);
-          padding: 8px 16px;
-          border-radius: 20px;
-          cursor: pointer;
-          backdrop-filter: blur(8px);
-          transition: all 0.2s;
-        }
-        .skip-btn:hover {
-          color: #000;
-          border-color: #000;
-          background: rgba(10, 10, 10, 0.18);
-        }
-        .skip-btn:focus {
-          outline: none;
-        }
-        .skip-btn:focus-visible {
-          outline: 2px solid #000;
-          outline-offset: 4px;
-        }
-        
-        .sound-toggle {
-          color: #0A0A0A;
-          cursor: pointer;
-          background: rgba(10, 10, 10, 0.08);
-          border: 1px solid rgba(10, 10, 10, 0.15);
-          padding: 8px;
-          border-radius: 50%;
-          backdrop-filter: blur(8px);
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .sound-toggle:hover {
-          color: #000;
-          border-color: #000;
-          background: rgba(10, 10, 10, 0.18);
-        }
-        .sound-toggle:focus {
-          outline: none;
-        }
-        .sound-toggle:focus-visible {
-          outline: 2px solid #000;
-          outline-offset: 4px;
-        }
-
-        /* Auto-skip progress bar at the very bottom */
-        .auto-skip-progress {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 3px;
-          background: rgba(10, 10, 10, 0.05);
-          overflow: hidden;
-          z-index: 100;
-        }
-        .auto-skip-bar {
-          height: 100%;
-          width: 0%;
-          background: linear-gradient(90deg, transparent, rgba(10, 10, 10, 0.3));
-          animation: auto-skip-fill ${AUTO_SKIP_MS}ms linear forwards;
-        }
-        @keyframes auto-skip-fill {
-          0% { width: 0%; }
-          100% { width: 100%; }
+          object-fit: contain;
         }
       `
       }} />
 
-      {/* Top Controls */}
-      <div className="splash-controls">
-        <button
-          onClick={toggleSound}
-          className="sound-toggle"
-          aria-label={soundEnabled ? "Mute intro sound" : "Enable intro sound"}
-        >
-          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-        </button>
-        <button
-          onClick={handleSkip}
-          className="skip-btn"
-          aria-label="Skip intro and enter site"
-          tabIndex={0}
-        >
-          Skip
-        </button>
-      </div>
-
-      {/* Video Content wrapper */}
-      <div className="video-container">
-        <svg
-          viewBox="0 0 1280 720"
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMid meet"
-          className="loader-svg"
-          aria-hidden="true"
-        >
-          <foreignObject x="0" y="0" width="1280" height="720">
-            <video
-              ref={videoRef}
-              src="/assets/I_the_video_can_u_stick_with_t.mp4"
-              autoPlay
-              playsInline
-              muted={!soundEnabled}
-              onEnded={handleSkip}
-              className="w-full h-full object-contain"
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
-          </foreignObject>
-          {/* Cover Rect to hide the Gemini spark logo in the bottom-right corner */}
-          <rect
-            x="1150"
-            y="545"
-            width="130"
-            height="175"
-            fill="#ecc007"
-            stroke="none"
-          />
-        </svg>
-      </div>
-
-      {/* Safety Progress Indicator */}
-      <div className="auto-skip-progress">
-        <div className="auto-skip-bar" />
+      {/* Image Content wrapper */}
+      <div className="image-container">
+        <img
+          src="/assets/desktop loading page.svg"
+          alt="NIRA6 Loading"
+          className="loader-img"
+        />
       </div>
     </div>
   );
 }
+
