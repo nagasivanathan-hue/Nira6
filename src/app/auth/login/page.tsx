@@ -195,13 +195,20 @@ export default function NIRA6AuthPage() {
       });
 
       if (signInError) {
-        const attempts = failedAttempts + 1;
-        setFailedAttempts(attempts);
-        if (attempts >= 3) {
-          setLockoutTimer(30);
-          setError("Too many attempts. Please wait 30 seconds.");
+        const errorMsg = signInError.message.toLowerCase();
+        if (errorMsg.includes('confirm') || errorMsg.includes('verify')) {
+          setError("Your email address is not confirmed yet. Please verify it via the confirmation link sent to your inbox.");
+        } else if (errorMsg.includes('invalid login') || errorMsg.includes('invalid credentials')) {
+          const attempts = failedAttempts + 1;
+          setFailedAttempts(attempts);
+          if (attempts >= 3) {
+            setLockoutTimer(30);
+            setError("Too many login attempts. Please wait 30 seconds.");
+          } else {
+            setError(`Incorrect email or password. ${3 - attempts} attempts remaining.`);
+          }
         } else {
-          setError(`Incorrect password. ${3 - attempts} attempts remaining.`);
+          setError(signInError.message);
         }
         setLoading(false);
         return;
@@ -646,9 +653,23 @@ export default function NIRA6AuthPage() {
       <h2 className="font-heading text-4xl text-white tracking-wide">SUCCESS</h2>
       <p className="text-[#555555] text-sm">{successMsg || "Authentication successful."}</p>
       
-      <button onClick={handleRedirect} className="bg-[#1E1E1E] hover:bg-white hover:text-black text-white px-8 py-3 rounded-xl font-bold text-sm transition-colors mt-4">
-        Continue to NIRA6
-      </button>
+      {mode === 'signup' ? (
+        <button 
+          onClick={() => { 
+            setStep('form'); 
+            setMode('login'); 
+            setError(''); 
+            setSuccessMsg(''); 
+          }} 
+          className="bg-[#FFDA03] hover:bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold text-sm transition-colors mt-4"
+        >
+          Go to Login
+        </button>
+      ) : (
+        <button onClick={handleRedirect} className="bg-[#1E1E1E] hover:bg-white hover:text-black text-white px-8 py-3 rounded-xl font-bold text-sm transition-colors mt-4">
+          Continue to NIRA6
+        </button>
+      )}
     </motion.div>
   );
 
