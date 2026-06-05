@@ -122,11 +122,32 @@ export default function DiscoverPage() {
           {/* Category pills */}
           <div className="flex gap-2 overflow-x-auto scrollbar-hide mt-4 pb-1">
             <button onClick={() => setCategory('all')} className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${category === 'all' ? 'bg-nira-dark text-white' : 'bg-nira-gray text-nira-text-secondary hover:bg-nira-dark/5'}`}>All</button>
-            {CREATOR_CATEGORIES.map(cat => (
-              <button key={cat.id} onClick={() => setCategory(cat.id as CreatorCategory)} className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${category === cat.id ? 'text-white' : 'bg-nira-gray text-nira-text-secondary hover:bg-nira-dark/5'}`} style={category === cat.id ? { backgroundColor: cat.color } : {}}>
-                {cat.name}
-              </button>
-            ))}
+            {CREATOR_CATEGORIES.map(cat => {
+              const categoryBgClasses: Record<string, string> = {
+                photographer: 'bg-[#FFDA03]',
+                videographer: 'bg-[#FF6B35]',
+                editor: 'bg-[#A855F7]',
+                drone_operator: 'bg-[#3B82F6]',
+                model: 'bg-[#EC4899]',
+                studio: 'bg-[#10B981]',
+                makeup_artist: 'bg-[#F59E0B]',
+                anchor: 'bg-[#06B6D4]',
+                decorator: 'bg-[#EF4444]',
+              };
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setCategory(cat.id as CreatorCategory)}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    category === cat.id
+                      ? `text-white ${categoryBgClasses[cat.id] || 'bg-nira-dark'}`
+                      : 'bg-nira-gray text-nira-text-secondary hover:bg-nira-dark/5'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

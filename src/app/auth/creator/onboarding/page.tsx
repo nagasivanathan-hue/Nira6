@@ -127,8 +127,13 @@ export default function CreatorOnboarding() {
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-nira-gray-dark -z-10 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-nira-yellow transition-all duration-500 ease-in-out" 
-                style={{ width: `${((currentStep - 1) / 5) * 100}%` }}
+                className={`h-full bg-nira-yellow transition-all duration-500 ease-in-out ${
+                  currentStep === 2 ? 'w-1/5' :
+                  currentStep === 3 ? 'w-2/5' :
+                  currentStep === 4 ? 'w-3/5' :
+                  currentStep === 5 ? 'w-4/5' :
+                  currentStep === 6 ? 'w-full' : 'w-0'
+                }`}
               />
             </div>
             {steps.map((step) => {

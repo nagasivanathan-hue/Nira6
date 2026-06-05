@@ -6,6 +6,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import LoginPage from '@/app/auth/login/page';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
+import MiniCart from '@/components/cart/MiniCart';
 import dynamic from 'next/dynamic';
 
 const LiveChatWidget = dynamic(() => import('@/components/support/LiveChatWidget'));
@@ -51,6 +52,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       <Footer />
       <MobileBottomNav />
       <LiveChatWidget />
+      <MiniCart />
     </>
   );
 }

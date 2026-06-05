@@ -17,8 +17,7 @@ export default function StickyRentBar({ onFilterToggle, sort, onSort, resultCoun
           <select aria-label="Select option" title="Select option"
             value={sort}
             onChange={(e) => onSort(e.target.value)}
-            className="input-dark rounded-lg px-3 py-1.5 text-[11px] font-bold cursor-pointer appearance-none pr-7"
-            style={{ backgroundImage: 'none' }}
+            className="input-dark rounded-lg px-3 py-1.5 text-[11px] font-bold cursor-pointer appearance-none pr-7 bg-none"
           >
             <option value="">Newest</option>
             <option value="price_asc">Price: Low → High</option>

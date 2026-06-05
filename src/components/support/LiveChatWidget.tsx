@@ -134,8 +134,7 @@ export default function LiveChatWidget() {
               }
             }}
             onPointerDown={handleDragStart}
-            className="w-14 h-14 bg-nira-dark/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 cursor-grab active:cursor-grabbing relative group"
-            style={{ touchAction: 'none' }}
+            className="w-14 h-14 bg-nira-dark/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 cursor-grab active:cursor-grabbing relative group touch-none"
           >
             {/* Idle Breathing Pulse Rings */}
             <span className="absolute inset-0 rounded-full bg-nira-yellow/20 animate-ping opacity-75 -z-10" />
@@ -156,14 +155,12 @@ export default function LiveChatWidget() {
             initial={{ y: 50, scale: 0.9, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 50, scale: 0.9, opacity: 0 }}
-            className="w-[340px] sm:w-[380px] h-[500px] bg-white/95 backdrop-blur-xl rounded-3xl border border-nira-gray-dark shadow-2xl overflow-hidden flex flex-col"
-            style={{ boxShadow: '0 12px 50px rgba(0,0,0,0.15)' }}
+            className="w-[calc(100vw-32px)] sm:w-[380px] h-[500px] bg-white/95 backdrop-blur-xl rounded-3xl border border-nira-gray-dark shadow-[0_12px_50px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col"
           >
             {/* Header / Drag Handle */}
             <div 
               onPointerDown={handleDragStart}
-              className="bg-nira-dark text-white p-4 flex items-center justify-between cursor-grab active:cursor-grabbing select-none"
-              style={{ touchAction: 'none' }}
+              className="bg-nira-dark text-white p-4 flex items-center justify-between cursor-grab active:cursor-grabbing select-none touch-none"
             >
               <div className="flex items-center gap-3 pointer-events-none">
                 <div className="relative flex items-center py-1">

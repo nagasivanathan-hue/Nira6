@@ -47,9 +47,9 @@ export default function CartPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-white rounded-2xl p-5 flex gap-5 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow relative group"
+                className="bg-white rounded-2xl p-4 sm:p-5 flex gap-3 sm:gap-5 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow relative group"
               >
-                <div className="relative w-28 h-28 bg-neutral-50 border border-neutral-100 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-3">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 bg-neutral-50 border border-neutral-100 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-2 sm:p-3">
                   <Image src={item.product.image} alt={item.product.name} fill className="object-contain" />
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-between">

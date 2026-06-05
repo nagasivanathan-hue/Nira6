@@ -24,13 +24,20 @@ export default function Logo({ className = '', height = 28, theme = 'auto', icon
   // Size of the logo icon is 1:1, derived from the height prop
   const iconSize = height;
 
+  // Pre-compiled Tailwind classes for height & font-size mapping to avoid inline styles
+  const logoSizeClasses: Record<number, { container: string; text: string }> = {
+    20: { container: 'w-[20px] h-[20px]', text: 'text-[17px]' },
+    26: { container: 'w-[26px] h-[26px]', text: 'text-[22px]' },
+    28: { container: 'w-[28px] h-[28px]', text: 'text-[24px]' },
+    32: { container: 'w-[32px] h-[32px]', text: 'text-[27.2px]' },
+  };
+
+  const sizeClass = logoSizeClasses[height] || { container: 'w-[28px] h-[28px]', text: 'text-[24px]' };
+
   return (
     <div className={`flex items-center gap-2 select-none pointer-events-none ${className}`}>
       {/* Brand Icon (Square frame with logo image) */}
-      <div 
-        className="relative flex-shrink-0 overflow-hidden"
-        style={{ width: iconSize, height: iconSize }}
-      >
+      <div className={`relative flex-shrink-0 overflow-hidden ${sizeClass.container}`}>
         <Image
           src="/assets/logo.png"
           alt="N6"
@@ -46,10 +53,7 @@ export default function Logo({ className = '', height = 28, theme = 'auto', icon
 
       {/* Brand Text Name */}
       {!iconOnly && (
-        <span 
-          className={`font-heading font-black tracking-tight leading-none ${textColorClass}`}
-          style={{ fontSize: `${Math.round(height * 0.85)}px` }}
-        >
+        <span className={`font-heading font-black tracking-tight leading-none ${textColorClass} ${sizeClass.text}`}>
           NIRA6
         </span>
       )}

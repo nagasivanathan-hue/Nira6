@@ -30,7 +30,7 @@ img {
   /* Phone landscape — very constrained height */
   .hero { 
     flex-direction: row !important; 
-    min-height: auto !important; 
+    min-height: 0 !important; 
   }
   .reel-card { 
     width: 50vw !important; 
@@ -61,16 +61,14 @@ html {
 /* Momentum scroll on touch (iOS) */
 .scroll-container {
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
 
 /* Horizontal scroll areas */
 .horizontal-scroll {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Firefox */
+  /* scrollbar-width: none; */
 }
 .horizontal-scroll::-webkit-scrollbar { display: none; }
 

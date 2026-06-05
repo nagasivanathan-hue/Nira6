@@ -99,10 +99,29 @@ interface Warehouse {
   city: string;
 }
 
-const statusSteps = [
-  'pending', 'confirmed', 'processing', 'packed', 'shipped', 
-  'in_transit', 'out_for_delivery', 'delivered', 'cancelled', 'returned'
-];
+interface KycRequest {
+  _id: string;
+  businessName?: string;
+  userId?: {
+    name: string;
+    avatar?: string;
+  };
+  category: string;
+  location: string;
+  govtIdUrl?: string;
+}
+
+interface AnalyticsData {
+  summary: {
+    totalRevenue: number;
+    averageOrderValue: number;
+  };
+  chartData: {
+    date: string;
+    sales: number;
+  }[];
+  statusCounts: Record<string, number>;
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -111,7 +130,7 @@ export default function AdminDashboardPage() {
   const [activeSubTab, setActiveSubTab] = useState<'analytics' | 'fulfillment' | 'warehouse' | 'inventory' | 'escrow' | 'kyc'>('analytics');
   
   // KYC State
-  const [kycRequests, setKycRequests] = useState<any[]>([]);
+  const [kycRequests, setKycRequests] = useState<KycRequest[]>([]);
   // Bookings / Escrows State
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [resolvingBookingId, setResolvingBookingId] = useState<string | null>(null);
@@ -123,11 +142,11 @@ export default function AdminDashboardPage() {
   });
 
   // E-commerce state
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
   const [inventories, setInventories] = useState<InventoryItem[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   
   // Search query filters
   const [orderSearch, setOrderSearch] = useState('');
@@ -479,36 +498,44 @@ export default function AdminDashboardPage() {
                 <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-nira-dark mb-6">Daily Sales Revenue Chart (7 Days)</h3>
                 
                 <div className="h-64 flex items-end gap-3 sm:gap-6 border-b border-nira-gray-dark pb-3 pt-6 px-4">
-                  {(analytics?.chartData || [
-                    { date: '1 May', sales: 45000 },
-                    { date: '2 May', sales: 65000 },
-                    { date: '3 May', sales: 12000 },
-                    { date: '4 May', sales: 89000 },
-                    { date: '5 May', sales: 54000 },
-                    { date: '6 May', sales: 110000 },
-                    { date: '7 May', sales: 76000 }
-                  ]).map((bar: { date: string; sales: number }, idx: number) => {
-                    const maxVal = Math.max(...(analytics?.chartData || []).map((c: { sales: number }) => c.sales), 100000);
-                    const percentage = Math.min(100, Math.round((bar.sales / maxVal) * 100));
-                    return (
-                      <div key={idx} className="flex-1 flex flex-col items-center group relative h-full justify-end">
-                        
-                        {/* Hover Tooltip */}
-                        <div className="absolute bottom-full mb-2 bg-nira-dark text-white px-2 py-1 rounded text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
-                          {formatPrice(bar.sales)}
-                        </div>
+                  {(() => {
+                    const chartBars = analytics?.chartData || [
+                      { date: '1 May', sales: 45000 },
+                      { date: '2 May', sales: 65000 },
+                      { date: '3 May', sales: 12000 },
+                      { date: '4 May', sales: 89000 },
+                      { date: '5 May', sales: 54000 },
+                      { date: '6 May', sales: 110000 },
+                      { date: '7 May', sales: 76000 }
+                    ];
+                    const maxVal = Math.max(...chartBars.map((c: { sales: number }) => c.sales), 100000);
+                    const styles = chartBars.map((bar: { sales: number }, idx: number) => {
+                      const percentage = Math.min(100, Math.round((bar.sales / maxVal) * 100));
+                      return `.chart-bar-${idx} { height: ${percentage}%; }`;
+                    }).join('\n');
 
-                        {/* Chart Bar */}
-                        <div 
-                          className="w-full bg-nira-yellow rounded-t-lg transition-all duration-700" 
-                          style={{ height: `${percentage}%` }}
-                        />
-                        
-                        {/* Date Label */}
-                        <span className="text-[9px] text-nira-text-secondary font-bold mt-2 truncate w-full text-center">{bar.date}</span>
-                      </div>
+                    return (
+                      <>
+                        <style dangerouslySetInnerHTML={{ __html: styles }} />
+                        {chartBars.map((bar: { date: string; sales: number }, idx: number) => {
+                          return (
+                            <div key={idx} className="flex-1 flex flex-col items-center group relative h-full justify-end">
+                              {/* Hover Tooltip */}
+                              <div className="absolute bottom-full mb-2 bg-nira-dark text-white px-2 py-1 rounded text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                                {formatPrice(bar.sales)}
+                              </div>
+
+                              {/* Chart Bar */}
+                              <div className={`w-full bg-nira-yellow rounded-t-lg transition-all duration-700 chart-bar-${idx}`} />
+
+                              {/* Date Label */}
+                              <span className="text-[9px] text-nira-text-secondary font-bold mt-2 truncate w-full text-center">{bar.date}</span>
+                            </div>
+                          );
+                        })}
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
               </div>
 
@@ -1062,6 +1089,26 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            {/* Escrow Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-nira-gray/25 border-b border-nira-gray-dark">
+              <div className="bg-white p-3 rounded-2xl border border-nira-gray-dark">
+                <p className="text-[9px] font-bold text-nira-text-secondary uppercase">Total Bookings</p>
+                <p className="text-sm font-black text-nira-dark mt-1">{escrowStats.totalBookings}</p>
+              </div>
+              <div className="bg-white p-3 rounded-2xl border border-nira-gray-dark">
+                <p className="text-[9px] font-bold text-nira-text-secondary uppercase">Escrow Held</p>
+                <p className="text-sm font-black text-nira-yellow mt-1">₹{escrowStats.escrowHeld.toLocaleString('en-IN')}</p>
+              </div>
+              <div className="bg-white p-3 rounded-2xl border border-nira-gray-dark">
+                <p className="text-[9px] font-bold text-nira-text-secondary uppercase">Escrow Refunded</p>
+                <p className="text-sm font-black text-red-600 mt-1">₹{escrowStats.escrowRefunded.toLocaleString('en-IN')}</p>
+              </div>
+              <div className="bg-white p-3 rounded-2xl border border-nira-gray-dark">
+                <p className="text-[9px] font-bold text-nira-text-secondary uppercase">Escrow Disbursed</p>
+                <p className="text-sm font-black text-emerald-600 mt-1">₹{escrowStats.escrowDisbursed.toLocaleString('en-IN')}</p>
+              </div>
+            </div>
+
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -1158,7 +1205,7 @@ export default function AdminDashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {kycRequests.map((req: any) => (
+                  {kycRequests.map((req: KycRequest) => (
                     <div key={req._id} className="bg-nira-gray rounded-xl p-5 border border-nira-gray-dark flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl overflow-hidden bg-white">
@@ -1175,13 +1222,13 @@ export default function AdminDashboardPage() {
                           try {
                             await api.post('/admin/creators/kyc/approve', { creatorId: req._id, action: 'reject' });
                             setKycRequests(prev => prev.filter(p => p._id !== req._id));
-                          } catch(e) { alert('Error rejecting KYC'); }
+                          } catch { alert('Error rejecting KYC'); }
                         }} className="px-4 py-2 bg-white text-red-600 font-bold text-xs uppercase rounded-lg border border-red-200 hover:bg-red-50">Reject</button>
                         <button onClick={async () => {
                           try {
                             await api.post('/admin/creators/kyc/approve', { creatorId: req._id, action: 'approve' });
                             setKycRequests(prev => prev.filter(p => p._id !== req._id));
-                          } catch(e) { alert('Error approving KYC'); }
+                          } catch { alert('Error approving KYC'); }
                         }} className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs uppercase rounded-lg hover:bg-emerald-700">Approve</button>
                       </div>
                     </div>

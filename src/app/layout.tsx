@@ -71,12 +71,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="antialiased">
         {/* BUG-002: noscript fallback for crawlers and users without JS */}
         <noscript>
-          <div style={{ backgroundColor: '#0A0A0A', color: '#ffffff', fontFamily: 'system-ui, sans-serif', padding: '40px 20px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-            <h1 style={{ color: '#FFDA03', fontSize: '48px', fontWeight: 800, marginBottom: '16px' }}>NIRA6</h1>
-            <p style={{ color: '#cccccc', fontSize: '18px', maxWidth: '600px', lineHeight: 1.6, marginBottom: '24px' }}>
+          <div className="bg-[#0A0A0A] text-white font-sans py-10 px-5 min-h-screen flex flex-col items-center justify-center text-center">
+            <h1 className="text-[#FFDA03] text-5xl font-extrabold mb-4">NIRA6</h1>
+            <p className="text-[#cccccc] text-lg max-w-[600px] leading-relaxed mb-6">
               India&apos;s premium recommerce platform for creators. Buy, sell, rent, and repair cameras, drones, lenses, and creator equipment at the best prices.
             </p>
-            <a href="/auth/login" style={{ display: 'inline-block', padding: '14px 32px', backgroundColor: '#FFDA03', color: '#0A0A0A', fontWeight: 700, textDecoration: 'none', borderRadius: '8px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <a href="/auth/login" className="inline-block py-3.5 px-8 bg-[#FFDA03] text-[#0A0A0A] font-bold no-underline rounded-lg text-sm uppercase tracking-wider">
               Join the Waitlist
             </a>
           </div>

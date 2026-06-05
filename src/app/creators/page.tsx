@@ -187,12 +187,26 @@ export default function CreatorHubPage() {
             </button>
             {CREATOR_CATEGORIES.map(cat => {
               const CatIcon = catIconMap[cat.icon] || Sparkles;
+              const categoryBgClasses: Record<string, string> = {
+                photographer: 'bg-[#FFDA03]',
+                videographer: 'bg-[#FF6B35]',
+                editor: 'bg-[#A855F7]',
+                drone_operator: 'bg-[#3B82F6]',
+                model: 'bg-[#EC4899]',
+                studio: 'bg-[#10B981]',
+                makeup_artist: 'bg-[#F59E0B]',
+                anchor: 'bg-[#06B6D4]',
+                decorator: 'bg-[#EF4444]',
+              };
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${activeCategory === cat.id ? 'text-white' : 'bg-white text-nira-text-secondary hover:bg-nira-dark/5'}`}
-                  style={activeCategory === cat.id ? { backgroundColor: cat.color } : {}}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    activeCategory === cat.id
+                      ? `text-white ${categoryBgClasses[cat.id] || 'bg-nira-dark'}`
+                      : 'bg-white text-nira-text-secondary hover:bg-nira-dark/5'
+                  }`}
                 >
                   <CatIcon className="w-3.5 h-3.5" /> {cat.name}
                 </button>

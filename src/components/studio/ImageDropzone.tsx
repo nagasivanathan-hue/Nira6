@@ -297,15 +297,15 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
             <div className="relative w-16 h-16 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border border-neutral-700 animate-ping opacity-30" />
               <div className="w-12 h-12 rounded-full border border-nira-yellow/20 flex items-center justify-center bg-neutral-950">
-                <Aperture className="w-6 h-6 text-[#FFDA03] animate-spin" style={{ animationDuration: '3s' }} />
+                <Aperture className="w-6 h-6 text-[#FFDA03] animate-spin-3s" />
               </div>
             </div>
             <div>
               <p className="text-xs text-white font-mono tracking-widest uppercase">Uploading reference mood...</p>
               <div className="w-48 bg-neutral-950 h-1.5 rounded-full overflow-hidden mt-3 border border-neutral-800">
+                <style dangerouslySetInnerHTML={{ __html: `.upload-progress-bar { width: ${progress}%; }` }} />
                 <div
-                  className="bg-gradient-to-r from-[#FFDA03] to-amber-500 h-full rounded-full transition-all duration-200"
-                  style={{ width: `${progress}%` }}
+                  className="bg-gradient-to-r from-[#FFDA03] to-amber-500 h-full rounded-full transition-all duration-200 upload-progress-bar"
                 />
               </div>
               <p className="text-[10px] text-neutral-400 font-mono mt-1.5">{progress}% uploaded</p>
@@ -440,7 +440,7 @@ export default function ImageDropzone({ onUploadComplete, onClear }: ImageDropzo
 
           {analyzingVision && (
             <div className="mt-3 flex items-center justify-center gap-2 py-3 text-[10px] text-purple-300 font-mono">
-              <Aperture className="w-4 h-4 animate-spin text-purple-400" style={{ animationDuration: '2s' }} />
+              <Aperture className="w-4 h-4 animate-spin-2s text-purple-400" />
               <span className="uppercase tracking-widest">AI Vision analyzing composition...</span>
             </div>
           )}

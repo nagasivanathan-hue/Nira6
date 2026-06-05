@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Play, Pause, Volume2, VolumeX, Heart, MessageCircle, Share2,
-  Bookmark, X, Send, Eye, CheckCircle2, MapPin, Tag, Plus, PlusCircle,
+  Volume2, VolumeX, Heart, MessageCircle, Share2,
+  Bookmark, X, Send, CheckCircle2, MapPin, Tag, Plus, PlusCircle,
   AlertTriangle, Home, Film, ShoppingBag, Briefcase, Key, Compass, User,
-  ChevronRight, Calendar, ArrowRight, MessageSquare, ShieldAlert
+  ArrowRight, MessageSquare, ShieldAlert
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -243,12 +243,10 @@ const USER_TYPE_BADGES: Record<string, string> = {
 };
 
 export default function NIRA6ReelsTab() {
-  const router = useRouter();
-
   // Reels feed & user state
   const [reels, setReels] = useState(INITIAL_REELS);
   const [activeTab, setActiveTab] = useState("For You");
-  const [activeReelIndex, setActiveReelIndex] = useState(0);
+  const [_activeReelIndex, setActiveReelIndex] = useState(0);
   const [isGlobalMuted, setIsGlobalMuted] = useState(true);
 
   // User preference parameters (real-time recommendation feedback)
@@ -608,7 +606,6 @@ export default function NIRA6ReelsTab() {
         <div 
           ref={feedContainerRef}
           className="flex-1 w-full overflow-y-auto snap-y snap-mandatory scrollbar-none"
-          style={{ scrollSnapType: 'y mandatory' }}
         >
           {activeFeed.map((reel, index) => {
             const isLiked = userPrefs.likedIds.includes(reel.id);
@@ -620,7 +617,6 @@ export default function NIRA6ReelsTab() {
                 key={reel.id}
                 data-index={index}
                 className="reel-video-card relative w-full h-full snap-start snap-always overflow-hidden flex flex-col justify-end"
-                style={{ height: '100%' }}
               >
                 {/* Background Video element */}
                 <video
@@ -898,6 +894,8 @@ export default function NIRA6ReelsTab() {
                 <button 
                   onClick={() => setCommentsReel(null)}
                   className="p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Close comments"
+                  title="Close comments"
                 >
                   <X size={18} />
                 </button>
@@ -971,6 +969,8 @@ export default function NIRA6ReelsTab() {
                 <button 
                   onClick={() => setActiveListingTag(null)}
                   className="p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Close details"
+                  title="Close details"
                 >
                   <X size={18} />
                 </button>
@@ -1096,6 +1096,8 @@ export default function NIRA6ReelsTab() {
                 <button 
                   onClick={() => setIsUploadOpen(false)}
                   className="p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Close upload modal"
+                  title="Close upload modal"
                 >
                   <X size={18} />
                 </button>
@@ -1104,13 +1106,16 @@ export default function NIRA6ReelsTab() {
               <form onSubmit={handleUploadSubmit} className="flex flex-col gap-4">
                 {/* Custom Video input */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Select Video (Max 60s)</label>
+                  <label htmlFor="reels-video-upload" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Select Video (Max 60s)</label>
                   <div className="border border-dashed border-[#1E1E26] bg-[#0A0A0C] hover:border-[#FFDA03]/40 rounded-xl p-4 text-center cursor-pointer relative flex flex-col items-center justify-center min-h-[90px] transition-colors">
                     <input 
+                      id="reels-video-upload"
                       type="file" 
                       accept="video/mp4,video/x-m4v,video/*"
                       onChange={handleVideoSelect}
                       className="absolute inset-0 opacity-0 cursor-pointer" 
+                      title="Select Video"
+                      aria-label="Select Video"
                     />
                     {uploadForm.videoFile ? (
                       <div className="flex flex-col items-center gap-1.5">
@@ -1130,8 +1135,9 @@ export default function NIRA6ReelsTab() {
 
                 {/* Form fields */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Video Title</label>
+                  <label htmlFor="reels-video-title" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Video Title</label>
                   <input
+                    id="reels-video-title"
                     type="text"
                     required
                     placeholder="e.g. Sony A7IV Cinematic Test"
@@ -1142,8 +1148,9 @@ export default function NIRA6ReelsTab() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Description</label>
+                  <label htmlFor="reels-video-desc" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Description</label>
                   <textarea
+                    id="reels-video-desc"
                     required
                     placeholder="e.g. Demonstrating low-light capability. Follow for more gear unboxings!"
                     value={uploadForm.description}
@@ -1155,8 +1162,10 @@ export default function NIRA6ReelsTab() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Category</label>
+                    <label htmlFor="reels-video-category" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Category</label>
                     <select
+                      id="reels-video-category"
+                      title="Category"
                       value={uploadForm.category}
                       onChange={(e) => setUploadForm(p => ({ ...p, category: e.target.value }))}
                       className="w-full bg-[#0A0A0C] border border-[#1E1E26] rounded-xl px-3 py-2 text-xs text-white focus:border-[#FFDA03] outline-none"
@@ -1169,8 +1178,10 @@ export default function NIRA6ReelsTab() {
                     </select>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">User Type Role</label>
+                    <label htmlFor="reels-video-usertype" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">User Type Role</label>
                     <select
+                      id="reels-video-usertype"
+                      title="User Type Role"
                       value={uploadForm.userType}
                       onChange={(e) => setUploadForm(p => ({ ...p, userType: e.target.value }))}
                       className="w-full bg-[#0A0A0C] border border-[#1E1E26] rounded-xl px-3 py-2 text-xs text-white focus:border-[#FFDA03] outline-none"
@@ -1188,8 +1199,9 @@ export default function NIRA6ReelsTab() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Location</label>
+                    <label htmlFor="reels-video-location" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Location</label>
                     <input
+                      id="reels-video-location"
                       type="text"
                       placeholder="e.g. Mumbai, MH"
                       value={uploadForm.location}
@@ -1198,8 +1210,9 @@ export default function NIRA6ReelsTab() {
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Hashtags</label>
+                    <label htmlFor="reels-video-hashtags" className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Hashtags</label>
                     <input
+                      id="reels-video-hashtags"
                       type="text"
                       placeholder="e.g. #sony #gear"
                       value={uploadForm.hashtags}
@@ -1214,8 +1227,10 @@ export default function NIRA6ReelsTab() {
                   <span className="text-[10px] text-[#FFDA03] font-bold uppercase tracking-wider">Connect Marketplace Listing (Optional)</span>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
-                      <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Listing Type</label>
+                      <label htmlFor="reels-video-taggedtype" className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Listing Type</label>
                       <select
+                        id="reels-video-taggedtype"
+                        title="Listing Type"
                         value={uploadForm.taggedType}
                         onChange={(e) => setUploadForm(p => ({ ...p, taggedType: e.target.value, taggedId: '' }))}
                         className="w-full bg-[#0A0A0C] border border-[#1E1E26] rounded-xl px-3 py-2 text-xs text-white focus:border-[#FFDA03] outline-none"
@@ -1229,8 +1244,10 @@ export default function NIRA6ReelsTab() {
 
                     {uploadForm.taggedType !== 'none' && (
                       <div className="flex flex-col gap-1">
-                        <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Select Item</label>
+                        <label htmlFor="reels-video-taggedid" className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Select Item</label>
                         <select
+                          id="reels-video-taggedid"
+                          title="Select Item"
                           value={uploadForm.taggedId}
                           onChange={(e) => setUploadForm(p => ({ ...p, taggedId: e.target.value }))}
                           className="w-full bg-[#0A0A0C] border border-[#1E1E26] rounded-xl px-3 py-2 text-xs text-white focus:border-[#FFDA03] outline-none"
@@ -1298,7 +1315,7 @@ function DescriptionBox({ text }: { text: string }) {
 
 // --- SUBCOMPONENT: COMMENT DRAWER INPUT BLOCK ---
 function CommentInput({ 
-  reelId, 
+  reelId: _reelId, 
   onCommentAdded 
 }: { 
   reelId: number, 

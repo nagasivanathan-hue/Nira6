@@ -43,15 +43,15 @@ export default function RepairPage() {
         </div>
 
         {/* Benefits */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
           {[
             { icon: Search, label: 'Free Diagnostics' },
             { icon: Truck, label: 'Free Pickup' },
             { icon: Clock, label: '48hr Turnaround' },
           ].map(({ icon: Icon, label }) => (
-            <div key={label} className="flex flex-col items-center gap-2 p-4 bg-white rounded-xl text-center">
-              <Icon className="w-6 h-6 text-nira-yellow" />
-              <span className="text-sm font-medium">{label}</span>
+            <div key={label} className="flex flex-col items-center gap-2 p-2.5 sm:p-4 bg-white rounded-xl text-center">
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-nira-yellow" />
+              <span className="text-[10px] sm:text-sm font-medium leading-tight">{label}</span>
             </div>
           ))}
         </div>

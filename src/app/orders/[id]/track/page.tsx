@@ -335,7 +335,7 @@ export default function OrderTrackingPage() {
                         {/* Connecting Line */}
                         {i < arr.length - 1 && (
                           <div className="hidden md:block absolute top-5 left-1/2 w-full h-0.5 bg-neutral-800 -z-10">
-                            <div className="h-full bg-nira-yellow transition-all duration-500" style={{ width: hub.active && arr[i+1].active ? '100%' : '0%' }} />
+                            <div className={`h-full bg-nira-yellow transition-all duration-500 ${hub.active && arr[i+1].active ? 'w-full' : 'w-0'}`} />
                           </div>
                         )}
 

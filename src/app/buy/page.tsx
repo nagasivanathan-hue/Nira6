@@ -97,20 +97,25 @@ const STARFIELD_STARS = Array.from({ length: 100 }).map((_, i) => ({
 }));
 
 function Starfield() {
+  const styles = STARFIELD_STARS.map(star => `
+    #star-${star.id} {
+      top: ${star.top};
+      left: ${star.left};
+      width: ${star.size};
+      height: ${star.size};
+      animation-delay: ${star.delay};
+      animation-duration: ${star.duration};
+    }
+  `).join('\n');
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#0A0A0A]">
+      <style dangerouslySetInnerHTML={{ __html: styles }} />
       {STARFIELD_STARS.map((star) => (
         <div
           key={star.id}
+          id={`star-${star.id}`}
           className="absolute bg-white rounded-full opacity-0 animate-twinkle"
-          style={{
-            top: star.top,
-            left: star.left,
-            width: star.size,
-            height: star.size,
-            animationDelay: star.delay,
-            animationDuration: star.duration,
-          }}
         />
       ))}
     </div>

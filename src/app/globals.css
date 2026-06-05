@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./breakpoints.css";
+@import "./responsive-tokens.css";
 
 @theme {
   --color-nira-yellow: #FFDA03;
@@ -24,6 +26,8 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
   --animate-spin-slow: spin 8s linear infinite;
+  --animate-spin-3s: spin 3s linear infinite;
+  --animate-spin-2s: spin 2s linear infinite;
   --animate-bounce-gentle: bounce-gentle 2s ease-in-out infinite;
   --animate-lens-focus: lens-focus 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-shutter: shutter-open 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -85,7 +89,7 @@
 .asset-protected {
   -webkit-user-select: none;
   user-select: none;
-  -webkit-user-drag: none;
+  /* -webkit-user-drag: none; */
   pointer-events: none;
 }
 
@@ -246,10 +250,6 @@ h1, h2, h3, h4, h5, h6 {
     will-change: transform, opacity;
   }
 
-  /* Momentum scroll behavior for absolute/overflow sections */
-  .touch-scroll {
-    
-  }
 
   /* Safe Area paddings */
   .pb-safe-bottom {

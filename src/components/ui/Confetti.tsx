@@ -96,8 +96,7 @@ export default function Confetti({ duration = 4000 }: { duration?: number }) {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-[100] pointer-events-none"
-      style={{ mixBlendMode: 'normal' }}
+      className="fixed inset-0 z-[100] pointer-events-none mix-blend-normal"
     />
   );
 }
