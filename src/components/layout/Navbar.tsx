@@ -464,19 +464,21 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-4 py-2 text-sm font-semibold transition-colors ${
+                    className={`relative px-4 py-2 text-sm font-semibold transition-colors group ${
                       isActive 
                         ? (isDarkPage ? 'text-white' : 'text-nira-dark') 
                         : (isDarkPage ? 'text-neutral-400 hover:text-white' : 'text-nira-text-secondary hover:text-nira-dark')
                     }`}
                   >
                     <span>{link.label}</span>
-                    {isActive && (
+                    {isActive ? (
                       <motion.div
                         layoutId="activeNavTab"
                         className="absolute bottom-0 left-4 right-4 h-0.5 bg-nira-yellow rounded-full"
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
+                    ) : (
+                      <span className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-nira-yellow scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                     )}
                   </Link>
                 );
@@ -663,19 +665,23 @@ export default function Navbar() {
                   )}
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2 px-4 py-2 bg-nira-dark text-white text-sm font-medium rounded-xl hover:bg-nira-dark/90 transition-colors shadow-sm"
+                    className="flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-sm font-medium rounded-full hover:bg-nira-dark/90 transition-colors shadow-sm group"
                   >
-                    <User className="w-4 h-4" />
-                    {user?.name?.split(' ')[0] || 'Dashboard'}
+                    <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center">
+                      <User className="w-4 h-4 text-nira-yellow" />
+                    </span>
+                    <span>{user?.name?.split(' ')[0] || 'Dashboard'}</span>
                   </Link>
                 </div>
               ) : (
                 <Link
                   href="/auth"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-nira-dark text-white text-sm font-medium rounded-xl hover:bg-nira-dark/90 transition-colors"
+                  className="hidden sm:flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-sm font-medium rounded-full hover:bg-nira-dark/90 transition-colors group"
                 >
-                  <User className="w-4 h-4" />
-                  Login
+                  <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center">
+                    <User className="w-4 h-4 text-nira-yellow" />
+                  </span>
+                  <span>Login</span>
                 </Link>
               )}
               <button onClick={() => dispatch(toggleMobileMenu())} className="lg:hidden p-3 hover:bg-nira-gray rounded-lg transition-colors" aria-label="Menu">

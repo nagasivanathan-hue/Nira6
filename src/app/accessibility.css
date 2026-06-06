@@ -47,7 +47,7 @@
 
 /* Base Contrast Adjustments */
 /* Replaces any weak gray #555555 with #777777 for contrast ratio compliance */
-.text-muted, .text-[#555555], .text-neutral-600 {
+.text-muted, .text-weak-gray, .text-neutral-600 {
   color: #777777 !important;
 }
 
