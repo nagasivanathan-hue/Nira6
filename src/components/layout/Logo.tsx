@@ -35,7 +35,7 @@ export default function Logo({ className = '', height = 28, theme = 'auto', icon
   const sizeClass = logoSizeClasses[height] || { container: 'w-[28px] h-[28px]', text: 'text-[24px]' };
 
   return (
-    <div className={`flex items-center gap-2 select-none pointer-events-none ${className}`}>
+    <div className={`flex items-center gap-2 select-none pointer-events-none whitespace-nowrap flex-shrink-0 ${className}`}>
       {/* Brand Icon (Square frame with logo image) */}
       <div className={`relative flex-shrink-0 overflow-hidden ${sizeClass.container}`}>
         <Image

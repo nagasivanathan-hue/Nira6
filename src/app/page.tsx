@@ -327,7 +327,7 @@ export default function HomePage() {
               </motion.div>
 
               {/* Headline — word-by-word reveal */}
-              <h1 className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl tracking-tight text-white leading-[1.05] mb-6">
+              <h1 className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl tracking-[0.02em] text-white leading-[1.05] mb-6">
                 <WordReveal text="EVERYTHING FOR A" delay={0.4} />
                 <br />
                 <motion.span
@@ -346,7 +346,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="text-neutral-400 text-lg sm:text-xl md:text-[22px] font-light mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+                className="text-neutral-400 text-base sm:text-lg md:text-xl font-light mb-10 max-w-xl mx-auto lg:mx-0 leading-[1.65]"
               >
                 Buy, sell, rent, and repair cinematography gear. Engage with top creators and launch your studio.
               </motion.p>

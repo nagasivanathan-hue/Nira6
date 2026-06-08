@@ -449,22 +449,22 @@ export default function Navbar() {
               : 'bg-white/40 backdrop-blur-md border-b border-transparent text-nira-dark'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex items-center justify-between h-16 lg:h-20 gap-6 lg:gap-12">
             {/* Logo */}
             <Link href="/" className="flex items-center group py-2" onClick={() => dispatch(closeMobileMenu())}>
               <Logo className="group-hover:scale-[1.02] transition-transform duration-300" height={28} theme={isDarkPage ? 'dark' : 'light'} />
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-2">
+            <nav className="hidden lg:flex items-center gap-8">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-4 py-2 text-sm font-semibold transition-colors group ${
+                    className={`relative px-3 py-2 text-[14px] font-medium tracking-[0.03em] transition-colors group whitespace-nowrap ${
                       isActive 
                         ? (isDarkPage ? 'text-white' : 'text-nira-dark') 
                         : (isDarkPage ? 'text-neutral-400 hover:text-white' : 'text-nira-text-secondary hover:text-nira-dark')
@@ -486,7 +486,7 @@ export default function Navbar() {
             </nav>
 
             {/* Search Bar - Desktop */}
-            <div className={`hidden md:flex flex-1 max-w-md mx-6 relative ${showSuggestions ? 'z-50' : 'z-10'}`}>
+            <div className={`hidden md:flex flex-1 min-w-[280px] max-w-[420px] mx-6 relative ${showSuggestions ? 'z-50' : 'z-10'}`}>
               <div className="relative w-full group">
                 <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 group-focus-within:text-nira-yellow transition-colors ${isDarkPage ? 'text-neutral-400' : 'text-nira-text-secondary'}`} />
                 <input
@@ -665,20 +665,20 @@ export default function Navbar() {
                   )}
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-sm font-medium rounded-full hover:bg-nira-dark/90 transition-colors shadow-sm group"
+                    className="flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-[13px] font-medium rounded-full hover:bg-nira-dark/90 transition-colors shadow-sm group whitespace-nowrap flex-shrink-0"
                   >
-                    <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center">
+                    <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-nira-yellow" />
                     </span>
-                    <span>{user?.name?.split(' ')[0] || 'Dashboard'}</span>
+                    <span className="max-w-[120px] truncate">{user?.name?.split(' ')[0] || 'Dashboard'}</span>
                   </Link>
                 </div>
               ) : (
                 <Link
                   href="/auth"
-                  className="hidden sm:flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-sm font-medium rounded-full hover:bg-nira-dark/90 transition-colors group"
+                  className="hidden sm:flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-[13px] font-medium rounded-full hover:bg-nira-dark/90 transition-colors group whitespace-nowrap flex-shrink-0"
                 >
-                  <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center">
+                  <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 text-nira-yellow" />
                   </span>
                   <span>Login</span>
