@@ -6,7 +6,7 @@ import type { Creator } from '@/types/creator';
 import { CREATOR_CATEGORIES } from '@/lib/constants';
 
 export default function CreatorCard({ creator, compact = false }: { creator: Creator; compact?: boolean }) {
-  const catColor = CREATOR_CATEGORIES.find(c => c.id === creator.category)?.color || '#FFDA03';
+
 
   if (compact) {
     return (

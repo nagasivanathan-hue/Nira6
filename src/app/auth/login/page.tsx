@@ -312,7 +312,7 @@ export default function NIRA6AuthPage() {
             <div
               key={r.id}
               role="radio"
-              aria-checked={isSelected}
+              aria-checked={isSelected ? "true" : "false"}
               tabIndex={0}
               onClick={() => setSelectedRole(r.id)}
               onKeyDown={(e) => {

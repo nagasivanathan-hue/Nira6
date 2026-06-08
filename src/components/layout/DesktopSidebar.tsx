@@ -1,13 +1,13 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Compass, ShoppingBag, MessageSquare, User, Bell, LogOut, Package, Wrench, Video, Menu } from 'lucide-react';
+import { Home, Compass, ShoppingBag, MessageSquare, User, Bell, LogOut, Package, Wrench, Video } from 'lucide-react';
 import { useAppSelector } from '@/store';
-import Logo from './Logo';
+
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const mainLinks = [
     { label: 'Home', icon: Home, href: '/' },

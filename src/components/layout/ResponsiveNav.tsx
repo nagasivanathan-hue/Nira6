@@ -3,11 +3,9 @@ import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import MobileBottomNav from './MobileBottomNav';
 import DesktopSidebar from './DesktopSidebar';
-import { useAppSelector } from '@/store';
 
 export default function ResponsiveNav() {
   const pathname = usePathname();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   // Hide global navigation on auth pages or fullscreen specific pages
   const hidePaths = ['/auth/login', '/auth/signup', '/auth/forgot-password'];

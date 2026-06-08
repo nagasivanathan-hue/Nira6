@@ -142,7 +142,7 @@ export default function AdminDashboardPage() {
   });
 
   // E-commerce state
-  const [_loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
   const [inventories, setInventories] = useState<InventoryItem[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);

@@ -8,8 +8,8 @@ import {
   Clock, Briefcase, Camera, Shield, Globe, ArrowLeft, Zap, Award
 } from 'lucide-react';
 import { mockCreators, mockBookingPackages, mockCreatorReviews } from '@/lib/creatorMockData';
-import { CREATOR_CATEGORIES } from '@/lib/constants';
-import type { Metadata } from 'next';
+
+
 import Image from 'next/image';
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
 export default function CreatorProfilePage({ params }: Props) {
   const { id } = use(params);
   const creator = mockCreators.find(c => c.id === id) || mockCreators[0];
-  const catColor = CREATOR_CATEGORIES.find(c => c.id === creator.category)?.color || '#FFDA03';
+
   const packages = mockBookingPackages.slice(0, 3);
   const reviews = mockCreatorReviews;
   const [activeTab, setActiveTab] = useState<'portfolio' | 'packages' | 'reviews' | 'about'>('portfolio');
