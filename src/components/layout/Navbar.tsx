@@ -449,8 +449,8 @@ export default function Navbar() {
               : 'bg-white/40 backdrop-blur-md border-b border-transparent text-nira-dark'
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center justify-between h-16 lg:h-20 gap-4 lg:gap-6">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+          <div className="flex items-center justify-between h-16 lg:h-20 gap-3 lg:gap-4 xl:gap-6">
             {/* Logo */}
             <Link href="/" className="flex items-center group py-2" onClick={() => dispatch(closeMobileMenu())}>
               <Logo className="group-hover:scale-[1.02] transition-transform duration-300" height={28} theme={isDarkPage ? 'dark' : 'light'} />
@@ -464,7 +464,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-3 py-2 text-[13px] font-medium tracking-[0.02em] transition-colors group whitespace-nowrap ${
+                    className={`relative px-2 xl:px-3 py-2 text-[13px] font-medium tracking-[0.01em] transition-colors group whitespace-nowrap ${
                       isActive 
                         ? (isDarkPage ? 'text-white' : 'text-nira-dark') 
                         : (isDarkPage ? 'text-neutral-400 hover:text-white' : 'text-nira-text-secondary hover:text-nira-dark')
@@ -486,7 +486,7 @@ export default function Navbar() {
             </nav>
 
             {/* Search Bar - Desktop */}
-            <div className={`hidden md:flex flex-1 max-w-[420px] mx-4 relative ${showSuggestions ? 'z-50' : 'z-10'}`}>
+            <div className={`hidden xl:flex flex-1 min-w-[200px] max-w-[380px] mx-4 relative ${showSuggestions ? 'z-50' : 'z-10'}`}>
               <div className="relative w-full group">
                 <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 group-focus-within:text-nira-yellow transition-colors ${isDarkPage ? 'text-neutral-400' : 'text-nira-text-secondary'}`} />
                 <input
@@ -533,7 +533,7 @@ export default function Navbar() {
             <div className="flex items-center gap-1 sm:gap-2">
               <button 
                 onClick={() => dispatch(toggleSearch())} 
-                className={`p-3 rounded-lg transition-colors md:hidden ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
+                className={`p-3 rounded-lg transition-colors xl:hidden ${isDarkPage ? 'hover:bg-white/10 text-white' : 'hover:bg-nira-gray text-nira-dark'}`} 
                 aria-label="Search"
               >
                 <Search className="w-5 h-5" />
@@ -698,7 +698,7 @@ export default function Navbar() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-nira-gray-dark overflow-visible z-50 relative bg-white"
+              className="xl:hidden border-t border-nira-gray-dark overflow-visible z-50 relative bg-white"
             >
               <div className="px-4 py-3">
                 <div className="relative">
