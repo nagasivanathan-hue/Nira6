@@ -42,7 +42,12 @@ const productSchema = new mongoose.Schema({
     comment: { type: String, required: true },
     title: { type: String },
     date: { type: Date, default: Date.now }
-  }]
+  }],
+  isArchived: { type: Boolean, default: false },
+  tags: [{ type: String }],
+  seoTitle: { type: String },
+  seoDescription: { type: String },
+  seoKeywords: [{ type: String }]
 }, { timestamps: true });
 
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);

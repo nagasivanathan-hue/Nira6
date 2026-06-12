@@ -66,3 +66,19 @@ export function generateToken(id: string) {
     expiresIn: '30d',
   });
 }
+
+export async function verifyAdmin(req: Request) {
+  const user = await verifyAuth(req);
+  if (!user) {
+    return null;
+  }
+  // Exclusively nira6studio@gmail.com is owner/admin
+  if (user.email === 'nira6studio@gmail.com') {
+    return user;
+  }
+  // Staff accounts must be explicitly approved by owner
+  if (['admin', 'super_admin', 'order_manager', 'support_agent'].includes(user.role) && user.adminApprovedByOwner) {
+    return user;
+  }
+  return null;
+}

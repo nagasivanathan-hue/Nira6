@@ -1,13 +1,21 @@
 'use client';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Home, Compass, ShoppingBag, MessageSquare, User, Bell, LogOut, Package, Wrench, Video } from 'lucide-react';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
+import { logout } from '@/store/authSlice';
 
 
 export default function DesktopSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push('/');
+  };
 
   const mainLinks = [
     { label: 'Home', icon: Home, href: '/' },
@@ -94,7 +102,10 @@ export default function DesktopSidebar() {
       {/* Footer / Logout */}
       <div className="p-2 border-t border-gray-100">
         {isAuthenticated ? (
-          <button className="flex items-center w-full h-12 px-3 rounded-lg text-[#777777] hover:bg-white hover:text-red-400 transition-colors overflow-hidden whitespace-nowrap">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center w-full h-12 px-3 rounded-lg text-[#777777] hover:bg-white hover:text-red-400 transition-colors overflow-hidden whitespace-nowrap"
+          >
             <LogOut className="w-5 h-5 shrink-0" />
             <span className="ml-4 font-medium opacity-0 group-hover:opacity-100 xl:opacity-100 transition-opacity text-sm">
               Sign Out

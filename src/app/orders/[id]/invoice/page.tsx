@@ -7,6 +7,8 @@ import { formatPrice } from '@/lib/utils';
 
 interface OrderDetails {
   _id: string;
+  orderId?: string;
+  invoiceNumber?: string;
   items: {
     product: {
       name: string;
@@ -23,6 +25,7 @@ interface OrderDetails {
   taxAmount: number;
   cgst: number;
   sgst: number;
+  igst?: number;
   platformFee: number;
   discountAmount: number;
   couponApplied: string;
@@ -31,6 +34,7 @@ interface OrderDetails {
     phone: string;
     address: string;
     city: string;
+    state?: string;
     pincode: string;
   };
   paymentMethod: string;
@@ -77,8 +81,12 @@ export default function OrderInvoicePage() {
 
   const itemsSubtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+  // QR Code data: contains Order ID, Date, and Total
+  const qrData = `NIRA6-INVOICE|ID:${order.orderId || order._id}|DATE:${new Date(order.createdAt).toISOString().split('T')[0]}|AMT:${order.totalAmount}|GSTIN:27AACCB9485C1Z1`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrData)}`;
+
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900 font-mono py-12 px-4 selection:bg-neutral-200">
+    <div className="min-h-screen bg-neutral-50 text-neutral-950 font-mono py-12 px-4 selection:bg-neutral-200">
       
       {/* Action buttons (hidden on print) */}
       <div className="max-w-3xl mx-auto mb-8 flex justify-between items-center print:hidden">
@@ -110,8 +118,8 @@ export default function OrderInvoicePage() {
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 border border-emerald-300 bg-emerald-50 text-emerald-800 text-[9px] font-bold uppercase rounded-md">
               <Check className="w-3 h-3" /> TAX PAID
             </span>
-            <p className="text-xs font-bold mt-2 text-neutral-950">Order Invoice ID</p>
-            <p className="text-xs text-neutral-500 font-mono mt-0.5">#{order._id.toString().toUpperCase()}</p>
+            <p className="text-xs font-bold mt-2 text-neutral-950">Tax Invoice Number</p>
+            <p className="text-xs text-neutral-500 font-mono mt-0.5">{order.invoiceNumber || 'INV-MOCKED-SYSTEM'}</p>
           </div>
         </div>
 
@@ -132,7 +140,7 @@ export default function OrderInvoicePage() {
             <p className="font-bold text-neutral-800">{order.shippingAddress.name}</p>
             <p className="text-neutral-500 mt-1 leading-relaxed">
               {order.shippingAddress.address},<br />
-              {order.shippingAddress.city} - <span className="font-bold text-neutral-800">{order.shippingAddress.pincode}</span>
+              {order.shippingAddress.city} {order.shippingAddress.state ? `, ${order.shippingAddress.state}` : ''} - <span className="font-bold text-neutral-850">{order.shippingAddress.pincode}</span>
             </p>
             <p className="text-neutral-500 mt-1.5">Contact: {order.shippingAddress.phone}</p>
           </div>
@@ -140,6 +148,10 @@ export default function OrderInvoicePage() {
 
         {/* Invoice Meta */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 border-b border-neutral-200 gap-4 text-xs">
+          <div>
+            <span className="text-neutral-500 uppercase text-[10px] font-bold tracking-wider">Order Reference ID</span>
+            <p className="font-bold text-neutral-850 mt-0.5 font-mono">{order.orderId || order._id.toUpperCase()}</p>
+          </div>
           <div>
             <span className="text-neutral-500 uppercase text-[10px] font-bold tracking-wider">Date of Invoice</span>
             <p className="font-bold text-neutral-800 mt-0.5">{new Date(order.createdAt).toLocaleDateString('en-IN', { dateStyle: 'medium' })}</p>
@@ -194,8 +206,17 @@ export default function OrderInvoicePage() {
           </div>
         </div>
 
-        {/* Calculations */}
-        <div className="flex justify-end pt-4 border-t border-neutral-200">
+        {/* Calculations and QR Code */}
+        <div className="flex flex-col sm:flex-row justify-between items-start pt-6 border-t border-neutral-200 gap-6">
+          {/* Dynamic Verification QR Code */}
+          <div className="flex items-center gap-3">
+            <img src={qrCodeUrl} alt="Invoice Verification QR" className="w-24 h-24 border border-neutral-200 p-1 bg-white rounded-lg" />
+            <div className="max-w-[200px]">
+              <p className="text-[9px] font-bold uppercase text-neutral-500">Scan to Verify Invoice</p>
+              <p className="text-[9px] text-neutral-400 leading-tight mt-0.5">Scan with any GST verification app to check official record integrity.</p>
+            </div>
+          </div>
+
           <div className="w-full sm:w-64 space-y-2 text-xs">
             <div className="flex justify-between">
               <span className="text-neutral-500">Subtotal</span>
@@ -209,15 +230,24 @@ export default function OrderInvoicePage() {
               </div>
             )}
             
-            <div className="flex justify-between">
-              <span className="text-neutral-500">CGST (9%)</span>
-              <span className="font-bold text-neutral-800">{formatPrice(order.cgst || 0)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-neutral-500">SGST (9%)</span>
-              <span className="font-bold text-neutral-800">{formatPrice(order.sgst || 0)}</span>
-            </div>
+            {/* Dynamic CGST/SGST/IGST rendering */}
+            {(order.igst && order.igst > 0) ? (
+              <div className="flex justify-between">
+                <span className="text-neutral-500">IGST (18%)</span>
+                <span className="font-bold text-neutral-800">{formatPrice(order.igst)}</span>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-neutral-500">CGST (9%)</span>
+                  <span className="font-bold text-neutral-800">{formatPrice(order.cgst || 0)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-500">SGST (9%)</span>
+                  <span className="font-bold text-neutral-800">{formatPrice(order.sgst || 0)}</span>
+                </div>
+              </>
+            )}
 
             <div className="flex justify-between">
               <span className="text-neutral-500">Platform Fee</span>

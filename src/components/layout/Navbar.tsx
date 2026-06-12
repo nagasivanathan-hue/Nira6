@@ -31,7 +31,7 @@ interface SearchSuggestion {
   brand?: string;
 }
 
-function HighlightText({ text, highlight }: { text: string; highlight: string }) {
+function HighlightText({ text, highlight, isDarkPage }: { text: string; highlight: string; isDarkPage?: boolean }) {
   if (!highlight.trim()) return <span>{text}</span>;
   const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
   const parts = text.split(regex);
@@ -39,9 +39,9 @@ function HighlightText({ text, highlight }: { text: string; highlight: string })
     <span>
       {parts.map((part, index) => 
         regex.test(part) ? (
-          <strong key={index} className="text-nira-dark font-extrabold">{part}</strong>
+          <strong key={index} className={`font-extrabold ${isDarkPage ? 'text-nira-yellow' : 'text-nira-dark'}`}>{part}</strong>
         ) : (
-          <span key={index} className="text-neutral-500 font-normal">{part}</span>
+          <span key={index} className={`${isDarkPage ? 'text-neutral-300' : 'text-neutral-555'} font-normal`}>{part}</span>
         )
       )}
     </span>
@@ -191,7 +191,7 @@ export default function Navbar() {
           : 'bg-white border-neutral-100 text-neutral-800'
       }`}>
         {localSearch.trim() === '' ? (
-          <div className="p-4 text-neutral-800">
+          <div className={`p-4 ${isDarkPage ? 'text-neutral-200' : 'text-neutral-800'}`}>
             {/* Recent Searches */}
             {recentSearches.length > 0 && (
               <div className="mb-4">
@@ -212,14 +212,18 @@ export default function Navbar() {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {recentSearches.map(term => (
-                    <div key={term} className="flex items-center gap-1 bg-neutral-100 hover:bg-nira-yellow/10 rounded-lg pl-2.5 pr-1 py-1 group">
+                    <div key={term} className={`flex items-center gap-1 rounded-lg pl-2.5 pr-1 py-1 group ${
+                      isDarkPage ? 'bg-neutral-800 hover:bg-nira-yellow/20' : 'bg-neutral-100 hover:bg-nira-yellow/10'
+                    }`}>
                       <button
                         onClick={() => {
                           setLocalSearch(term);
                           handleSearchSubmit(term);
                           if (isMobile) dispatch(toggleSearch());
                         }}
-                        className="text-neutral-700 group-hover:text-nira-dark text-xs font-semibold cursor-pointer"
+                        className={`text-xs font-semibold cursor-pointer ${
+                          isDarkPage ? 'text-neutral-300 group-hover:text-white' : 'text-neutral-700 group-hover:text-nira-dark'
+                        }`}
                       >
                         {term}
                       </button>
@@ -258,7 +262,11 @@ export default function Navbar() {
                       handleSearchSubmit(tag);
                       if (isMobile) dispatch(toggleSearch());
                     }}
-                    className="px-2.5 py-1 bg-neutral-50 hover:bg-nira-yellow/10 hover:text-nira-dark text-neutral-600 text-xs font-medium rounded-lg border border-neutral-200/60 transition-all cursor-pointer"
+                    className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all cursor-pointer ${
+                      isDarkPage 
+                        ? 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-nira-yellow hover:text-nira-dark' 
+                        : 'bg-neutral-50 border-neutral-200/60 text-neutral-600 hover:bg-nira-yellow/10 hover:text-nira-dark'
+                    }`}
                   >
                     {tag}
                   </button>
@@ -280,7 +288,11 @@ export default function Navbar() {
                       handleSearchSubmit(cat);
                       if (isMobile) dispatch(toggleSearch());
                     }}
-                    className="flex items-center justify-between px-2.5 py-1.5 border border-neutral-100 hover:border-nira-yellow hover:bg-neutral-50 rounded-lg text-left text-xs font-semibold text-neutral-700 transition-all cursor-pointer"
+                    className={`flex items-center justify-between px-2.5 py-1.5 border rounded-lg text-left text-xs font-semibold transition-all cursor-pointer ${
+                      isDarkPage 
+                        ? 'border-neutral-800 hover:border-nira-yellow hover:bg-neutral-800/60 text-neutral-300' 
+                        : 'border-neutral-100 hover:border-nira-yellow hover:bg-neutral-50 text-neutral-700'
+                    }`}
                   >
                     <span>{cat}</span>
                     <ArrowRight className="w-3 h-3 text-neutral-400" />
@@ -290,7 +302,7 @@ export default function Navbar() {
             </div>
           </div>
         ) : (
-          <div className="py-1 text-neutral-800">
+          <div className={`py-1 ${isDarkPage ? 'text-neutral-200' : 'text-neutral-800'}`}>
             {suggestions.map((item, idx) => (
               <div key={item.text + idx}>
                 {item.type === 'product' ? (
@@ -302,10 +314,14 @@ export default function Navbar() {
                       if (isMobile) dispatch(toggleSearch());
                     }}
                     className={`flex items-center gap-3 px-3 py-2 transition-colors ${
-                      keyboardIndex === idx ? 'bg-nira-yellow/10' : 'hover:bg-neutral-50'
+                      keyboardIndex === idx 
+                        ? 'bg-nira-yellow/10' 
+                        : isDarkPage ? 'hover:bg-neutral-800' : 'hover:bg-neutral-50'
                     }`}
                   >
-                    <div className="relative w-8 h-8 flex-shrink-0 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center p-1">
+                    <div className={`relative w-8 h-8 flex-shrink-0 rounded border flex items-center justify-center p-1 ${
+                      isDarkPage ? 'bg-neutral-800 border-neutral-700' : 'bg-neutral-50 border-neutral-100'
+                    }`}>
                       <Image
                         src={item.image || '/assets/placeholder.png'}
                         alt={item.text}
@@ -315,8 +331,8 @@ export default function Navbar() {
                       />
                     </div>
                     <div className="flex-grow min-w-0">
-                      <p className="text-xs font-semibold text-neutral-800 truncate">
-                        <HighlightText text={item.text} highlight={localSearch} />
+                      <p className={`text-xs font-semibold truncate ${isDarkPage ? 'text-white' : 'text-neutral-800'}`}>
+                        <HighlightText text={item.text} highlight={localSearch} isDarkPage={isDarkPage} />
                       </p>
                       <p className="text-[9px] text-neutral-400 font-semibold uppercase">{item.brand} • {item.category}</p>
                     </div>
@@ -332,7 +348,9 @@ export default function Navbar() {
                       if (isMobile) dispatch(toggleSearch());
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors ${
-                      keyboardIndex === idx ? 'bg-nira-yellow/10' : 'hover:bg-neutral-50'
+                      keyboardIndex === idx 
+                        ? 'bg-nira-yellow/10' 
+                        : isDarkPage ? 'hover:bg-neutral-800' : 'hover:bg-neutral-50'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -341,8 +359,8 @@ export default function Navbar() {
                       ) : (
                         <Award className="w-3.5 h-3.5 text-blue-500" />
                       )}
-                      <span className="text-xs font-medium text-neutral-700">
-                        Search for <HighlightText text={item.text} highlight={localSearch} />
+                      <span className={`text-xs font-medium ${isDarkPage ? 'text-neutral-300' : 'text-neutral-700'}`}>
+                        Search for <HighlightText text={item.text} highlight={localSearch} isDarkPage={isDarkPage} />
                       </span>
                     </div>
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase ${
@@ -675,7 +693,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Link
-                  href="/auth"
+                  href="/auth/login"
                   className="hidden sm:flex items-center gap-2 pl-1 pr-4 py-1.5 bg-nira-dark text-white text-[13px] font-medium rounded-full hover:bg-nira-dark/90 transition-colors group whitespace-nowrap flex-shrink-0"
                 >
                   <span className="w-8 h-8 rounded-full bg-nira-yellow/15 border-2 border-nira-yellow flex items-center justify-center flex-shrink-0">
@@ -791,7 +809,7 @@ export default function Navbar() {
                   </Link>
                 ) : (
                   <Link
-                    href="/auth"
+                    href="/auth/login"
                     onClick={() => dispatch(closeMobileMenu())}
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-nira-dark text-white font-medium rounded-xl"
                   >

@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import Booking from '@/models/Booking';
 import User from '@/models/User';
-import { verifyAuth } from '@/lib/auth/auth';
+import { verifyAdmin } from '@/lib/auth/auth';
 
 export async function GET(req: Request) {
   try {
-    const user = await verifyAuth(req);
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ message: 'Forbidden. Admin role required.' }, { status: 403 });
+    const user = await verifyAdmin(req);
+    if (!user) {
+      return NextResponse.json({ message: 'Forbidden. Admin verification required.' }, { status: 403 });
     }
 
     await dbConnect();
@@ -29,9 +29,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const user = await verifyAuth(req);
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ message: 'Forbidden. Admin role required.' }, { status: 403 });
+    const user = await verifyAdmin(req);
+    if (!user) {
+      return NextResponse.json({ message: 'Forbidden. Admin verification required.' }, { status: 403 });
     }
 
     await dbConnect();

@@ -7,6 +7,7 @@ import Delivery from '@/models/Delivery';
 import Notification from '@/models/Notification';
 import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth/auth';
+import { logOrderAudit } from '@/lib/orderUtils';
 
 export async function POST(
   req: Request,
@@ -27,7 +28,7 @@ export async function POST(
       return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
 
-    const isAdmin = user.role === 'admin';
+    const isAdmin = ['admin', 'super_admin', 'order_manager', 'support_agent'].includes(user.role);
     const isOwner = order.user && order.user.toString() === user._id.toString();
 
     // Authorization check
@@ -375,6 +376,16 @@ export async function POST(
     });
 
     await order.save();
+
+    // Log status transition audit trail
+    await logOrderAudit({
+      orderId: order.orderId || `order-${order._id}`,
+      orderObjectId: order._id.toString(),
+      eventName: `status_${status}`,
+      notes: `Order status transitioned from ${previousStatus} to ${status}. Notes: ${timelineDesc}`,
+      operator: user.name,
+      role: user.role
+    });
 
     return NextResponse.json({
       success: true,

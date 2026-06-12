@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import CreatorProfile from '@/models/CreatorProfile';
 import User from '@/models/User';
-import { verifyAuth } from '@/lib/auth/auth';
+import { verifyAdmin } from '@/lib/auth/auth';
 
 export async function GET(req: Request) {
   try {
-    const user = await verifyAuth(req);
-    if (!user || user.role !== 'admin') {
+    const user = await verifyAdmin(req);
+    if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 

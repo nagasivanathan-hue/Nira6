@@ -4,6 +4,7 @@ import Order from '@/models/Order';
 import Inventory from '@/models/Inventory';
 import Warehouse from '@/models/Warehouse';
 import { verifyAuth } from '@/lib/auth/auth';
+import { generateOrderId, generateInvoiceNumber, logOrderAudit } from '@/lib/orderUtils';
 
 export async function POST(req: Request) {
   try {
@@ -57,12 +58,33 @@ export async function POST(req: Request) {
     // 2. Locate active Warehouse
     const warehouse = await Warehouse.findOne({ active: true });
 
-    // 3. Create the Order
+    // Generate custom sequential Order ID and Invoice Number
+    const oId = await generateOrderId();
+    const invNo = await generateInvoiceNumber();
+
+    // 3. Dynamic GST Invoicing Calculation
+    const state = (shippingAddress?.state || 'Tamil Nadu').toLowerCase().trim();
+    const isLocal = state.includes('tamil nadu') || state === 'tn' || state === 'tamilnadu';
+    let cgstVal = 0;
+    let sgstVal = 0;
+    let igstVal = 0;
+    const taxableAmount = totalAmount - (discountAmount || 0);
+
+    if (isLocal) {
+      cgstVal = Math.round(taxableAmount * 0.09);
+      sgstVal = Math.round(taxableAmount * 0.09);
+    } else {
+      igstVal = Math.round(taxableAmount * 0.18);
+    }
+
+    const calculatedTax = cgstVal + sgstVal + igstVal;
+
+    // 4. Create the Order
     const orderStatus = paymentMethod === 'wallet' ? 'confirmed' : 'pending';
-    const cgstVal = Math.round((totalAmount - (discountAmount || 0)) * 0.09);
-    const sgstVal = Math.round((totalAmount - (discountAmount || 0)) * 0.09);
 
     const order = new Order({
+      orderId: oId,
+      invoiceNumber: invNo,
       user: user ? user._id : undefined,
       items: orderItems,
       shippingAddress,
@@ -71,9 +93,10 @@ export async function POST(req: Request) {
       shippingCost: shippingCost || 0,
       paymentMethod,
       totalAmount,
-      taxAmount: taxAmount || (cgstVal + sgstVal),
+      taxAmount: taxAmount || calculatedTax,
       cgst: cgstVal,
       sgst: sgstVal,
+      igst: igstVal,
       platformFee: platformFee || 0,
       discountAmount: discountAmount || 0,
       couponApplied: couponApplied || '',
@@ -92,7 +115,7 @@ export async function POST(req: Request) {
       }]
     });
 
-    // 4. If orderStatus is immediately confirmed, deduct stock
+    // 5. If orderStatus is immediately confirmed, deduct stock
     if (orderStatus === 'confirmed') {
       for (const item of order.items) {
         const itemSku = item.sku;
@@ -111,7 +134,7 @@ export async function POST(req: Request) {
             inv.history.push({
               type: 'outward',
               quantity: item.quantity,
-              description: `Ordered in Order #${order._id.toString().slice(-8).toUpperCase()}`,
+              description: `Ordered in Order #${oId.slice(-8).toUpperCase()}`,
               referenceId: order._id.toString(),
               timestamp: new Date()
             });
@@ -122,6 +145,16 @@ export async function POST(req: Request) {
     }
 
     const createdOrder = await order.save();
+
+    // Log Placement Audit Trail
+    await logOrderAudit({
+      orderId: oId,
+      orderObjectId: createdOrder._id.toString(),
+      eventName: 'order_placed',
+      notes: `Order placed successfully. Sequential ID: ${oId}. Total: ₹${totalAmount}. Payment method: ${paymentMethod}`,
+      operator: user ? user.name : 'Guest Customer',
+      role: user ? user.role : 'customer'
+    });
 
     // Trigger confirmation email asynchronously
     try {
@@ -139,7 +172,7 @@ export async function POST(req: Request) {
 
       if (customerEmail) {
         sendOrderConfirmationEmail({
-          orderId: createdOrder._id.toString(),
+          orderId: createdOrder.orderId || createdOrder._id.toString(),
           totalAmount: createdOrder.totalAmount,
           items: emailItems,
           customerName: customerName || 'Valued Creator',

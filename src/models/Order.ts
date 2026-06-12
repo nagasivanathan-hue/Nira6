@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
+  orderId: { type: String, unique: true, sparse: true, index: true },
+  invoiceNumber: { type: String, unique: true, sparse: true, index: true },
+  courierPartner: { type: String },
+  trackingNumber: { type: String },
+  estimatedDeliveryDate: { type: Date },
+  actualDeliveryDate: { type: Date },
+  shippingLabelUrl: { type: String },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   items: [{
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -13,6 +20,7 @@ const orderSchema = new mongoose.Schema({
   taxAmount: { type: Number, default: 0 },
   cgst: { type: Number, default: 0 },
   sgst: { type: Number, default: 0 },
+  igst: { type: Number, default: 0 },
   platformFee: { type: Number, default: 0 },
   discountAmount: { type: Number, default: 0 },
   couponApplied: { type: String, default: '' },
@@ -39,9 +47,10 @@ const orderSchema = new mongoose.Schema({
   orderStatus: { 
     type: String, 
     enum: [
-      'pending', 'confirmed', 'processing', 'packed', 'shipped', 
-      'in_transit', 'out_for_delivery', 'delivered', 'cancelled', 
-      'return_requested', 'returned', 'refund_initiated', 'refund_completed'
+      'pending', 'placed', 'payment_verified', 'confirmed', 'processing', 'packed', 
+      'ready_for_dispatch', 'shipped', 'in_transit', 'out_for_delivery', 
+      'delivered', 'cancelled', 'return_requested', 'returned', 'refund_initiated', 
+      'refund_completed', 'refunded'
     ], 
     default: 'pending' 
   },

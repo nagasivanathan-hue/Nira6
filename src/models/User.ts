@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, index: true },
   password: { type: String, required: true, select: false },
   avatar: { type: String },
-  role: { type: String, enum: ['user', 'creator', 'admin'], default: 'user', index: true },
+  role: { type: String, enum: ['user', 'creator', 'admin', 'super_admin', 'order_manager', 'support_agent', 'customer'], default: 'user', index: true },
   walletBalance: { type: Number, default: 0 },
   walletTransactions: [{
     type: { type: String, enum: ['credit', 'debit'] },
@@ -22,7 +22,15 @@ const userSchema = new mongoose.Schema({
     state: String,
     pincode: String
   },
-  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  adminApprovedByOwner: { type: Boolean, default: false },
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockoutUntil: { type: Date },
+  twoFactorSecret: { type: String },
+  twoFactorEnabled: { type: Boolean, default: false },
+  lastLoginIp: { type: String },
+  lastLoginDevice: { type: String },
+  lastLoginAt: { type: Date }
 }, { timestamps: true });
 
 // Hash password before saving

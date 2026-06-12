@@ -47,6 +47,7 @@ export interface User {
   role: 'user' | 'creator' | 'admin';
   walletBalance: number;
   verified: boolean;
+  adminApprovedByOwner?: boolean;
 }
 
 export interface RentalItem {
@@ -140,6 +141,8 @@ export interface Review {
 
 export interface Order {
   _id: string;
+  orderId?: string;
+  invoiceNumber?: string;
   user: string | User;
   items: {
     product: Product;
@@ -147,7 +150,7 @@ export interface Order {
     price: number;
   }[];
   totalAmount: number;
-  orderStatus: 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  orderStatus: 'pending' | 'placed' | 'payment_verified' | 'confirmed' | 'processing' | 'packed' | 'ready_for_dispatch' | 'shipped' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'return_requested' | 'returned' | 'refund_initiated' | 'refund_completed' | 'refunded';
   paymentMethod: 'razorpay' | 'cod' | 'emi';
   paymentStatus: 'pending' | 'completed' | 'failed';
   shippingAddress: {
@@ -157,6 +160,16 @@ export interface Order {
     city: string;
     pincode: string;
   };
+  guestEmail?: string;
+  guestPhone?: string;
+  trackingNumber?: string;
+  courierPartner?: string;
+  trackingUpdates?: {
+    status: string;
+    description: string;
+    location: string;
+    timestamp: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 }

@@ -4,11 +4,14 @@ import User from '@/models/User';
 import { generateToken } from '@/lib/auth/auth';
 import { sanitizeEmail } from '@/lib/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import { logAdminActivity } from '@/lib/adminLogger';
 
 export async function POST(req: Request) {
   try {
-    // Rate limit: 10 login attempts per minute per IP
     const clientIp = getClientIp(req);
+    const userAgent = req.headers.get('user-agent') || 'Unknown Device';
+
+    // Rate limit: 10 login attempts per minute per IP
     const { allowed, resetIn } = checkRateLimit(`login:${clientIp}`, {
       maxRequests: 10,
       windowMs: 60_000,
@@ -35,8 +38,50 @@ export async function POST(req: Request) {
     await dbConnect();
     const user = await User.findOne({ email: sanitizedEmail }).select('+password');
 
+    if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
+      const lockRemaining = Math.ceil((user.lockoutUntil.getTime() - Date.now()) / 60000);
+      return NextResponse.json(
+        { message: `Account is temporarily locked due to repeated failures. Try again in ${lockRemaining} minute(s).` },
+        { status: 403 }
+      );
+    }
+
     if (!user || !(await user.comparePassword(password))) {
+      if (user) {
+        user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+        if (user.failedLoginAttempts >= 5) {
+          user.lockoutUntil = new Date(Date.now() + 15 * 60_000); // 15 mins
+        }
+        await user.save();
+
+        if (user.email === 'nira6studio@gmail.com' || ['admin', 'super_admin'].includes(user.role)) {
+          await logAdminActivity(
+            user.email,
+            'LOGIN_FAILED',
+            `Failed password attempt. Attempts count: ${user.failedLoginAttempts}. IP: ${clientIp}`,
+            req
+          );
+        }
+      }
+
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+    }
+
+    // Reset lock on success
+    user.failedLoginAttempts = 0;
+    user.lockoutUntil = undefined;
+    user.lastLoginIp = clientIp;
+    user.lastLoginDevice = userAgent.slice(0, 255);
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    if (user.email === 'nira6studio@gmail.com' || ['admin', 'super_admin'].includes(user.role)) {
+      await logAdminActivity(
+        user.email,
+        'LOGIN_SUCCESS',
+        `Successfully logged into session. IP: ${clientIp}, Device: ${userAgent}`,
+        req
+      );
     }
 
     return NextResponse.json({
@@ -44,6 +89,7 @@ export async function POST(req: Request) {
       name: user.name,
       email: user.email,
       role: user.role,
+      adminApprovedByOwner: user.adminApprovedByOwner,
       token: generateToken(user._id.toString()),
     });
   } catch (err) {

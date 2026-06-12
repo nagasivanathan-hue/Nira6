@@ -5,7 +5,7 @@ import {
   Heart, Package, Wallet, Settings, LogOut, Camera, TrendingUp,
   ShoppingBag, Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet,
   FileUp, Download, Printer, ShieldCheck, ChevronRight, CornerDownLeft,
-  MessageSquare, Sparkles, Plus, Check, Eye
+  MessageSquare, Sparkles, Plus, Check, Eye, Search
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -15,6 +15,8 @@ import { formatPrice } from '@/lib/utils';
 import { Order } from '@/types';
 import api from '@/services/api';
 import ProductCard from '@/components/products/ProductCard';
+import dynamic from 'next/dynamic';
+const TrackingMap = dynamic(() => import('@/components/orders/TrackingMap'), { ssr: false });
 
 interface ExtendedOrder extends Order {
   taxAmount?: number;
@@ -520,50 +522,73 @@ export default function DashboardPage() {
     }
   };
 
-  // Handle Order cancellation & returns with instant refunds
+  const [orderQuery, setOrderQuery] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [returnStep, setReturnStep] = useState(1);
+  const [returnPhotos, setReturnPhotos] = useState<string[]>([]);
+  const [returnUploadProgress, setReturnUploadProgress] = useState(false);
+  const [returnMethod, setReturnMethod] = useState('wallet');
+  const [returnSubmitting, setReturnSubmitting] = useState(false);
+
+  const handleReturnPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setReturnUploadProgress(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        setReturnPhotos(prev => [...prev, res.data.fileUrl]);
+      }
+    } catch {
+      alert('Photo upload failed. Please try again.');
+    } finally {
+      setReturnUploadProgress(false);
+    }
+  };
+
+  // Handle Order cancellation & returns with multi-step wizard
   const handleInitiateReturn = async (oId: string) => {
     if (!returnReasonInput) {
       alert('Please enter a brief explanation reason for your return diagnostics.');
       return;
     }
 
+    setReturnSubmitting(true);
     try {
-      const res = await api.post(`/orders/${oId}/return`, { reason: returnReasonInput });
+      const res = await api.post(`/orders/return`, {
+        orderObjectId: oId,
+        reason: returnReasonInput,
+        photos: returnPhotos,
+        refundMethod: returnMethod
+      });
 
       // Update order status in frontend array
-      setOrders(prev => prev.map(o => o._id === oId ? { ...o, returned: true, returnReason: returnReasonInput } : o));
+      setOrders(prev => prev.map(o => o._id === oId ? { ...o, orderStatus: 'return_requested' } : o));
 
-      // Refresh wallet balances
+      // Refresh wallet balances if wallet was instantly processed (though here it requires admin approval first)
       const walletRes = await api.get('/users/wallet');
       setWalletBalance(walletRes.data.walletBalance || 0);
       setWalletHistory(walletRes.data.walletTransactions || []);
 
-      setSelectedOrder(null);
-      setReturningOrderId(null);
-      setReturnReasonInput('');
+      setReturnStep(4); // Show success step
 
       // Dispatch alert
       window.dispatchEvent(new CustomEvent('nira_notification', {
         detail: {
           type: 'push',
-          title: '↩️ Return Accepted - Refunded!',
-          content: `Order returned. Refund amount was instantly credited to your Loyalty Wallet balance.`
+          title: '↩️ Return Registered!',
+          content: `Return request submitted for Order #${(selectedOrder?.orderId || oId).slice(-8).toUpperCase()}. Awaiting admin approval.`
         }
       }));
-
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('nira_notification', {
-          detail: {
-            type: 'sms',
-            title: 'Refund Credit Alert',
-            content: `NIRA6 REFUND: ₹${res.data.refundAmount.toLocaleString('en-IN')} credited back to your NIRA Loyalty Wallet for returned order #${oId.slice(-8).toUpperCase()}. New balance: ₹${res.data.walletBalance.toLocaleString('en-IN')}`
-          }
-        }));
-      }, 1000);
-
-      alert(`Return accepted. Refund of ₹${res.data.refundAmount} successfully credited back to your Loyalty Wallet balance.`);
-    } catch {
-      alert('Return processing failed. Eligible diagnostics might have expired.');
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Return processing failed. Eligible diagnostics might have expired.');
+    } finally {
+      setReturnSubmitting(false);
     }
   };
 
@@ -714,54 +739,118 @@ export default function DashboardPage() {
                 )}
 
                 {/* 2. Orders Tab */}
-                {activeTab === 'orders' && (
-                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-                    <div className="flex items-center justify-between mb-4 border-b border-nira-gray-dark pb-3">
-                      <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider">All Orders &amp; Receipts</h3>
-                      <span className="text-[10px] bg-nira-gray px-2 py-0.5 rounded-full font-bold text-nira-text-secondary">{orders.length} Total</span>
-                    </div>
-                    <div className="space-y-3">
-                      {orders.length > 0 ? (
-                        orders.map((order) => (
-                          <div key={order._id} className="p-4 bg-nira-gray/40 hover:bg-nira-gray/70 border border-nira-gray-dark rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
-                            <div className="flex items-start gap-3 min-w-0">
-                              <div className="w-10 h-10 bg-white rounded-xl border border-nira-gray-dark flex items-center justify-center shrink-0 mt-0.5"><Package className="w-5 h-5 text-nira-yellow" /></div>
-                              <div className="min-w-0">
-                                <p className="font-bold text-xs text-nira-dark truncate max-w-[200px] sm:max-w-sm">{order.items[0]?.product?.name || 'Visual Pack'}</p>
-                                <p className="text-[10px] text-nira-text-secondary mt-0.5">Reference ID: <span className="font-mono">{order._id}</span></p>
-                                <div className="flex gap-3 text-[9px] text-nira-text-secondary mt-1 font-semibold">
-                                  <span>Date: {new Date(order.createdAt).toLocaleString()}</span>
-                                  <span>•</span>
-                                  <span className="text-nira-dark">Payable: {formatPrice(order.totalAmount)}</span>
+                {activeTab === 'orders' && (() => {
+                  const filteredOrders = orders.filter((order) => {
+                    const matchesQuery = 
+                      (order.orderId || '').toLowerCase().includes(orderQuery.toLowerCase()) ||
+                      order._id.toLowerCase().includes(orderQuery.toLowerCase()) ||
+                      order.items.some(item => (item.product?.name || '').toLowerCase().includes(orderQuery.toLowerCase())) ||
+                      (order.invoiceNumber || '').toLowerCase().includes(orderQuery.toLowerCase());
+                    
+                    if (orderStatusFilter === 'all') return matchesQuery;
+                    if (orderStatusFilter === 'returned') {
+                      return matchesQuery && ['returned', 'return_requested', 'refund_initiated', 'refund_completed'].includes(order.orderStatus);
+                    }
+                    return matchesQuery && order.orderStatus === orderStatusFilter;
+                  });
+
+                  return (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-nira-gray-dark pb-4">
+                        <div>
+                          <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider">All Orders &amp; Receipts</h3>
+                          <p className="text-[10px] text-nira-text-secondary mt-0.5">Filter and search through your visual gear purchases</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          {/* Search input */}
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Search Order ID or item..."
+                              value={orderQuery}
+                              onChange={(e) => setOrderQuery(e.target.value)}
+                              className="pl-8 pr-4 py-2 bg-nira-gray rounded-xl text-xs border border-transparent focus:border-nira-yellow focus:bg-white focus:outline-none w-48 font-bold text-nira-dark"
+                            />
+                            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-3" />
+                          </div>
+                          {/* Filter status */}
+                          <select
+                            title="Filter Status"
+                            aria-label="Filter Status"
+                            value={orderStatusFilter}
+                            onChange={(e) => setOrderStatusFilter(e.target.value)}
+                            className="px-3 py-2 bg-nira-gray rounded-xl text-xs border border-transparent focus:border-nira-yellow focus:outline-none cursor-pointer font-bold text-nira-dark"
+                          >
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="return_requested">Return Requested</option>
+                            <option value="returned">Returned</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        {filteredOrders.length > 0 ? (
+                          filteredOrders.map((order) => (
+                            <div key={order._id} className="p-4 bg-nira-gray/40 hover:bg-nira-gray/70 border border-nira-gray-dark rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                              <div className="flex items-start gap-3 min-w-0">
+                                <div className="w-10 h-10 bg-white rounded-xl border border-nira-gray-dark flex items-center justify-center shrink-0 mt-0.5"><Package className="w-5 h-5 text-nira-yellow" /></div>
+                                <div className="min-w-0">
+                                  <p className="font-bold text-xs text-nira-dark truncate max-w-[200px] sm:max-w-sm">{order.items[0]?.product?.name || 'Visual Pack'}</p>
+                                  <p className="text-[10px] text-nira-text-secondary mt-0.5">Order ID: <span className="font-mono font-bold text-nira-dark">{order.orderId || order._id.toUpperCase()}</span></p>
+                                  <div className="flex gap-3 text-[9px] text-nira-text-secondary mt-1 font-semibold">
+                                    <span>Date: {new Date(order.createdAt).toLocaleString('en-IN')}</span>
+                                    <span>•</span>
+                                    <span className="text-nira-dark font-bold">Payable: {formatPrice(order.totalAmount)}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
-                              <div className="text-right">
-                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${order.returned ? 'bg-red-100 text-red-800' :
+                              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                                <div className="text-right mr-2">
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                                    order.orderStatus === 'returned' || order.orderStatus === 'refunded' || order.orderStatus === 'refund_completed' ? 'bg-purple-100 text-purple-800' :
                                     order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-800' :
-                                      'bg-amber-100 text-amber-800'
+                                    order.orderStatus === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-amber-100 text-amber-800'
                                   }`}>
-                                  {order.returned ? 'Refunded' : order.orderStatus}
-                                </span>
+                                    {order.orderStatus.replace('_', ' ')}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedOrder(order);
+                                    setReturnStep(1);
+                                    setReturnPhotos([]);
+                                    setReturnMethod('wallet');
+                                    setReturnReasonInput('');
+                                  }}
+                                  className="px-3.5 py-1.5 border border-nira-gray-dark hover:bg-nira-gray text-nira-dark font-bold text-xs rounded-xl transition-all cursor-pointer"
+                                >
+                                  Details &amp; Invoice
+                                </button>
+                                <Link
+                                  href={`/orders/${order._id}/track`}
+                                  className="px-3.5 py-1.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs rounded-xl flex items-center gap-1 transition-all cursor-pointer"
+                                >
+                                  Track AWB <ChevronRight className="w-3.5 h-3.5" />
+                                </Link>
                               </div>
-                              <Link
-                                href={`/orders/${order._id}/track`}
-                                className="px-3.5 py-1.5 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark font-bold text-xs rounded-xl flex items-center gap-1 transition-all cursor-pointer"
-                              >
-                                Inspect &amp; Track <ChevronRight className="w-3.5 h-3.5" />
-                              </Link>
                             </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-12">
+                            <p className="text-nira-text-secondary text-xs">No orders recorded yet matching criteria.</p>
                           </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-12">
-                          <p className="text-nira-text-secondary text-xs">No orders recorded yet. Try checking out our marketplace!</p>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* 3. Loyalty Wallet Tab */}
                 {activeTab === 'wallet' && (
@@ -1326,6 +1415,19 @@ export default function DashboardPage() {
               )}
             </div>
 
+            {/* Interactive Routing Map */}
+            {['shipped', 'in_transit', 'out_for_delivery', 'delivered'].includes(selectedOrder.orderStatus) && (
+              <div className="mb-6 h-60 w-full rounded-2xl overflow-hidden border border-nira-gray-dark relative z-10">
+                <TrackingMap
+                  originCity="Mumbai"
+                  destinationCity={selectedOrder.shippingAddress.city}
+                  currentLocationCity={selectedOrder.trackingUpdates && selectedOrder.trackingUpdates.length > 0
+                    ? selectedOrder.trackingUpdates[selectedOrder.trackingUpdates.length - 1].location
+                    : 'Mumbai'}
+                />
+              </div>
+            )}
+
             {/* Itemized Printer Friendly Tax invoice segment */}
             <div id="tax-invoice-view" className="p-5 border border-nira-gray-dark rounded-2xl bg-nira-gray/10">
               <div className="flex justify-between items-start mb-4 border-b border-nira-gray-dark pb-3">
@@ -1384,35 +1486,224 @@ export default function DashboardPage() {
                 <Printer className="w-4 h-4" /> Print Tax Receipt
               </button>
 
-              {/* Instant Wallet return handler triggers */}
-              {!selectedOrder.returned && selectedOrder.orderStatus !== 'cancelled' && (
+              {/* Multi-Step Return Request Wizard */}
+              {!['cancelled', 'return_requested', 'returned', 'refunded', 'refund_initiated', 'refund_completed'].includes(selectedOrder.orderStatus) && (
                 returningOrderId === selectedOrder._id ? (
-                  <div className="flex-1 flex flex-col gap-2 p-3 bg-red-50 border border-red-100 rounded-xl">
-                    <input
-                      type="text"
-                      placeholder="Reason for return diagnostics..."
-                      value={returnReasonInput}
-                      onChange={(e) => setReturnReasonInput(e.target.value)}
-                      className="px-3 py-2 bg-white rounded-xl text-xs focus:outline-none border border-red-200"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleInitiateReturn(selectedOrder._id)}
-                        className="flex-1 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold text-[10px] uppercase rounded-lg cursor-pointer"
-                      >
-                        Confirm Return &amp; Refund
-                      </button>
-                      <button
-                        onClick={() => setReturningOrderId(null)}
-                        className="px-3 py-1.5 bg-white text-nira-dark border border-nira-gray-dark font-bold text-[10px] uppercase rounded-lg cursor-pointer"
-                      >
-                        Cancel
-                      </button>
+                  <div className="flex-1 bg-neutral-50 border border-nira-gray-dark rounded-2xl p-5 mt-6 animate-scale-in">
+                    {/* Wizard Steps indicator */}
+                    <div className="flex justify-between items-center mb-5 border-b border-nira-gray-dark pb-3">
+                      <h5 className="font-heading font-black text-[10px] uppercase tracking-wider text-nira-dark">Return Wizard</h5>
+                      <div className="flex gap-1">
+                        {[1, 2, 3].map((stepNum) => (
+                          <div
+                            key={stepNum}
+                            className={`w-4 h-4 rounded-full text-[9px] font-black flex items-center justify-center ${
+                              returnStep >= stepNum ? 'bg-nira-yellow text-nira-dark' : 'bg-nira-gray text-nira-text-secondary'
+                            }`}
+                          >
+                            {stepNum}
+                          </div>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Step 1: Reason Selection */}
+                    {returnStep === 1 && (
+                      <div className="space-y-4">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Return Category</label>
+                          <select
+                            title="Return Reason Category"
+                            aria-label="Return Reason Category"
+                            value={returnReasonInput.split(' - ')[0] || ''}
+                            onChange={(e) => setReturnReasonInput(e.target.value + ' - ')}
+                            className="px-3 py-2 bg-white border border-nira-gray-dark rounded-xl text-xs focus:outline-none"
+                          >
+                            <option value="">Select reason category...</option>
+                            <option value="Defective / Faulty Gear">Defective / Faulty Gear</option>
+                            <option value="Damaged during shipping">Damaged during shipping</option>
+                            <option value="Doesn't match description">Doesn't match description</option>
+                            <option value="Wrong model / size shipped">Wrong model / size shipped</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Elaborated details</label>
+                          <textarea
+                            placeholder="Please explain the issues with your product physical diagnostics..."
+                            value={returnReasonInput.includes(' - ') ? returnReasonInput.split(' - ').slice(1).join(' - ') : returnReasonInput}
+                            onChange={(e) => {
+                              const category = returnReasonInput.split(' - ')[0] || 'Other';
+                              setReturnReasonInput(category + ' - ' + e.target.value);
+                            }}
+                            className="px-3 py-2 bg-white border border-nira-gray-dark rounded-xl text-xs focus:outline-none"
+                            rows={3}
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setReturnStep(2)}
+                            disabled={!returnReasonInput.trim()}
+                            className="flex-1 py-2 bg-nira-dark text-white hover:bg-nira-yellow hover:text-nira-dark disabled:opacity-50 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                          >
+                            Next: Upload Proof
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setReturningOrderId(null)}
+                            className="px-4 py-2 border border-nira-gray-dark bg-white text-nira-dark text-[10px] font-bold uppercase tracking-wider rounded-xl cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Proof attachments */}
+                    {returnStep === 2 && (
+                      <div className="space-y-4">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Upload Proof Photos</label>
+                          <p className="text-[9px] text-nira-text-secondary leading-relaxed mb-2">Upload physical inspection snaps verifying the issue. Mandatory for automated returns approval.</p>
+                          
+                          <label className="border-2 border-dashed border-nira-gray-dark hover:border-nira-yellow rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-white">
+                            <input
+                              type="file"
+                              multiple
+                              accept="image/*"
+                              onChange={handleReturnPhotoUpload}
+                              className="hidden"
+                            />
+                            <span className="text-[10px] font-bold text-nira-dark">Choose photos of return gear</span>
+                          </label>
+                        </div>
+
+                        {returnUploadProgress && (
+                          <div className="flex items-center justify-center gap-1 text-[10px] text-nira-yellow font-bold animate-pulse">
+                            Uploading image to server...
+                          </div>
+                        )}
+
+                        {returnPhotos.length > 0 && (
+                          <div className="grid grid-cols-4 gap-2 pt-2">
+                            {returnPhotos.map((url, idx) => (
+                              <div key={idx} className="relative aspect-square rounded-lg border border-nira-gray-dark overflow-hidden bg-white">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={url} alt="Proof upload" className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setReturnStep(1)}
+                            className="px-4 py-2 border border-nira-gray-dark bg-white text-nira-dark text-[10px] font-bold uppercase tracking-wider rounded-xl cursor-pointer"
+                          >
+                            Back
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setReturnStep(3)}
+                            className="flex-1 py-2 bg-nira-dark text-white hover:bg-nira-yellow hover:text-nira-dark text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                          >
+                            Next: Refund Method
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Refund Method selection */}
+                    {returnStep === 3 && (
+                      <div className="space-y-4">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[9px] font-bold text-nira-text-secondary uppercase">Refund Destination</label>
+                          <div className="grid grid-cols-2 gap-3 pt-2">
+                            <label className={`p-3 border rounded-xl cursor-pointer flex flex-col justify-between transition-all ${
+                              returnMethod === 'wallet' ? 'border-nira-yellow bg-nira-yellow/5' : 'border-nira-gray-dark bg-white hover:bg-nira-gray/30'
+                            }`}>
+                              <input
+                                type="radio"
+                                name="refund_destination"
+                                checked={returnMethod === 'wallet'}
+                                onChange={() => setReturnMethod('wallet')}
+                                className="sr-only"
+                              />
+                              <span className="text-xs font-bold text-nira-dark">NIRA Loyalty Wallet</span>
+                              <span className="text-[9px] text-nira-text-secondary mt-1">Processed instantly after physical inspection.</span>
+                            </label>
+
+                            <label className={`p-3 border rounded-xl cursor-pointer flex flex-col justify-between transition-all ${
+                              returnMethod === 'original_payment' ? 'border-nira-yellow bg-nira-yellow/5' : 'border-nira-gray-dark bg-white hover:bg-nira-gray/30'
+                            }`}>
+                              <input
+                                type="radio"
+                                name="refund_destination"
+                                checked={returnMethod === 'original_payment'}
+                                onChange={() => setReturnMethod('original_payment')}
+                                className="sr-only"
+                              />
+                              <span className="text-xs font-bold text-nira-dark">Original Payment Source</span>
+                              <span className="text-[9px] text-nira-text-secondary mt-1">Takes 5-7 working days following validation.</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setReturnStep(2)}
+                            className="px-4 py-2 border border-nira-gray-dark bg-white text-nira-dark text-[10px] font-bold uppercase tracking-wider rounded-xl cursor-pointer"
+                          >
+                            Back
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInitiateReturn(selectedOrder._id)}
+                            disabled={returnSubmitting}
+                            className="flex-1 py-2 bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            {returnSubmitting ? (
+                              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              'Confirm Return Request'
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Success confirmation screen */}
+                    {returnStep === 4 && (
+                      <div className="text-center py-4 space-y-3">
+                        <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-base">✓</div>
+                        <h4 className="font-heading font-bold text-sm text-nira-dark">Return Registered Successfully!</h4>
+                        <p className="text-[10px] text-nira-text-secondary leading-relaxed">
+                          Your return request for Order #{selectedOrder._id.slice(-8).toUpperCase()} has been submitted. Our logistics partner will pick up the package within 48 hours for inspection.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedOrder(null);
+                            setReturningOrderId(null);
+                            setReturnReasonInput('');
+                          }}
+                          className="px-6 py-2 bg-nira-dark hover:bg-nira-yellow text-white hover:text-nira-dark text-[10px] font-bold uppercase tracking-wider rounded-xl cursor-pointer"
+                        >
+                          Finish &amp; Close
+                        </button>
+                      </div>
+                    )}
+
                   </div>
                 ) : (
                   <button
-                    onClick={() => setReturningOrderId(selectedOrder._id)}
+                    onClick={() => {
+                      setReturningOrderId(selectedOrder._id);
+                      setReturnStep(1);
+                    }}
                     className="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <CornerDownLeft className="w-4 h-4" /> Return Item &amp; Refund

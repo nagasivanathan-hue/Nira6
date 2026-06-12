@@ -114,21 +114,38 @@ export default function CreatorProfilePage({ params }: Props) {
         {/* Tabs */}
         <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-gray-100 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Creator Profile Tabs">
           {(['portfolio', 'packages', 'reviews', 'about'] as const).map(tab => {
-            const tabAttrs = {
-              'aria-selected': (activeTab === tab ? 'true' : 'false') as 'true' | 'false',
-              'aria-controls': 'tabpanel-' + tab,
-            };
-            return (
-              <button 
-                key={tab} 
-                role="tab"
-                {...tabAttrs}
-                onClick={() => setActiveTab(tab)} 
-                className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-nira-yellow ${activeTab === tab ? 'bg-nira-dark text-white' : 'text-nira-text-secondary hover:text-nira-dark'}`}
-              >
-                {tab}
-              </button>
-            );
+            const isSelected = activeTab === tab;
+            if (isSelected) {
+              return (
+                <button 
+                  key={tab} 
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls={"tabpanel-" + tab}
+                  title={tab}
+                  aria-label={tab}
+                  onClick={() => setActiveTab(tab)} 
+                  className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-nira-yellow bg-nira-dark text-white`}
+                >
+                  {tab}
+                </button>
+              );
+            } else {
+              return (
+                <button 
+                  key={tab} 
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls={"tabpanel-" + tab}
+                  title={tab}
+                  aria-label={tab}
+                  onClick={() => setActiveTab(tab)} 
+                  className={`flex-1 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-nira-yellow text-nira-text-secondary hover:text-nira-dark`}
+                >
+                  {tab}
+                </button>
+              );
+            }
           })}
         </div>
 

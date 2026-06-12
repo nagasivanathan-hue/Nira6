@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ShoppingCart, Package, Wrench, Video, ArrowRight, ArrowLeft, 
@@ -60,8 +60,10 @@ const STEPS_LIST = [
   { id: '2fa', num: '04', label: 'Vault' }
 ];
 
-export default function NIRA6AuthPage() {
+function AuthContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams ? searchParams.get('redirect') : null;
   const supabase = createClient();
 
   // Navigation State
@@ -278,6 +280,10 @@ export default function NIRA6AuthPage() {
   };
 
   const handleRedirect = () => {
+    if (redirectUrl && redirectUrl.startsWith('/')) {
+      router.push(redirectUrl);
+      return;
+    }
     if (!selectedRole) return;
     switch (selectedRole) {
       case 'seller': router.push('/dashboard'); break;
@@ -308,52 +314,72 @@ export default function NIRA6AuthPage() {
         {ROLES.map((r) => {
           const isSelected = selectedRole === r.id;
           const Icon = r.icon;
-          return (
-            <div
-              key={r.id}
-              role="radio"
-              aria-checked={isSelected ? "true" : "false"}
-              tabIndex={0}
-              onClick={() => setSelectedRole(r.id)}
-              onKeyDown={(e) => {
-                if (e.key === ' ' || e.key === 'Enter') {
-                  e.preventDefault();
-                  setSelectedRole(r.id);
-                }
-              }}
-              className={`group flex flex-col justify-between p-6 rounded-2xl border transition-all duration-300 relative text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] min-h-[160px] ${
-                isSelected 
-                  ? 'bg-[#111111]/80 border-[#FFD700] shadow-[0_0_25px_rgba(255,215,0,0.15)]' 
-                  : 'bg-[#111111]/40 border-white/[0.06] hover:bg-[#1a1a1a]/60 hover:border-white/20'
-              }`}
-            >
-              <div className="flex justify-between items-start w-full">
-                <div className={`p-2.5 rounded-xl border transition-colors ${
-                  isSelected 
-                    ? 'bg-[#FFD700]/10 border-[#FFD700]/25 text-[#FFD700]' 
-                    : 'bg-white/[0.02] border-white/[0.08] text-gray-400 group-hover:text-white group-hover:bg-white/[0.04]'
-                }`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-                
-                {/* Selection Indicator Ring */}
-                <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
-                  isSelected 
-                    ? 'border-[#FFD700] bg-[#FFD700]' 
-                    : 'border-white/20 bg-transparent group-hover:border-white/40'
-                }`}>
-                  {isSelected && (
+          if (isSelected) {
+            return (
+              <div
+                key={r.id}
+                role="radio"
+                aria-checked="true"
+                tabIndex={0}
+                onClick={() => setSelectedRole(r.id)}
+                onKeyDown={(e) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    setSelectedRole(r.id);
+                  }
+                }}
+                className="group flex flex-col justify-between p-6 rounded-2xl border transition-all duration-300 relative text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] min-h-[160px] bg-[#111111]/80 border-[#FFD700] shadow-[0_0_25px_rgba(255,215,0,0.15)]"
+              >
+                <div className="flex justify-between items-start w-full">
+                  <div className="p-2.5 rounded-xl border transition-colors bg-[#FFD700]/10 border-[#FFD700]/25 text-[#FFD700]">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  
+                  {/* Selection Indicator Ring */}
+                  <div className="w-5 h-5 rounded-full border flex items-center justify-center transition-all border-[#FFD700] bg-[#FFD700]">
                     <div className="w-2 h-2 rounded-full bg-black" />
-                  )}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-heading text-lg font-bold tracking-wide text-white mt-4">{r.label}</h3>
+                  <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">{r.desc}</p>
                 </div>
               </div>
+            );
+          } else {
+            return (
+              <div
+                key={r.id}
+                role="radio"
+                aria-checked="false"
+                tabIndex={0}
+                onClick={() => setSelectedRole(r.id)}
+                onKeyDown={(e) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    setSelectedRole(r.id);
+                  }
+                }}
+                className="group flex flex-col justify-between p-6 rounded-2xl border transition-all duration-300 relative text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] min-h-[160px] bg-[#111111]/40 border-white/[0.06] hover:bg-[#1a1a1a]/60 hover:border-white/20"
+              >
+                <div className="flex justify-between items-start w-full">
+                  <div className="p-2.5 rounded-xl border transition-colors bg-white/[0.02] border-white/[0.08] text-gray-400 group-hover:text-white group-hover:bg-white/[0.04]">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  
+                  {/* Selection Indicator Ring */}
+                  <div className="w-5 h-5 rounded-full border flex items-center justify-center transition-all border-white/20 bg-transparent group-hover:border-white/40">
+                  </div>
+                </div>
 
-              <div>
-                <h3 className="font-heading text-lg font-bold tracking-wide text-white mt-4">{r.label}</h3>
-                <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">{r.desc}</p>
+                <div>
+                  <h3 className="font-heading text-lg font-bold tracking-wide text-white mt-4">{r.label}</h3>
+                  <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">{r.desc}</p>
+                </div>
               </div>
-            </div>
-          );
+            );
+          }
         })}
       </div>
 
@@ -987,5 +1013,17 @@ export default function NIRA6AuthPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NIRA6AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#FFD700]/20 border-t-[#FFD700] rounded-full animate-spin" />
+      </div>
+    }>
+      <AuthContent />
+    </Suspense>
   );
 }

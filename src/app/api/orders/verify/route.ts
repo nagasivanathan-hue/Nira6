@@ -5,6 +5,7 @@ import Order from '@/models/Order';
 import { verifyAuth } from '@/lib/auth/auth';
 import Inventory from '@/models/Inventory';
 import Warehouse from '@/models/Warehouse';
+import { generateOrderId, generateInvoiceNumber, logOrderAudit } from '@/lib/orderUtils';
 
 export async function POST(req: Request) {
   try {
@@ -49,7 +50,30 @@ export async function POST(req: Request) {
     if (razorpay_signature === expectedSign) {
       const warehouse = await Warehouse.findOne({ active: true });
 
+      // Generate custom sequential Order ID and Invoice Number
+      const oId = await generateOrderId();
+      const invNo = await generateInvoiceNumber();
+
+      // Dynamic GST Invoicing Calculation
+      const state = (shippingAddress?.state || 'Tamil Nadu').toLowerCase().trim();
+      const isLocal = state.includes('tamil nadu') || state === 'tn' || state === 'tamilnadu';
+      let cgstVal = 0;
+      let sgstVal = 0;
+      let igstVal = 0;
+      const taxableAmount = totalAmount - (discountAmount || 0);
+
+      if (isLocal) {
+        cgstVal = Math.round(taxableAmount * 0.09);
+        sgstVal = Math.round(taxableAmount * 0.09);
+      } else {
+        igstVal = Math.round(taxableAmount * 0.18);
+      }
+
+      const calculatedTax = cgstVal + sgstVal + igstVal;
+
       const order = new Order({
+        orderId: oId,
+        invoiceNumber: invNo,
         user: user ? user._id : undefined,
         items: orderItems,
         shippingAddress,
@@ -58,7 +82,10 @@ export async function POST(req: Request) {
         shippingCost: shippingCost || 0,
         paymentMethod,
         totalAmount,
-        taxAmount: taxAmount || 0,
+        taxAmount: taxAmount || calculatedTax,
+        cgst: cgstVal,
+        sgst: sgstVal,
+        igst: igstVal,
         platformFee: platformFee || 0,
         discountAmount: discountAmount || 0,
         couponApplied: couponApplied || '',
@@ -95,7 +122,7 @@ export async function POST(req: Request) {
             inv.history.push({
               type: 'outward',
               quantity: item.quantity,
-              description: `Ordered via Razorpay in Order #${order._id.toString().slice(-8).toUpperCase()}`,
+              description: `Ordered via Razorpay in Order #${oId.slice(-8).toUpperCase()}`,
               referenceId: order._id.toString(),
               timestamp: new Date()
             });
@@ -105,6 +132,16 @@ export async function POST(req: Request) {
       }
 
       const createdOrder = await order.save();
+
+      // Log Placement Audit Trail
+      await logOrderAudit({
+        orderId: oId,
+        orderObjectId: createdOrder._id.toString(),
+        eventName: 'order_placed',
+        notes: `Order placed successfully via Razorpay. Sequential ID: ${oId}. Total: ₹${totalAmount}`,
+        operator: user ? user.name : 'Guest Customer',
+        role: user ? user.role : 'customer'
+      });
 
       // Trigger confirmation email asynchronously
       try {
@@ -122,7 +159,7 @@ export async function POST(req: Request) {
 
         if (customerEmail) {
           sendOrderConfirmationEmail({
-            orderId: createdOrder._id.toString(),
+            orderId: createdOrder.orderId || createdOrder._id.toString(),
             totalAmount: createdOrder.totalAmount,
             items: emailItems,
             customerName: customerName || 'Valued Creator',

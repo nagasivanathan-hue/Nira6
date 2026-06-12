@@ -42,7 +42,7 @@ export default function MobileBottomNav() {
     {
       label: 'Account',
       icon: User,
-      href: isAuthenticated ? '/dashboard' : '/auth'
+      href: isAuthenticated ? '/dashboard' : '/auth/login'
     }
   ];
 
