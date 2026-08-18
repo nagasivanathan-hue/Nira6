@@ -7,6 +7,44 @@ import { mockProducts } from '@/lib/mockData';
 export async function GET(req: Request) {
   try {
     await dbConnect();
+
+    // Auto-seed if database is empty
+    const count = await Product.countDocuments();
+    if (count === 0) {
+      console.log('[Seeding] Products collection is empty. Seeding mockProducts...');
+      const seeded = mockProducts.map(p => {
+        const specMap = new Map();
+        if (p.specs) {
+          Object.entries(p.specs).forEach(([key, val]) => {
+            specMap.set(key, val);
+          });
+        }
+        return {
+          name: p.name,
+          brand: p.brand,
+          category: p.category,
+          price: p.price,
+          originalPrice: p.originalPrice,
+          discount: p.discount,
+          image: p.image || '/assets/product-camera.png',
+          images: p.images || [p.image || '/assets/product-camera.png'],
+          grade: p.condition === 'Like New' || p.condition === 'Excellent' || p.condition === 'Good' || p.condition === 'Fair' 
+            ? p.condition 
+            : 'Excellent',
+          featured: p.featured || false,
+          trending: p.trending || false,
+          rating: p.rating || 4.5,
+          reviewCount: p.reviewCount || 10,
+          emiAvailable: p.emiAvailable || false,
+          specs: specMap,
+          stock: p.inStock ? 1 : 0,
+          sku: `SKU-${p.id || Math.floor(Math.random() * 1000000)}`,
+          description: p.description || '',
+          seller: p.sellerName || 'NIRA6 Certified'
+        };
+      });
+      await Product.insertMany(seeded);
+    }
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     const brand = searchParams.get('brand');

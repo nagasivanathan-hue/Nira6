@@ -42,15 +42,30 @@ export async function verifyAuth(req: Request) {
     if (supabaseUser && supabaseUser.email) {
       await dbConnect();
       let user = await User.findOne({ email: supabaseUser.email }).select('-password');
+      const supabaseRole = supabaseUser.user_metadata?.role || 'user';
       if (!user) {
         // Create MongoDB user profile on first Google/Supabase Sign In
         user = await User.create({
           name: supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0] || 'Google User',
           email: supabaseUser.email,
           password: 'google-auth-placeholder-password',
-          role: 'user',
+          role: supabaseRole,
+          phone: supabaseUser.user_metadata?.phone || undefined,
           walletBalance: 0,
         });
+      } else {
+        let modified = false;
+        if (supabaseUser.user_metadata?.role && user.role !== supabaseUser.user_metadata.role) {
+          user.role = supabaseUser.user_metadata.role;
+          modified = true;
+        }
+        if (supabaseUser.user_metadata?.phone && user.phone !== supabaseUser.user_metadata.phone) {
+          user.phone = supabaseUser.user_metadata.phone;
+          modified = true;
+        }
+        if (modified) {
+          await user.save();
+        }
       }
       return user;
     }
@@ -63,7 +78,13 @@ export async function verifyAuth(req: Request) {
 
 export function generateToken(id: string) {
   return jwt.sign({ id }, getJwtSecret(), {
-    expiresIn: '30d',
+    expiresIn: '15m',
+  });
+}
+
+export function generateRefreshToken(id: string) {
+  return jwt.sign({ id, type: 'refresh' }, getJwtSecret(), {
+    expiresIn: '7d',
   });
 }
 

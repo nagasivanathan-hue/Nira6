@@ -29,6 +29,7 @@ export async function GET(
       return NextResponse.json({ message: 'Access denied: You are not authorized to view audit logs' }, { status: 403 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: any = {
       $or: [
         { orderObjectId: order._id }

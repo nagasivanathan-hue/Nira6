@@ -121,7 +121,6 @@ export default function CreatorProfilePage({ params }: Props) {
                   key={tab} 
                   role="tab"
                   aria-selected="true"
-                  aria-controls={"tabpanel-" + tab}
                   title={tab}
                   aria-label={tab}
                   onClick={() => setActiveTab(tab)} 
@@ -136,7 +135,6 @@ export default function CreatorProfilePage({ params }: Props) {
                   key={tab} 
                   role="tab"
                   aria-selected="false"
-                  aria-controls={"tabpanel-" + tab}
                   title={tab}
                   aria-label={tab}
                   onClick={() => setActiveTab(tab)} 

@@ -213,7 +213,7 @@ export default function AnalysisResultPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white selection:bg-[#FFDA03]/30 selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-neutral-950 text-white selection:bg-[#FFDA03]/30 selection:text-white font-sans antialiased">
       
       {/* Background ambient lighting effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -4,7 +4,7 @@ import User from '@/models/User';
 import CreatorProfile from '@/models/CreatorProfile';
 import Service from '@/models/Service';
 import { verifyAuth } from '@/lib/auth/auth';
-import mongoose from 'mongoose';
+import NotedEmail from '@/models/NotedEmail';
 
 export async function POST(req: Request) {
   try {
@@ -22,7 +22,16 @@ export async function POST(req: Request) {
       phone: data.phone || user.phone,
       name: data.fullName || user.name,
       avatar: data.profilePhoto || user.avatar,
+      emailNotedForContinue: true,
     });
+
+    if (user.email) {
+      await NotedEmail.findOneAndUpdate(
+        { email: user.email.toLowerCase().trim() },
+        { email: user.email.toLowerCase().trim() },
+        { upsert: true }
+      );
+    }
 
     // 2. Create CreatorProfile
     const profile = await CreatorProfile.create({

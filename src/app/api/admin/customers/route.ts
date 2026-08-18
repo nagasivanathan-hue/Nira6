@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     const search = searchParams.get('search') || '';
 
     // Find users who are customers
-    const userQuery: any = { role: { $in: ['user', 'customer', 'creator'] } };
+    const userQuery: Record<string, unknown> = { role: { $in: ['user', 'customer', 'creator'] } };
     if (search) {
       userQuery.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -29,6 +29,7 @@ export async function GET(req: Request) {
 
     // Enrich with order summary metrics (total spending, orders list, active/inactive flag)
     const enrichedCustomers = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       customers.map(async (c: any) => {
         const orders = await Order.find({ user: c._id }).lean();
         const totalSpent = orders
@@ -50,8 +51,8 @@ export async function GET(req: Request) {
     enrichedCustomers.sort((a, b) => b.totalSpent - a.totalSpent);
 
     return NextResponse.json(enrichedCustomers);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -96,7 +97,7 @@ export async function PUT(req: Request) {
         adminApprovedByOwner: targetUser.adminApprovedByOwner
       }
     });
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -121,7 +121,7 @@ export class ShippingService {
     const order = await Order.findOne({ trackingNumber });
     if (!order) return false;
 
-    const previousStatus = order.orderStatus;
+
     order.orderStatus = status;
 
     let desc = remarks || `Package status updated to ${status} by courier partner.`;

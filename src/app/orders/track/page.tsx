@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { Search, Shield, Clock, MapPin, Truck, HelpCircle, FileText, ArrowLeft, ArrowRight, ShieldCheck, HelpCircle as HelpIcon } from 'lucide-react';
+import { Clock, MapPin, Truck, FileText, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
 import api from '@/services/api';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -101,9 +101,10 @@ export default function PublicTrackPage() {
       });
       setOrder(data.order);
       setDelivery(data.delivery);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.response?.data?.message || 'No matching order found with the provided details.');
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'No matching order found with the provided details.');
       setOrder(null);
       setDelivery(null);
     } finally {

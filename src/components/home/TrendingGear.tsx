@@ -26,7 +26,7 @@ export default function TrendingGear() {
   if (loading && trendingProducts.length === 0) return null;
 
   return (
-    <div className="mb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 group relative">
+    <div className="mb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 group relative overflow-hidden">
       <div className="flex items-center justify-between mb-8">
         <div>
           <span className="text-[11px] uppercase font-mono tracking-widest text-emerald-400 block mb-2 flex items-center gap-1.5">

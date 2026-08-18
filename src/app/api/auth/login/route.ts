@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import User from '@/models/User';
-import { generateToken } from '@/lib/auth/auth';
+import { generateToken, generateRefreshToken } from '@/lib/auth/auth';
+import RefreshToken from '@/models/RefreshToken';
 import { sanitizeEmail } from '@/lib/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { logAdminActivity } from '@/lib/adminLogger';
+import NotedEmail from '@/models/NotedEmail';
 
 export async function POST(req: Request) {
   try {
@@ -36,6 +38,18 @@ export async function POST(req: Request) {
     const sanitizedEmail = sanitizeEmail(email);
 
     await dbConnect();
+
+    // Check if the email is noted for Continue with Email
+    const noted = await NotedEmail.findOne({ email: sanitizedEmail });
+    if (!noted) {
+      const userObj = await User.findOne({ email: sanitizedEmail });
+      if (!userObj || !userObj.emailNotedForContinue) {
+        return NextResponse.json({
+          message: 'This email is not registered or did not complete manual registration. Please sign up and provide details manually first.'
+        }, { status: 403 });
+      }
+    }
+
     const user = await User.findOne({ email: sanitizedEmail }).select('+password');
 
     if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
@@ -84,13 +98,23 @@ export async function POST(req: Request) {
       );
     }
 
+    const accessToken = generateToken(user._id.toString());
+    const refreshToken = generateRefreshToken(user._id.toString());
+
+    await RefreshToken.create({
+      token: refreshToken,
+      userId: user._id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    });
+
     return NextResponse.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       adminApprovedByOwner: user.adminApprovedByOwner,
-      token: generateToken(user._id.toString()),
+      token: accessToken,
+      refreshToken,
     });
   } catch (err) {
     const error = err as Error;

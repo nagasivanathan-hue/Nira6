@@ -103,6 +103,21 @@ export default function DashboardPage() {
   const { user: userInfo, isAuthenticated } = useAppSelector((state) => state.auth);
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
 
+  const userRole = userInfo?.role || 'user';
+
+  // Dynamic tab configuration
+  const allowedTabs = tabs.filter(tab => {
+    if (tab.id === 'bulk-import') {
+      return userRole === 'creator' || userRole === 'admin' || userRole === 'super_admin';
+    }
+    return true;
+  }).map(tab => {
+    if (tab.id === 'sell' && userRole === 'creator') {
+      return { ...tab, label: 'Sell Gear' };
+    }
+    return tab;
+  });
+
   const [activeTab, setActiveTab] = useState('overview');
   const [orders, setOrders] = useState<ExtendedOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -196,10 +211,12 @@ export default function DashboardPage() {
 
     if (!isAuthenticated) {
       router.push('/auth/login?redirect=/dashboard');
+    } else if (userInfo && (userInfo.role === 'admin' || userInfo.role === 'super_admin')) {
+      router.push('/dashboard/admin');
     } else {
       fetchDashboardData();
     }
-  }, [isAuthenticated, router, dispatch]);
+  }, [isAuthenticated, userInfo, router, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -560,7 +577,7 @@ export default function DashboardPage() {
 
     setReturnSubmitting(true);
     try {
-      const res = await api.post(`/orders/return`, {
+      await api.post(`/orders/return`, {
         orderObjectId: oId,
         reason: returnReasonInput,
         photos: returnPhotos,
@@ -585,8 +602,9 @@ export default function DashboardPage() {
           content: `Return request submitted for Order #${(selectedOrder?.orderId || oId).slice(-8).toUpperCase()}. Awaiting admin approval.`
         }
       }));
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Return processing failed. Eligible diagnostics might have expired.');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Return processing failed. Eligible diagnostics might have expired.');
     } finally {
       setReturnSubmitting(false);
     }
@@ -608,7 +626,19 @@ export default function DashboardPage() {
           <div className="text-center sm:text-left flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2">
               <h1 className="font-heading font-bold text-2xl text-nira-dark">{userInfo.name}</h1>
-              <span className="px-2.5 py-0.5 bg-nira-yellow text-nira-dark text-[9px] font-black tracking-widest uppercase rounded-full w-fit mx-auto sm:mx-0">Creator Verified</span>
+              {userRole === 'creator' ? (
+                <span className="flex items-center gap-1 px-2.5 py-0.5 bg-nira-yellow text-nira-dark text-[9px] font-black tracking-widest uppercase rounded-full w-fit mx-auto sm:mx-0 shadow-sm border border-amber-300">
+                  <Sparkles className="w-3 h-3 fill-nira-dark" /> Verified Creator & Partner
+                </span>
+              ) : userRole === 'admin' || userRole === 'super_admin' ? (
+                <span className="flex items-center gap-1 px-2.5 py-0.5 bg-rose-600 text-white text-[9px] font-black tracking-widest uppercase rounded-full w-fit mx-auto sm:mx-0 shadow-sm">
+                  <ShieldCheck className="w-3 h-3" /> System Administrator
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 text-[9px] font-black tracking-widest uppercase rounded-full w-fit mx-auto sm:mx-0 border border-emerald-500/25">
+                  <CheckCircle2 className="w-3 h-3" /> Active Member
+                </span>
+              )}
             </div>
             <p className="text-nira-text-secondary text-sm">{userInfo.email} • Active Member • Diagnostics Core</p>
             <div className="flex items-center justify-center sm:justify-start gap-4 mt-2.5">
@@ -622,7 +652,7 @@ export default function DashboardPage() {
           {/* Dashboard Navigation Sidepanel */}
           <aside className="lg:w-60 flex-shrink-0">
             <nav className="bg-white rounded-2xl p-3 flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide shadow-sm border border-nira-gray-dark">
-              {tabs.map((tab) => (
+              {allowedTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => {
@@ -927,143 +957,189 @@ export default function DashboardPage() {
 
                 {/* 4. Sell Gear Tab (Creator seller submission) */}
                 {activeTab === 'sell' && (
-                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark">
-                    <div className="mb-6 border-b border-nira-gray-dark pb-4">
-                      <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider flex items-center gap-1.5">
-                        <Camera className="w-5 h-5 text-nira-yellow animate-bounce" /> Creator Sell Gear Hub
-                      </h3>
-                      <p className="text-xs text-nira-text-secondary leading-relaxed mt-1">Submit high-end cinematography gear details. Our backend will index it immediately and display it inside global buying markets!</p>
-                    </div>
+                  userRole === 'creator' ? (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-nira-gray-dark animate-fade-in">
+                      <div className="mb-6 border-b border-nira-gray-dark pb-4">
+                        <h3 className="font-heading font-bold text-base text-nira-dark uppercase tracking-wider flex items-center gap-1.5">
+                          <Camera className="w-5 h-5 text-nira-yellow animate-bounce" /> Creator Sell Gear Hub
+                        </h3>
+                        <p className="text-xs text-nira-text-secondary leading-relaxed mt-1">Submit high-end cinematography gear details. Our backend will index it immediately and display it inside global buying markets!</p>
+                      </div>
 
-                    <div className="mb-6 bg-gradient-to-r from-nira-dark to-black p-5 rounded-2xl border border-nira-yellow/20 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <h4 className="text-xs font-black uppercase text-nira-yellow tracking-wider flex items-center gap-1.5">
-                          <Sparkles className="w-4 h-4 text-nira-yellow animate-pulse" /> Enterprise Partner Central Hub
-                        </h4>
-                        <p className="text-[10px] text-white/60 leading-relaxed mt-1">
-                          Looking to list freelance services (video editing, reels cuts, photo grading), manage bulk inventories, track UPI payouts, or configure Madurai studio location KYC?
+                      <div className="mb-6 bg-gradient-to-r from-nira-dark to-black p-5 rounded-2xl border border-nira-yellow/20 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <h4 className="text-xs font-black uppercase text-nira-yellow tracking-wider flex items-center gap-1.5">
+                            <Sparkles className="w-4 h-4 text-nira-yellow animate-pulse" /> Enterprise Partner Central Hub
+                          </h4>
+                          <p className="text-[10px] text-white/60 leading-relaxed mt-1">
+                            Looking to list freelance services (video editing, reels cuts, photo grading), manage bulk inventories, track UPI payouts, or configure Madurai studio location KYC?
+                          </p>
+                        </div>
+                        <Link
+                          href="/seller"
+                          className="px-4 py-2 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow shrink-0 text-center cursor-pointer font-bold"
+                        >
+                          Enter Partner Central
+                        </Link>
+                      </div>
+
+                      <form onSubmit={handlePublishGear} className="space-y-4">
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Product Gear Title</label>
+                            <input
+                              type="text"
+                              placeholder="Sony Alpha A7 IV Mirrorless"
+                              value={sellForm.name}
+                              onChange={(e) => setSellForm({ ...sellForm, name: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                              required
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Brand Manufacturer</label>
+                            <input
+                              type="text"
+                              placeholder="Sony"
+                              value={sellForm.brand}
+                              onChange={(e) => setSellForm({ ...sellForm, brand: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                              required
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Market Category</label>
+                            <select
+                              title="Market Category"
+                              aria-label="Market Category"
+                              value={sellForm.category}
+                              onChange={(e) => setSellForm({ ...sellForm, category: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
+                            >
+                              <option>Cameras</option>
+                              <option>Lenses</option>
+                              <option>Audio</option>
+                              <option>Lighting</option>
+                              <option>Accessories</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Physical Diagnostics Grade</label>
+                            <select
+                              title="Physical Diagnostics Grade"
+                              aria-label="Physical Diagnostics Grade"
+                              value={sellForm.grade}
+                              onChange={(e) => setSellForm({ ...sellForm, grade: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
+                            >
+                              <option>Like New</option>
+                              <option>Excellent</option>
+                              <option>Good</option>
+                              <option>Fair</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Asking Price (₹ INR)</label>
+                            <input
+                              type="number"
+                              placeholder="135000"
+                              value={sellForm.price}
+                              onChange={(e) => setSellForm({ ...sellForm, price: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                              required
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Original Purchase Price (₹ INR)</label>
+                            <input
+                              type="number"
+                              placeholder="165000"
+                              value={sellForm.originalPrice}
+                              onChange={(e) => setSellForm({ ...sellForm, originalPrice: e.target.value })}
+                              className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Diagnostic Features & Specifications (Specs)</label>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="flex gap-2">
+                              <input type="text" placeholder="Resolution" value={sellForm.specKey1} onChange={(e) => setSellForm({ ...sellForm, specKey1: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                              <input type="text" placeholder="24.2 MP" value={sellForm.specVal1} onChange={(e) => setSellForm({ ...sellForm, specVal1: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            </div>
+                            <div className="flex gap-2">
+                              <input type="text" placeholder="Optical Zoom" value={sellForm.specKey2} onChange={(e) => setSellForm({ ...sellForm, specKey2: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                              <input type="text" placeholder="3x Kit Zoom" value={sellForm.specVal2} onChange={(e) => setSellForm({ ...sellForm, specVal2: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Equipment Description & Condition History</label>
+                          <textarea
+                            placeholder="List any scratches, repair history, usage duration, or package items..."
+                            value={sellForm.description}
+                            onChange={(e) => setSellForm({ ...sellForm, description: e.target.value })}
+                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
+                            rows={3}
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={submittingGear}
+                          className="w-full py-4 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          {submittingGear ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Publish Listing to Catalogue</>}
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl p-8 border border-nira-gray-dark shadow-sm relative overflow-hidden animate-fade-in">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-nira-yellow/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                      
+                      <div className="max-w-2xl mx-auto text-center py-6">
+                        <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-amber-500/20">
+                          <Camera className="w-8 h-8 animate-pulse" />
+                        </div>
+                        
+                        <h3 className="font-heading font-black text-2xl text-nira-dark uppercase tracking-wide">
+                          Turn Your Cinema Gear &amp; Skills Into Income
+                        </h3>
+                        <p className="text-sm text-nira-text-secondary mt-3 leading-relaxed">
+                          Join the elite NIRA6 creator network. List your used cameras/lenses, offer freelance services (video editing, color grading, reels cuts), and get direct bookings with escrow safety.
+                        </p>
+
+                        <div className="grid sm:grid-cols-2 gap-4 my-8 text-left">
+                          {[
+                            { title: 'Instant UPI Payouts', desc: 'Secure advance payments held in secure escrow. Released directly to your UPI account post-job.' },
+                            { title: 'Studio Location KYC', desc: 'Showcase your physical shoot setup or rental house on our interactive Madurai maps directory.' },
+                            { title: 'Excel Bulk Imports', desc: 'Got a large catalog of rental or pre-owned gear? Upload hundreds of items in one single Excel sheet.' },
+                            { title: 'Service Listings', desc: 'Offer editing, editing consulting, cinematography services directly to users searching NIRA6.' }
+                          ].map((feat, idx) => (
+                            <div key={idx} className="p-4 bg-nira-gray/50 border border-nira-gray-dark rounded-xl">
+                              <h4 className="text-xs font-black uppercase text-nira-dark tracking-wider flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {feat.title}
+                              </h4>
+                              <p className="text-[11px] text-nira-text-secondary mt-1 leading-relaxed">{feat.desc}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <Link
+                          href="/seller"
+                          className="inline-flex items-center gap-2 px-8 py-4 bg-nira-yellow hover:bg-amber-400 text-nira-dark font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer"
+                        >
+                          Become an Onboarded Seller / Creator <ChevronRight className="w-4 h-4" />
+                        </Link>
+                        
+                        <p className="text-[10px] text-nira-text-secondary/70 mt-4 font-semibold">
+                          🛡️ Escrow protection and verified hardware checking active
                         </p>
                       </div>
-                      <Link
-                        href="/seller"
-                        className="px-4 py-2 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow shrink-0 text-center cursor-pointer"
-                      >
-                        Enter Partner Central
-                      </Link>
                     </div>
-
-                    <form onSubmit={handlePublishGear} className="space-y-4">
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Product Gear Title</label>
-                          <input
-                            type="text"
-                            placeholder="Sony Alpha A7 IV Mirrorless"
-                            value={sellForm.name}
-                            onChange={(e) => setSellForm({ ...sellForm, name: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
-                            required
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Brand Manufacturer</label>
-                          <input
-                            type="text"
-                            placeholder="Sony"
-                            value={sellForm.brand}
-                            onChange={(e) => setSellForm({ ...sellForm, brand: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
-                            required
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Market Category</label>
-                          <select
-                            title="Market Category"
-                            aria-label="Market Category"
-                            value={sellForm.category}
-                            onChange={(e) => setSellForm({ ...sellForm, category: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
-                          >
-                            <option>Cameras</option>
-                            <option>Lenses</option>
-                            <option>Audio</option>
-                            <option>Lighting</option>
-                            <option>Accessories</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Physical Diagnostics Grade</label>
-                          <select
-                            title="Physical Diagnostics Grade"
-                            aria-label="Physical Diagnostics Grade"
-                            value={sellForm.grade}
-                            onChange={(e) => setSellForm({ ...sellForm, grade: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow cursor-pointer"
-                          >
-                            <option>Like New</option>
-                            <option>Excellent</option>
-                            <option>Good</option>
-                            <option>Fair</option>
-                          </select>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Asking Price (₹ INR)</label>
-                          <input
-                            type="number"
-                            placeholder="135000"
-                            value={sellForm.price}
-                            onChange={(e) => setSellForm({ ...sellForm, price: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
-                            required
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Original Purchase Price (₹ INR)</label>
-                          <input
-                            type="number"
-                            placeholder="165000"
-                            value={sellForm.originalPrice}
-                            onChange={(e) => setSellForm({ ...sellForm, originalPrice: e.target.value })}
-                            className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Diagnostic Features & Specifications (Specs)</label>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          <div className="flex gap-2">
-                            <input type="text" placeholder="Resolution" value={sellForm.specKey1} onChange={(e) => setSellForm({ ...sellForm, specKey1: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                            <input type="text" placeholder="24.2 MP" value={sellForm.specVal1} onChange={(e) => setSellForm({ ...sellForm, specVal1: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                          </div>
-                          <div className="flex gap-2">
-                            <input type="text" placeholder="Optical Zoom" value={sellForm.specKey2} onChange={(e) => setSellForm({ ...sellForm, specKey2: e.target.value })} className="w-1/3 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                            <input type="text" placeholder="3x Kit Zoom" value={sellForm.specVal2} onChange={(e) => setSellForm({ ...sellForm, specVal2: e.target.value })} className="flex-1 px-3 py-2 bg-nira-gray rounded-xl text-xs border-none" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-nira-text-secondary uppercase">Equipment Description & Condition History</label>
-                        <textarea
-                          placeholder="List any scratches, repair history, usage duration, or package items..."
-                          value={sellForm.description}
-                          onChange={(e) => setSellForm({ ...sellForm, description: e.target.value })}
-                          className="px-4 py-3 bg-nira-gray rounded-xl text-xs focus:outline-none border border-transparent focus:border-nira-yellow"
-                          rows={3}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={submittingGear}
-                        className="w-full py-4 bg-nira-yellow hover:bg-nira-yellow-dark text-nira-dark font-black tracking-wider uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        {submittingGear ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Publish Listing to Catalogue</>}
-                      </button>
-                    </form>
-                  </div>
+                  )
                 )}
 
                 {/* 5. CRM Support & Diagnostics Tab */}
@@ -1589,7 +1665,6 @@ export default function DashboardPage() {
                           <div className="grid grid-cols-4 gap-2 pt-2">
                             {returnPhotos.map((url, idx) => (
                               <div key={idx} className="relative aspect-square rounded-lg border border-nira-gray-dark overflow-hidden bg-white">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={url} alt="Proof upload" className="w-full h-full object-cover" />
                               </div>
                             ))}

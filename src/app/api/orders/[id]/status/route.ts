@@ -8,6 +8,7 @@ import Notification from '@/models/Notification';
 import User from '@/models/User';
 import { verifyAuth } from '@/lib/auth/auth';
 import { logOrderAudit } from '@/lib/orderUtils';
+import { sendOrderShippedEmail, sendOrderDeliveredEmail, sendOrderCancelledEmail } from '@/lib/email/email';
 
 export async function POST(
   req: Request,
@@ -23,7 +24,7 @@ export async function POST(
     const { id } = await params;
     const { status, remarks, location } = await req.json();
 
-    const order = await Order.findById(id).populate('items.product');
+    const order = await Order.findById(id).populate('items.product').populate('user');
     if (!order) {
       return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
@@ -156,6 +157,24 @@ export async function POST(
         title: 'SMS: Order Shipped',
         content: `NIRA6: Package for Order #${order._id.toString().slice(-8).toUpperCase()} is shipped via ${courierPartner} (AWB: ${trackingNumber}). Est delivery: ${estimatedDeliveryDate.toDateString()}`
       });
+
+      const customerName = (order.user && (order.user as any).name) || order.shippingAddress?.name || 'Valued Customer';
+      const customerEmail = (order.user && (order.user as any).email) || order.guestEmail;
+      if (customerEmail) {
+        sendOrderShippedEmail({
+          orderId: order.orderId || order._id.toString(),
+          totalAmount: order.totalAmount,
+          items: order.items.map((item: any) => ({
+            name: item.product?.name || item.variant || 'Creative Gear',
+            quantity: item.quantity,
+            price: item.price
+          })),
+          customerName,
+          customerEmail,
+          courierPartner,
+          trackingNumber
+        }).catch(err => console.error('Error dispatching shipped email:', err));
+      }
     }
 
     // 5. IN TRANSIT status actions
@@ -235,6 +254,22 @@ export async function POST(
         title: '🎉 Order Delivered!',
         content: `Order #${order._id.toString().slice(-8).toUpperCase()} has been successfully delivered. Please review your gear!`
       });
+
+      const customerName = (order.user && (order.user as any).name) || order.shippingAddress?.name || 'Valued Customer';
+      const customerEmail = (order.user && (order.user as any).email) || order.guestEmail;
+      if (customerEmail) {
+        sendOrderDeliveredEmail({
+          orderId: order.orderId || order._id.toString(),
+          totalAmount: order.totalAmount,
+          items: order.items.map((item: any) => ({
+            name: item.product?.name || item.variant || 'Creative Gear',
+            quantity: item.quantity,
+            price: item.price
+          })),
+          customerName,
+          customerEmail
+        }).catch(err => console.error('Error dispatching delivered email:', err));
+      }
     }
 
     // 8. CANCELLED status actions
@@ -291,6 +326,22 @@ export async function POST(
         title: '⚠️ Order Cancelled',
         content: `Your order #${order._id.toString().slice(-8).toUpperCase()} has been cancelled.`
       });
+
+      const customerName = (order.user && (order.user as any).name) || order.shippingAddress?.name || 'Valued Customer';
+      const customerEmail = (order.user && (order.user as any).email) || order.guestEmail;
+      if (customerEmail) {
+        sendOrderCancelledEmail({
+          orderId: order.orderId || order._id.toString(),
+          totalAmount: order.totalAmount,
+          items: order.items.map((item: any) => ({
+            name: item.product?.name || item.variant || 'Creative Gear',
+            quantity: item.quantity,
+            price: item.price
+          })),
+          customerName,
+          customerEmail
+        }).catch(err => console.error('Error dispatching cancelled email:', err));
+      }
     }
 
     // 9. RETURN REQUESTED status actions

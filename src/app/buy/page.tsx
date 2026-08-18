@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BadgeCheck, ExternalLink, Search } from 'lucide-react';
+import { BadgeCheck, ExternalLink, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { affiliateProducts } from '@/lib/amazonData';
+import api from '@/services/api';
 
 // --- DATA STRUCTURES (MOCKED) ---
 
@@ -135,10 +136,37 @@ export default function BuyGearTab() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('Newest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [usedListings, setUsedListings] = useState<any[]>([]);
+  const [loadingListings, setLoadingListings] = useState(true);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        setLoadingListings(true);
+        const res = await api.get('/products');
+        const mapped = res.data.map((item: any) => ({
+          id: item.id || item._id,
+          title: item.name,
+          category: item.category.charAt(0).toUpperCase() + item.category.slice(1),
+          condition: item.grade || 'Excellent',
+          price: item.price,
+          thumbnail: item.image || '/assets/product-camera.png',
+          seller: { name: item.seller || 'NIRA6 Certified', verified: true },
+          views: item.reviewCount * 12 + 10
+        }));
+        setUsedListings(mapped);
+      } catch (err) {
+        console.error('Failed to fetch marketplace products:', err);
+      } finally {
+        setLoadingListings(false);
+      }
+    };
+    fetchListings();
+  }, []);
 
   // Filter & Sort Logic
-  const filteredUsed = mockUsedListings
-    .filter(item => activeCategory === 'All' || item.category === activeCategory)
+  const filteredUsed = usedListings
+    .filter(item => activeCategory === 'All' || item.category.toLowerCase() === activeCategory.toLowerCase())
     .filter(item => {
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase();
@@ -314,7 +342,12 @@ export default function BuyGearTab() {
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {filteredUsed.length > 0 ? (
+              {loadingListings ? (
+                <div className="col-span-full py-20 text-center text-[#555555]">
+                  <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-[#FFDA03]" />
+                  <p className="text-sm font-bold uppercase tracking-widest">Loading verified marketplace listings...</p>
+                </div>
+              ) : filteredUsed.length > 0 ? (
                 filteredUsed.map(item => (
                   <FloatCard key={item.id}>
                     <div className="relative aspect-video w-full bg-[#0A0A0A]">

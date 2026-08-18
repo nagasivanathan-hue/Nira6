@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 // --- MOCK DATABASE OF MARKETPLACE LISTINGS ---
 const MOCK_LISTINGS = {
@@ -246,7 +245,7 @@ export default function NIRA6ReelsTab() {
   // Reels feed & user state
   const [reels, setReels] = useState(INITIAL_REELS);
   const [activeTab, setActiveTab] = useState("For You");
-  const [_activeReelIndex, setActiveReelIndex] = useState(0);
+  const [, setActiveReelIndex] = useState(0);
   const [isGlobalMuted, setIsGlobalMuted] = useState(true);
 
   // User preference parameters (real-time recommendation feedback)
@@ -1315,7 +1314,6 @@ function DescriptionBox({ text }: { text: string }) {
 
 // --- SUBCOMPONENT: COMMENT DRAWER INPUT BLOCK ---
 function CommentInput({ 
-  reelId: _reelId, 
   onCommentAdded 
 }: { 
   reelId: number, 

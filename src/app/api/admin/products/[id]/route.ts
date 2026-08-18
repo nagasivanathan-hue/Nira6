@@ -48,8 +48,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     );
 
     return NextResponse.json(updatedProduct);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -80,7 +80,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     );
 
     return NextResponse.json({ success: true, message: 'Product successfully archived' });
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }

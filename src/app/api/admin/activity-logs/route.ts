@@ -33,7 +33,7 @@ export async function GET(req: Request) {
         totalLogs
       }
     });
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }

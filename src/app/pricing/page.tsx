@@ -185,7 +185,8 @@ export default function PricingPage() {
       <section className="max-w-4xl mx-auto px-4 mb-28 relative z-10">
         <h2 className="text-2xl font-bold text-white text-center mb-10 tracking-tight">Compare Platform Matrix</h2>
         <div className="border border-neutral-900 rounded-3xl overflow-hidden bg-white/[0.01]">
-          <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="border-b border-neutral-900 bg-white/[0.02]">
                 <th className="py-4 px-6 text-xs uppercase font-mono tracking-wider text-neutral-400">Core Capabilities</th>
@@ -211,6 +212,7 @@ export default function PricingPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
 

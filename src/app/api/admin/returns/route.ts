@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import ReturnRequest from '@/models/ReturnRequest';
-import Order from '@/models/Order';
-import User from '@/models/User';
 import Notification from '@/models/Notification';
 import Inventory from '@/models/Inventory';
 import { verifyAdmin } from '@/lib/auth/auth';
@@ -46,7 +44,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Return request not found' }, { status: 404 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const order = returnReq.order as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clientUser = returnReq.user as any;
 
     if (action === 'approve') {
@@ -190,6 +190,7 @@ export async function POST(req: Request) {
             inv.stockLevel += item.quantity;
             if (order.warehouse) {
               const whStock = inv.warehouseStock.find(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (w: any) => w.warehouse.toString() === order.warehouse.toString()
               );
               if (whStock) {

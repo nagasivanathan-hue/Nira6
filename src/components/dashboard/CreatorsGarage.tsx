@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   Camera, Sliders, Plus, Trash2, ShoppingCart,
-  Package, Tag, ChevronDown, ChevronUp
+  Package
 } from 'lucide-react';
 
 interface GearItem {
@@ -53,7 +52,7 @@ export default function CreatorsGarage() {
         const res = await fetch('/api/studio/gear');
         if (res.ok) {
           const data = await res.json();
-          const normalized: GearItem[] = data.map((g: any) => ({
+          const normalized: GearItem[] = data.map((g: { id?: string, _id?: string, [key: string]: unknown }) => ({
             ...g,
             id: g.id || g._id || '',
           }));

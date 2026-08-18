@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter, Poppins } from 'next/font/google';
 import "./globals.css";
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://www.nira6.in'),
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.nira6.in/',
   },
   openGraph: {
     title: "NIRA6 | India's Premium Creative Marketplace",
@@ -62,6 +62,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
@@ -69,16 +74,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>
       <body className="antialiased">
-        {/* BUG-002: noscript fallback for crawlers and users without JS */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[#FFDA03] focus:text-black focus:px-4 focus:py-2 focus:rounded"
+        >
+          Skip to main content
+        </a>
+
         <noscript>
-          <div className="bg-[#0A0A0A] text-white font-sans py-10 px-5 min-h-screen flex flex-col items-center justify-center text-center">
-            <h1 className="text-[#FFDA03] text-5xl font-extrabold mb-4">NIRA6</h1>
-            <p className="text-[#cccccc] text-lg max-w-[600px] leading-relaxed mb-6">
-              India&apos;s premium recommerce platform for creators. Buy, sell, rent, and repair cameras, drones, lenses, and creator equipment at the best prices.
-            </p>
-            <a href="/auth/login" className="inline-block py-3.5 px-8 bg-[#FFDA03] text-[#0A0A0A] font-bold no-underline rounded-lg text-sm uppercase tracking-wider">
-              Join the Waitlist
-            </a>
+          <div className="p-8 text-center font-sans bg-[#0A0A0A] text-white min-h-screen flex flex-col items-center justify-center">
+            <h1 className="text-[#FFDA03] text-[3rem] font-black mb-4 tracking-[0.1em]">NIRA6</h1>
+            <p className="text-[#cccccc] text-lg">NIRA6 requires JavaScript to run. Please enable JavaScript in your browser.</p>
           </div>
         </noscript>
 

@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import User from '@/models/User';
-import { generateToken } from '@/lib/auth/auth';
+import { generateToken, generateRefreshToken } from '@/lib/auth/auth';
+import RefreshToken from '@/models/RefreshToken';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { sanitizeEmail } from '@/lib/sanitize';
+import NotedEmail from '@/models/NotedEmail';
 
 export async function POST(req: Request) {
   try {
@@ -45,21 +47,45 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'User already exists' }, { status: 400 });
       }
 
-      const user = await User.create({ name: name.trim(), email: sanitizedEmail, password, role, phone: phone || undefined });
+      const user = await User.create({
+        name: name.trim(),
+        email: sanitizedEmail,
+        password,
+        role,
+        phone: phone || undefined,
+        emailNotedForContinue: true
+      });
 
       if (user) {
+        // Note the email in the NotedEmail collection
+        await NotedEmail.findOneAndUpdate(
+          { email: sanitizedEmail },
+          { email: sanitizedEmail },
+          { upsert: true }
+        );
+        const accessToken = generateToken(user._id.toString());
+        const refreshToken = generateRefreshToken(user._id.toString());
+
+        await RefreshToken.create({
+          token: refreshToken,
+          userId: user._id,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        });
+
         return NextResponse.json({
           _id: user._id,
           name: user.name,
           email: user.email,
           role: user.role,
-          token: generateToken(user._id.toString()),
+          token: accessToken,
+          refreshToken,
         }, { status: 201 });
       } else {
         return NextResponse.json({ message: 'Invalid user data' }, { status: 400 });
       }
-    } catch (dbErr: any) {
-      console.error("Database connection failed in register:", dbErr.message);
+    } catch (dbErr) {
+      const error = dbErr as Error;
+      console.error("Database connection failed in register:", error.message);
       return NextResponse.json({ message: 'Database connection failed' }, { status: 500 });
     }
   } catch (err) {

@@ -20,6 +20,13 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (isAuthenticated && user) {
+      // Note the email since they signed up manually and provided details
+      fetch('/api/auth/note-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email })
+      }).catch(err => console.error("Failed to note email on signup redirect:", err));
+
       if (user.role === 'creator') {
         router.push('/auth/creator/onboarding');
       } else {

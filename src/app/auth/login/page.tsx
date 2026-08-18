@@ -7,10 +7,11 @@ import Link from 'next/link';
 import { 
   ShoppingCart, Package, Wrench, Video, ArrowRight, ArrowLeft, 
   Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, 
-  ShieldCheck, ShieldAlert, Loader2, KeyRound, User, Phone, MapPin, Building, Star, Sparkles, Shield, Camera, Award
+  ShieldCheck, ShieldAlert, Loader2, KeyRound, User, Phone, MapPin, Building, Sparkles, Shield, Camera, Award
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { setKeepLoggedIn } from '@/store/authSlice';
+import { setKeepLoggedIn, setAuth } from '@/store/authSlice';
+import { useAppDispatch } from '@/store';
 
 type Role = 'buyer' | 'seller' | 'service_pro' | 'creator' | 'rental';
 type Step = 'role' | 'method' | 'form' | '2fa' | 'success';
@@ -65,6 +66,8 @@ function AuthContent() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams ? searchParams.get('redirect') : null;
   const supabase = createClient();
+  const dispatch = useAppDispatch();
+  const [otpUserId, setOtpUserId] = useState('');
 
   // Navigation State
   const [step, setStep] = useState<Step>('role');
@@ -199,25 +202,91 @@ function AuthContent() {
         return;
       }
 
+      // Note the email since they signed up manually and provided details
+      try {
+        await fetch('/api/auth/note-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email })
+        });
+      } catch (err) {
+        console.error("Failed to note email on signup:", err);
+      }
+
       setSuccessMsg("Check your inbox to verify your email.");
       setStep('success');
 
     } else {
       // Login Mode
+      // Check if email is noted for Continue with Email
+      try {
+        const checkRes = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email })
+        });
+        const checkData = await checkRes.json();
+        if (!checkRes.ok || !checkData.allowed) {
+          setError(checkData.message || "This email is not registered. Please sign up and provide details manually first.");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Email verification check failed:", err);
+        setError("Unable to verify account registration at this time. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       if (otpLogin) {
         if (!otpSent) {
-          setOtpSent(true);
-          setSuccessMsg(`OTP sent to ${formData.email}`);
+          try {
+            const res = await fetch('/api/auth/send-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: formData.email })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              setError(data.message || 'Failed to send OTP.');
+              setLoading(false);
+              return;
+            }
+            setOtpUserId(data.userId);
+            setOtpSent(true);
+            setSuccessMsg(data.message || `OTP sent to ${formData.email}`);
+          } catch (err: unknown) {
+            const error = err as Error;
+            setError(error.message || 'Failed to request OTP code.');
+          }
           setLoading(false);
           return;
         } else {
-          if (otp !== '123456') { // Mock OTP validation
-            setError("Invalid OTP. Try 123456.");
-            setLoading(false);
-            return;
+          try {
+            const res = await fetch('/api/auth/verify-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: otpUserId, code: otp })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              setError(data.message || 'Invalid OTP.');
+              setLoading(false);
+              return;
+            }
+
+            setKeepLoggedIn(keepLoggedIn);
+
+            if (data && data._id) {
+              dispatch(setAuth(data));
+            }
+
+            setSuccessMsg("Verification successful.");
+            setStep('success');
+          } catch (err: unknown) {
+            const error = err as Error;
+            setError(error.message || 'OTP verification failed.');
           }
-          setSuccessMsg("Phone verification successful.");
-          setStep('2fa');
           setLoading(false);
           return;
         }
@@ -272,7 +341,7 @@ function AuthContent() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?role=${selectedRole}`,
         queryParams: { role: selectedRole }
       }
     });

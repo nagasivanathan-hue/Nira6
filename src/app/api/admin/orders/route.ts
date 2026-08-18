@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const skip = (page - 1) * limit;
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (status) {
       query.orderStatus = status;

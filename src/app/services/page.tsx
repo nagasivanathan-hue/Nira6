@@ -101,19 +101,19 @@ export default function ServicesPage() {
 
         {/* Advanced Filters */}
         <div className="bg-white p-4 rounded-xl border border-nira-gray-dark mb-8 flex flex-wrap gap-4 items-center shadow-sm">
-          <div className="flex-1 min-w-[150px]">
+          <div className="flex-1 min-w-0 sm:min-w-[150px]">
             <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Location</label>
             <input type="text" placeholder="e.g. Mumbai" value={filters.location} onChange={e => setFilters({...filters, location: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
           </div>
-          <div className="flex-1 min-w-[150px]">
+          <div className="flex-1 min-w-0 sm:min-w-[150px]">
             <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Min Price (₹)</label>
             <input type="number" placeholder="0" value={filters.minPrice} onChange={e => setFilters({...filters, minPrice: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
           </div>
-          <div className="flex-1 min-w-[150px]">
+          <div className="flex-1 min-w-0 sm:min-w-[150px]">
             <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Max Price (₹)</label>
             <input type="number" placeholder="Max" value={filters.maxPrice} onChange={e => setFilters({...filters, maxPrice: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0" />
           </div>
-          <div className="flex-1 min-w-[150px]">
+          <div className="flex-1 min-w-0 sm:min-w-[150px]">
             <label className="block text-[10px] font-bold text-nira-text-secondary uppercase mb-1">Min Rating</label>
             <select aria-label="Select option" title="Select option" value={filters.rating} onChange={e => setFilters({...filters, rating: e.target.value})} className="w-full px-3 py-2 bg-nira-gray rounded-lg text-xs border-transparent focus:border-nira-yellow focus:ring-0">
               <option value="">Any Rating</option>

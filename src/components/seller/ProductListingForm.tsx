@@ -3,6 +3,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Plus, Image as ImageIcon, UploadCloud, X, CheckCircle, Calculator, Info } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '@/types';
+import api from '@/services/api';
 
 const generateId = () => `prod-sell-${Date.now()}`;
 const generateSku = () => `SKU-${Date.now().toString().slice(-6)}`;
@@ -76,7 +77,7 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !isOriginalValid) {
       alert('Please fill out all required fields (Name and Original Price).');
@@ -85,33 +86,64 @@ export default function ProductListingForm({ onSuccess, sellerName }: ProductLis
     
     const finalImage = images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1495707902641-75cac588d2e9?w=500&auto=format&fit=crop&q=60';
     
-    const created: Product = {
-      id: generateId(),
-      name: formData.name,
-      brand: formData.brand || 'Generic',
-      category: formData.category,
-      price: suggestedPrice, // Auto-applied CRO pricing
-      originalPrice: parsedOriginal,
-      discount: parsedOriginal - suggestedPrice,
-      image: finalImage,
-      images: images.length > 0 ? images : [finalImage],
-      condition: formData.condition as 'Like New' | 'Excellent' | 'Good' | 'Fair',
-      grade: formData.grade as 'A+' | 'A' | 'B+' | 'B' | 'C',
-      warranty: '6 Months Seller Warranty',
-      rating: 5.0,
-      reviewCount: 0,
-      sellerName: sellerName,
-      sellerRating: 5.0,
-      specs: { 'SKU': formData.sku || generateSku() },
-      description: formData.description,
-      emiAvailable: suggestedPrice > 10000,
-      inStock: Number(formData.stock) > 0,
-      featured: false,
-      trending: true,
-      createdAt: new Date().toISOString()
-    };
+    let mappedGrade = 'Excellent';
+    if (formData.condition.includes('Like New') || formData.condition.includes('Mint')) {
+      mappedGrade = 'Like New';
+    } else if (formData.condition.includes('Excellent')) {
+      mappedGrade = 'Excellent';
+    } else if (formData.condition.includes('Good')) {
+      mappedGrade = 'Good';
+    } else if (formData.condition.includes('Needs Repair') || formData.condition.includes('Fair')) {
+      mappedGrade = 'Fair';
+    }
 
-    onSuccess(created);
+    try {
+      const res = await api.post('/products', {
+        name: formData.name,
+        brand: formData.brand || 'Generic',
+        category: formData.category.toLowerCase(),
+        price: suggestedPrice,
+        originalPrice: parsedOriginal,
+        grade: mappedGrade,
+        description: formData.description || '',
+        image: finalImage,
+        specs: { 'SKU': formData.sku || generateSku() }
+      });
+
+      if (res.status === 201 || res.status === 200) {
+        const saved = res.data;
+        const formatted: Product = {
+          id: saved._id || saved.id,
+          name: saved.name,
+          brand: saved.brand,
+          category: saved.category,
+          price: saved.price,
+          originalPrice: saved.originalPrice,
+          discount: saved.discount,
+          image: saved.image,
+          images: saved.images || [saved.image],
+          condition: saved.grade,
+          grade: saved.grade === 'Like New' ? 'A+' : saved.grade === 'Excellent' ? 'A' : saved.grade === 'Good' ? 'B' : 'C',
+          warranty: '6 Months Seller Warranty',
+          rating: saved.rating || 5.0,
+          reviewCount: saved.reviewCount || 0,
+          sellerName: saved.seller || sellerName,
+          sellerRating: 5.0,
+          specs: saved.specs || {},
+          description: saved.description || '',
+          emiAvailable: saved.price > 10000,
+          inStock: saved.stock > 0,
+          featured: false,
+          trending: true,
+          createdAt: saved.createdAt || new Date().toISOString()
+        };
+        onSuccess(formatted);
+        alert('Product listed successfully!');
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || err.message || 'Failed to list product to marketplace.');
+    }
     
     // Reset Form
     setFormData({

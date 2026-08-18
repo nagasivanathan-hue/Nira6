@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db/mongodb';
 import User from '@/models/User';
 import OTP from '@/models/OTP';
-import { generateToken } from '@/lib/auth/auth';
+import { generateToken, generateRefreshToken } from '@/lib/auth/auth';
+import RefreshToken from '@/models/RefreshToken';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 /* ═══════════════════════════════════════════════════════════
@@ -53,12 +54,22 @@ export async function POST(req: Request) {
         );
       }
 
+      const accessToken = generateToken(user._id.toString());
+      const refreshToken = generateRefreshToken(user._id.toString());
+
+      await RefreshToken.create({
+        token: refreshToken,
+        userId: user._id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      });
+
       return NextResponse.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id.toString()),
+        token: accessToken,
+        refreshToken,
       });
     }
     // ----------------------------------------
@@ -121,12 +132,22 @@ export async function POST(req: Request) {
       );
     }
 
+    const accessToken = generateToken(user._id.toString());
+    const refreshToken = generateRefreshToken(user._id.toString());
+
+    await RefreshToken.create({
+      token: refreshToken,
+      userId: user._id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    });
+
     return NextResponse.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id.toString()),
+      token: accessToken,
+      refreshToken,
     });
   } catch (err) {
     const error = err as Error;

@@ -116,6 +116,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   // Image Magnifier state
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 });
+  const [activeImage, setActiveImage] = useState<string>('');
   const imgContainerRef = useRef<HTMLDivElement>(null);
 
   // Color swatch selection
@@ -145,6 +146,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   // Load reviews, update LocalStorage trackers, and initialize Q&A / Bundles
   useEffect(() => {
     if (product) {
+      Promise.resolve().then(() => setActiveImage(product.image));
       // 1. Fetch backend reviews
       Promise.resolve().then(() => setReviewsLoading(true));
       api.get(`/products/${product.id}/reviews`)
@@ -392,7 +394,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             >
               <div className="absolute inset-0 p-8 flex items-center justify-center">
                 <Image 
-                  src={product.image} 
+                  src={activeImage || product.image} 
                   alt={product.name} 
                   fill 
                   className="object-contain p-6 drop-shadow-2xl hover:scale-[1.03] transition-transform duration-500 ease-out" 
@@ -412,7 +414,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                       el.style.left = `${magnifierPos.x}%`;
                       el.style.top = `${magnifierPos.y}%`;
                       el.style.transform = 'translate(-50%, -50%)';
-                      el.style.backgroundImage = `url(${product.image})`;
+                      el.style.backgroundImage = `url(${activeImage || product.image})`;
                       el.style.backgroundSize = '400%';
                       el.style.backgroundPosition = `${magnifierPos.x}% ${magnifierPos.y}%`;
                       el.style.backgroundRepeat = 'no-repeat';
@@ -426,6 +428,34 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <Eye className="w-3 h-3" /> Hover to zoom
               </div>
             </div>
+
+            {/* Image Gallery Thumbnails */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
+                {product.images.map((img: string, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(img)}
+                    title={`View gallery image ${idx + 1}`}
+                    aria-label={`View gallery image ${idx + 1}`}
+                    className={`relative w-20 h-20 bg-gradient-to-br from-[#FAFCFF] via-[#F4F6FB] to-[#EBEDF2] rounded-xl overflow-hidden shadow-sm border transition-all cursor-pointer p-1 flex items-center justify-center ${
+                      (activeImage || product.image) === img 
+                        ? 'border-nira-yellow ring-2 ring-nira-yellow/30' 
+                        : 'border-nira-gray-dark hover:border-nira-yellow/50'
+                    }`}
+                  >
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={img} 
+                        alt={`${product.name} Gallery ${idx + 1}`} 
+                        fill 
+                        className="object-contain"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Urgency Triggers */}
             <div className="flex items-center gap-4 mb-4">

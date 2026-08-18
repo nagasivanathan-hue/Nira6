@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { 
   ShieldCheck, MapPin, BarChart3, 
@@ -10,6 +10,7 @@ import {
 import { formatPrice } from '@/lib/utils';
 import { Product } from '@/types';
 import ProductListingForm from '@/components/seller/ProductListingForm';
+import api from '@/services/api';
 
 // Mock Initial Seller Data for Dashboard Simulation
 const initialProducts: Product[] = [
@@ -217,6 +218,32 @@ export default function SellerPartnerPage() {
   // Bulk Product Spreadsheet Uploader Simulator
   const [bulkProgress, setBulkProgress] = useState(false);
 
+  useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const res = await api.get('/users/wallet');
+        if (res.data) {
+          setBalance(res.data.walletBalance || 0);
+          if (res.data.transactions && res.data.transactions.length > 0) {
+            const mappedPayouts = res.data.transactions
+              .filter((tx: { type: string, amount: number, date: string, status: string, description: string, _id: string }) => tx.type === 'debit')
+              .map((tx: { type: string, amount: number, date: string, status: string, description: string, _id: string }) => ({
+                id: tx._id || `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+                amount: tx.amount,
+                date: new Date(tx.date).toISOString().slice(0, 10),
+                status: tx.status || 'Completed',
+                channel: tx.description || 'Withdrawal Payout'
+              }));
+            setPayoutLogs(mappedPayouts);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch wallet info:', err);
+      }
+    };
+    fetchWallet();
+  }, []);
+
   // Auto Onboarding demo bypass
   const handleBypassDemo = () => {
     setRegForm({
@@ -231,23 +258,52 @@ export default function SellerPartnerPage() {
     setIsOnboarded(true);
   };
 
-  const handleOnboardSubmit = (e: React.FormEvent) => {
+  const handleOnboardSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (onboardStep < 3) {
       setOnboardStep(onboardStep + 1);
     } else {
-      setKycStatus('Verified');
-      setIsBadgeGranted(true);
-      setIsOnboarded(true);
-      
-      // Send verified push event
-      window.dispatchEvent(new CustomEvent('nira_notification', {
-        detail: {
-          type: 'push',
-          title: '🎖️ NIRA6 Seller Verified!',
-          content: `Welcome aboard "${regForm.businessName}"! KYC verified & Madurai geolocations active.`
+      try {
+        const onboardPayload = {
+          fullName: regForm.fullName || 'Siva Nagasivanathan',
+          businessName: regForm.businessName,
+          phone: regForm.phone,
+          primaryServiceCategory: partnerRole === 'seller' ? 'Equipment Recommerce' : 'Video Editor',
+          serviceTitle: partnerRole === 'seller' ? 'Verified Gear Merchant' : 'Cinematic Video Editor',
+          bio: 'Verified partner listed under NIRA6 Studio alliance.',
+          city: 'Madurai',
+          state: 'Tamil Nadu',
+          country: 'India',
+          startingPrice: 1500,
+          gstNumber: regForm.gstin,
+          govtIdUrl: regForm.govtId,
+          selfieUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+          acceptTerms: true,
+          yearsOfExperience: 5,
+          instagram: 'nira6studio',
+          youtube: 'nira6studio',
+          website: 'nira6.in'
+        };
+
+        const res = await api.post('/creators/onboarding', onboardPayload);
+        if (res.status === 201 || res.status === 200) {
+          setKycStatus('Verified');
+          setIsBadgeGranted(true);
+          setIsOnboarded(true);
+
+          window.dispatchEvent(new CustomEvent('nira_notification', {
+            detail: {
+              type: 'push',
+              title: '🎖️ NIRA6 Seller Verified!',
+              content: `Welcome aboard "${regForm.businessName}"! KYC verified & Madurai geolocations active.`
+            }
+          }));
         }
-      }));
+      } catch (err: unknown) {
+        console.error(err);
+        const error = err as { response?: { data?: { message?: string } }, message?: string };
+        alert(error.response?.data?.message || error.message || 'Onboarding failed.');
+      }
     }
   };
 
@@ -326,33 +382,52 @@ export default function SellerPartnerPage() {
   };
 
   // Withdraw simulation
-  const handleWithdrawal = (e: React.FormEvent) => {
+  const handleWithdrawal = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = Number(withdrawAmt);
     if (isNaN(amt) || amt <= 0 || amt > balance) {
       alert('Please enter a valid payout withdrawal amount within your balance limits.');
       return;
     }
-    setBalance(balance - amt);
-    const newLog = {
-      id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
-      amount: amt,
-      date: new Date().toISOString().slice(0, 10),
-      status: 'Processing',
-      channel: regForm.upiId ? 'UPI Wallet Transfer' : 'Direct Bank Payout'
-    };
-    setPayoutLogs([newLog, ...payoutLogs]);
-    setWithdrawAmt('');
     
-    // Notification dispatch
-    window.dispatchEvent(new CustomEvent('nira_notification', {
-      detail: {
-        type: 'push',
-        title: '💸 Payout Withdrawal Initiated',
-        content: `₹${amt} requested securely to UPI: ${regForm.upiId}. Instant verification pending.`
+    try {
+      const channel = regForm.upiId ? `UPI Wallet Transfer (${regForm.upiId})` : 'Direct Bank Payout';
+      const res = await api.post('/users/wallet', {
+        action: 'withdraw',
+        amount: amt,
+        description: channel
+      });
+
+      if (res.data && res.data.success) {
+        setBalance(res.data.walletBalance || 0);
+        if (res.data.transactions) {
+          const mappedPayouts = res.data.transactions
+            .filter((tx: { type: string, amount: number, date: string, status: string, description: string, _id: string }) => tx.type === 'debit')
+            .map((tx: { type: string, amount: number, date: string, status: string, description: string, _id: string }) => ({
+              id: tx._id || `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+              amount: tx.amount,
+              date: new Date(tx.date).toISOString().slice(0, 10),
+              status: tx.status || 'Completed',
+              channel: tx.description || 'Withdrawal Payout'
+            }));
+          setPayoutLogs(mappedPayouts);
+        }
+        setWithdrawAmt('');
+        
+        window.dispatchEvent(new CustomEvent('nira_notification', {
+          detail: {
+            type: 'push',
+            title: '💸 Payout Withdrawal Initiated',
+            content: `₹${amt} requested securely to UPI: ${regForm.upiId}. Instant verification pending.`
+          }
+        }));
+        alert(`Withdrawal request processed securely. UPI Ref Transmitting...`);
       }
-    }));
-    alert(`Withdrawal request processed securely. UPI Ref Transmitting...`);
+    } catch (err: unknown) {
+      console.error(err);
+      const error = err as { response?: { data?: { message?: string } }, message?: string };
+      alert(error.response?.data?.message || error.message || 'Withdrawal failed.');
+    }
   };
 
   // Chat message simulator reply

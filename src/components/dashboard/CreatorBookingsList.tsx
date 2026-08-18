@@ -33,7 +33,7 @@ export default function CreatorBookingsList({ initialBookings }: { initialBookin
     try {
       setLoadingId(id);
       await api.patch(`/bookings/${id}/status`, { status: newStatus });
-      setBookings(prev => prev.map(b => b._id === id ? { ...b, status: newStatus as any } : b));
+      setBookings(prev => prev.map(b => b._id === id ? { ...b, status: newStatus as BookingItem['status'] } : b));
       
       // Emit simulated notification for the action
       window.dispatchEvent(new CustomEvent('nira_notification', {
@@ -43,7 +43,7 @@ export default function CreatorBookingsList({ initialBookings }: { initialBookin
           content: newStatus === 'confirmed' ? 'Client has been notified. Time to get ready!' : 'Client refunded and notified.'
         }
       }));
-    } catch (err) {
+    } catch {
       alert('Failed to update booking status.');
     } finally {
       setLoadingId(null);

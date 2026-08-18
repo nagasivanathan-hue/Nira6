@@ -38,7 +38,7 @@ export default function BarterInbox() {
         if (res.ok) {
           const data = await res.json();
           setListings(
-            data.map((b: any) => ({
+            data.map((b: { id?: string, _id?: string, [key: string]: unknown }) => ({
               ...b,
               id: b.id || b._id || '',
             }))

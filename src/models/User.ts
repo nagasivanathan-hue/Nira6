@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   adminApprovedByOwner: { type: Boolean, default: false },
+  emailNotedForContinue: { type: Boolean, default: false },
   failedLoginAttempts: { type: Number, default: 0 },
   lockoutUntil: { type: Date },
   twoFactorSecret: { type: String },

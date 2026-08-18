@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     const category = searchParams.get('category') || '';
     const status = searchParams.get('status') || 'all'; // all, active, archived
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (category) {
       query.category = category;
@@ -39,8 +39,8 @@ export async function GET(req: Request) {
 
     const products = await Product.find(query).sort({ createdAt: -1 }).lean();
     return NextResponse.json(products);
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
     );
 
     return NextResponse.json(savedProduct, { status: 201 });
-  } catch (err: any) {
-    return NextResponse.json({ message: err.message || 'Internal Server Error' }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ message: (err as Error).message || 'Internal Server Error' }, { status: 500 });
   }
 }

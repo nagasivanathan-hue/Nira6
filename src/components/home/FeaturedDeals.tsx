@@ -26,7 +26,7 @@ export default function FeaturedDeals() {
   if (loading && featuredProducts.length === 0) return null;
 
   return (
-    <div className="mb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 group relative pt-12">
+    <div className="mb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 group relative pt-12 overflow-hidden">
       <div className="flex items-center justify-between mb-8">
         <div>
           <span className="text-[11px] uppercase font-mono tracking-widest text-nira-yellow block mb-2 flex items-center gap-1.5">

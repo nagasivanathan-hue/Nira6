@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     const cleanVerification = verification.trim().toLowerCase();
 
     // Query order by Order ID, AWB (trackingNumber), or database _id
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: any = {
       $or: [
         { orderId: cleanTrackingId },
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
     }
 
     // Verify ownership/guest authorization (via email or phone number)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const orderUser = order.user as any;
     const matchEmail = (order.guestEmail || orderUser?.email || '').toLowerCase();
     const matchPhone = (order.guestPhone || order.shippingAddress?.phone || orderUser?.phone || '').toLowerCase();

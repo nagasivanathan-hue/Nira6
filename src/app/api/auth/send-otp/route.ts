@@ -5,6 +5,7 @@ import OTP from '@/models/OTP';
 import { generateOTP, sendEmailOTP, sendSmsOTP } from '@/lib/otp';
 import { sanitizeEmail } from '@/lib/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
+import NotedEmail from '@/models/NotedEmail';
 
 /* ═══════════════════════════════════════════════════════════
    NIRA6 — Send OTP API  (/api/auth/send-otp)
@@ -32,9 +33,9 @@ export async function POST(req: Request) {
 
     const { email, password } = await req.json();
 
-    if (!email || !password) {
+    if (!email) {
       return NextResponse.json(
-        { message: 'Email and password are required.' },
+        { message: 'Email is required.' },
         { status: 400 }
       );
     }
@@ -42,13 +43,38 @@ export async function POST(req: Request) {
     const sanitizedEmail = sanitizeEmail(email);
     await dbConnect();
 
-    // Verify password first
-    const user = await User.findOne({ email: sanitizedEmail }).select('+password');
-    if (!user || !(await user.comparePassword(password))) {
-      return NextResponse.json(
-        { message: 'Invalid email or password.' },
-        { status: 401 }
-      );
+    // Check if the email is noted for Continue with Email
+    const noted = await NotedEmail.findOne({ email: sanitizedEmail });
+    if (!noted) {
+      const userObj = await User.findOne({ email: sanitizedEmail });
+      if (!userObj || !userObj.emailNotedForContinue) {
+        return NextResponse.json({
+          message: 'This email is not registered or did not complete manual registration. Please sign up and provide details manually first.'
+        }, { status: 403 });
+      }
+    }
+
+    let user;
+    if (password) {
+      // Verify password first
+      user = await User.findOne({ email: sanitizedEmail }).select('+password');
+      if (!user || !(await user.comparePassword(password))) {
+        return NextResponse.json(
+          { message: 'Invalid email or password.' },
+          { status: 401 }
+        );
+      }
+    } else {
+      // Passwordless OTP - auto-register if user doesn't exist
+      user = await User.findOne({ email: sanitizedEmail });
+      if (!user) {
+        user = await User.create({
+          name: sanitizedEmail.split('@')[0],
+          email: sanitizedEmail,
+          password: Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2),
+          role: 'user'
+        });
+      }
     }
 
     // Invalidate any existing OTPs for this user

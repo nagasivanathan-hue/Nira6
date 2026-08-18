@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ForgeProduct {
+  id                 String   @id @default(cuid())
+  name               String
+  slug               String   @unique
+  description        String
+  category           String
+  price              Float
+  originalPrice      Float?
+  images             String[]
+  printTimeMinutes   Int
+  weightGrams        Float
+  dimensions         String
+  defaultMaterial    String   @default("PLA")
+  availableMaterials String[]
+  availableColors    String[]
+  inStock            Boolean  @default(true)
+  featured           Boolean  @default(false)
+  rating             Float    @default(4.8)
+  reviewCount        Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ForgePrinter {
+  id                 String   @id @default(cuid())
+  name               String
+  model              String
+  buildVolumeX       Float
+  buildVolumeY       Float
+  buildVolumeZ       Float
+  nozzleDiameter     Float    @default(0.4)
+  maxPrintSpeed      Float    @default(500)
+  hourlyCost         Float    @default(4.5)
+  status             String   @default("IDLE") // IDLE, PRINTING, MAINTENANCE, OFFLINE
+  currentOrderNumber String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ForgeFilament {
+  id                     String   @id @default(cuid())
+  material               String   // PLA, PETG, ABS, TPU
+  color                  String   // e.g. Matte Black
+  colorHex               String   // e.g. #1e1e1e
+  pricePerKg             Float    @default(22.0)
+  stockGrams             Float    @default(1000.0)
+  lowStockThresholdGrams Float    @default(200.0)
+  density                Float    @default(1.24)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model ForgeCustomOrder {
+  id               String   @id @default(cuid())
+  userId           String
+  orderId          String?
+  fileUrl          String
+  fileName         String
+  fileSize         Int
+  volumeCm3        Float?
+  surfaceAreaCm2   Float?
+  boundingBoxX     Float?
+  boundingBoxY     Float?
+  boundingBoxZ     Float?
+  material         String   @default("PLA")
+  color            String   @default("Black")
+  layerHeight      Float    @default(0.2)
+  infill           Int      @default(20)
+  finishing        String   @default("Standard Cleaned")
+  quantity         Int      @default(1)
+  estimatedPrice   Float
+  priceBreakdown   String   // Stored as JSON string
+  status           String   @default("DRAFT") // DRAFT, PENDING_REVIEW, QUEUED, PRINTING, POST_PROCESSING, COMPLETED, SHIPPED, CANCELLED
+  printerId        String?
+  failureReason    String?
+  reprintCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ForgeDesignRequest {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  description     String
+  referenceImages String[]
+  dimensions      String?
+  quantity        Int      @default(1)
+  targetMaterial  String?
+  status          String   @default("RECEIVED") // RECEIVED, UNDER_REVIEW, QUOTE_GENERATED, ACCEPTED, IN_PROGRESS, COMPLETED, DECLINED
+  quotedPrice     Float?
+  designerNotes   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ForgeModel {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  creatorId       String?
+  fileUrl         String
+  previewImageUrl String
+  price           Float    @default(0)
+  license         String   @default("Personal Use")
+  downloadsCount  Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ForgeReview {
+  id            String   @id @default(cuid())
+  userId        String
+  userName      String
+  userAvatar    String?
+  productId     String?
+  customOrderId String?
+  rating        Int
+  comment       String
+  images        String[]
+  createdAt     DateTime @default(now())
+}
+
+model ForgeSavedConfig {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  fileName       String
+  fileUrl        String
+  configJson     String   // Stored as JSON string
+  estimatedPrice Float
+  createdAt      DateTime @default(now())
+}

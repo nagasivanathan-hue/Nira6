@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   ShieldCheck, ShieldAlert, Check, X, CreditCard, 
-  ArrowLeft, Loader2, TrendingUp, Package, Box, MapPin, 
+  Loader2, TrendingUp, Package, Box, MapPin, 
   AlertTriangle, RefreshCw, BarChart3, Layers, ClipboardList,
-  Search, CornerDownLeft, History, FileText, Eye,
+  Search, CornerDownLeft, History, FileText,
   Menu, Sun, Moon, Bell, Settings, Activity, Plus, Edit,
   Trash2, Copy, Download, Upload, ShoppingBag, Users
 } from 'lucide-react';
@@ -36,6 +36,58 @@ interface Booking {
   totalAmount: number;
   advancePaid: number;
   escrowStatus: string;
+}
+
+interface AdminProduct {
+  _id?: string;
+  sku?: string;
+  name: string;
+  brand: string;
+  price: number | string;
+  category: string;
+  image: string;
+  grade: string;
+  conditionScore?: number | string;
+  featured?: boolean;
+  trending?: boolean;
+  originalPrice?: number | string;
+  description?: string;
+  warranty?: string;
+  stock?: number | string;
+  tags?: string[] | string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string[] | string;
+  variants?: Record<string, unknown>[];
+}
+
+interface AdminCustomer {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  ordersCount?: number;
+  totalSpent?: number;
+  averageOrderValue?: number;
+  adminApprovedByOwner?: boolean;
+}
+
+interface AdminActivityLog {
+  _id: string;
+  timestamp: string;
+  adminEmail: string;
+  action: string;
+  ipAddress: string;
+  device: string;
+  details: string;
+}
+
+interface DashboardNotification {
+  id: number;
+  title: string;
+  message: string;
+  type: string;
+  time: string;
 }
 
 interface OrderItem {
@@ -146,7 +198,7 @@ export default function AdminDashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Products Management state
-  const [adminProducts, setAdminProducts] = useState<any[]>([]);
+  const [adminProducts, setAdminProducts] = useState<AdminProduct[]>([]);
   const [productForm, setProductForm] = useState({
     _id: '',
     name: '',
@@ -166,24 +218,22 @@ export default function AdminDashboardPage() {
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
-    variants: [] as any[]
+    variants: [] as Record<string, unknown>[]
   });
-  const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
   const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [productCategoryFilter, setProductCategoryFilter] = useState('all');
-  const [productStatusFilter, setProductStatusFilter] = useState('all'); // all, active, archived
 
   // Customers Management state
-  const [customers, setCustomers] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<AdminCustomer[]>([]);
   const [customerSearch, setCustomerSearch] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
 
   // Admin Activity Logs state
-  const [adminActivityLogs, setAdminActivityLogs] = useState<any[]>([]);
+  const [adminActivityLogs, setAdminActivityLogs] = useState<AdminActivityLog[]>([]);
 
   // Notifications state
-  const [notifications, setNotifications] = useState<any[]>([
+  const [notifications, setNotifications] = useState<DashboardNotification[]>([
     { id: 1, title: '📦 New Order Placed', message: 'Order NIRA6-20260612-0042 received.', type: 'info', time: '5m ago' },
     { id: 2, title: '⚠️ Low Stock Alert', message: 'Sony Alpha A7 III is down to 1 unit.', type: 'warning', time: '12m ago' },
     { id: 3, title: '↩️ Return Request', message: 'Customer requested return for INV-20260611-0023.', type: 'refund', time: '40m ago' }
@@ -552,8 +602,9 @@ export default function AdminDashboardPage() {
           content: `Return status updated to: ${res.data.returnRequest?.status || action}.`
         }
       }));
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Moderation action failed.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Moderation action failed.');
     }
   };
 
@@ -580,7 +631,7 @@ export default function AdminDashboardPage() {
       }, 0);
       return () => clearTimeout(timer);
     } else {
-      setAuditLogs([]);
+      Promise.resolve().then(() => setAuditLogs([]));
     }
   }, [selectedAuditOrder]);
 
@@ -634,15 +685,16 @@ export default function AdminDashboardPage() {
       });
       setEditingProduct(null);
       fetchAdminData();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to save product.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Failed to save product.');
     } finally {
       setIsSubmittingProduct(false);
     }
   };
 
   // Duplicate product pre-fill
-  const handleDuplicateProduct = (prod: any) => {
+  const handleDuplicateProduct = (prod: AdminProduct) => {
     setProductForm({
       _id: '',
       name: `${prod.name} (Copy)`,
@@ -726,7 +778,7 @@ export default function AdminDashboardPage() {
         }
         alert(`Successfully imported ${successCount} products!`);
         fetchAdminData();
-      } catch (jsonErr) {
+      } catch {
         alert('Invalid JSON file format. Make sure it is a product details array.');
       }
     };
@@ -748,8 +800,9 @@ export default function AdminDashboardPage() {
         alert(res.data.message);
         fetchAdminData();
       }
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to toggle admin status.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      alert(error.response?.data?.message || 'Failed to toggle admin status.');
     }
   };
 
@@ -843,7 +896,7 @@ export default function AdminDashboardPage() {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveSubTab(item.id as any);
+                  setActiveSubTab(item.id as 'analytics' | 'fulfillment' | 'warehouse' | 'inventory' | 'escrow' | 'kyc' | 'returns' | 'audit' | 'products' | 'customers' | 'activity' | 'settings');
                   setSelectedFulfillmentOrder(null);
                   setWorkflowStep(0);
                 }}
@@ -987,7 +1040,7 @@ export default function AdminDashboardPage() {
             <button
               key={tab.id}
               onClick={() => {
-                setActiveSubTab(tab.id as any);
+                setActiveSubTab(tab.id as 'analytics' | 'fulfillment' | 'warehouse' | 'inventory' | 'escrow' | 'kyc' | 'returns' | 'audit' | 'products' | 'customers' | 'activity' | 'settings');
                 setSelectedFulfillmentOrder(null);
                 setWorkflowStep(0);
               }}
@@ -1133,7 +1186,7 @@ export default function AdminDashboardPage() {
                       <span>5,389 sessions</span>
                     </div>
                     <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
-                      <div className="w-[12.8%] h-full bg-indigo-500" style={{ width: '12.8%' }} />
+                      <div className="w-[12.8%] h-full bg-indigo-500" />
                     </div>
                   </div>
                   <div>
@@ -1142,7 +1195,7 @@ export default function AdminDashboardPage() {
                       <span>3,452 sessions</span>
                     </div>
                     <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
-                      <div className="w-[8.2%] h-full bg-amber-500" style={{ width: '8.2%' }} />
+                      <div className="w-[8.2%] h-full bg-amber-500" />
                     </div>
                   </div>
                   <div>
@@ -1151,7 +1204,7 @@ export default function AdminDashboardPage() {
                       <span>{orders.length} orders</span>
                     </div>
                     <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
-                      <div className="w-[3.4%] h-full bg-emerald-500" style={{ width: '3.4%' }} />
+                      <div className="w-[3.4%] h-full bg-emerald-500" />
                     </div>
                   </div>
                 </div>
@@ -1202,7 +1255,12 @@ export default function AdminDashboardPage() {
                         <span>{courier.time}</span>
                       </div>
                       <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden mt-1">
-                        <div className="h-full bg-nira-yellow" style={{ width: `${courier.pct}%` }} />
+                        <div className={`h-full bg-nira-yellow ${
+                          courier.pct === 99 ? 'w-[99%]' :
+                          courier.pct === 85 ? 'w-[85%]' :
+                          courier.pct === 80 ? 'w-[80%]' :
+                          courier.pct === 60 ? 'w-[60%]' : 'w-0'
+                        }`} />
                       </div>
                     </div>
                   ))}
@@ -1937,7 +1995,6 @@ export default function AdminDashboardPage() {
                               <div className="flex flex-wrap gap-2">
                                 {req.photos.map((url, i) => (
                                   <a key={i} href={url} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-lg border border-nira-gray-dark overflow-hidden hover:opacity-80 transition-opacity bg-white">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={url} alt="Return snap" className="w-full h-full object-cover" />
                                   </a>
                                 ))}
@@ -2476,7 +2533,7 @@ export default function AdminDashboardPage() {
                                 onClick={() => {
                                   setEditingProduct(prod);
                                   setProductForm({
-                                    _id: prod._id,
+                                    _id: prod._id || '',
                                     name: prod.name,
                                     brand: prod.brand,
                                     price: String(prod.price),
@@ -2511,7 +2568,7 @@ export default function AdminDashboardPage() {
                                 <Copy className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => handleArchiveProduct(prod._id)}
+                                onClick={() => handleArchiveProduct(prod._id || '')}
                                 className="p-1.5 bg-rose-600/10 hover:bg-rose-600/25 text-rose-500 rounded-lg"
                                 title="Archive/Delete Product"
                               >
@@ -2582,7 +2639,7 @@ export default function AdminDashboardPage() {
                           {currentUser?.email === 'nira6studio@gmail.com' && (
                             <td className="p-4 text-center">
                               <button
-                                onClick={() => handleToggleAdminPermission(cust._id, cust.role, cust.adminApprovedByOwner)}
+                                onClick={() => handleToggleAdminPermission(cust._id, cust.role, cust.adminApprovedByOwner || false)}
                                 className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
                                   cust.adminApprovedByOwner 
                                     ? 'bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white' 

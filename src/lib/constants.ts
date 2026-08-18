@@ -7,6 +7,7 @@ export const TAGLINE = 'EVERYTHING FOR A CREATOR IN ONE PLACE.';
 export const SUB_TAGLINE = 'Buy. Sell. Rent. Repair. Create.';
 
 export const NAV_LINKS = [
+  { label: 'Forge 3D Printing', href: '/forge' },
   { label: 'Creator Studio', href: '/studio' },
   { label: 'Creator Services', href: '/services' },
   { label: 'Buy Gear', href: '/buy' },

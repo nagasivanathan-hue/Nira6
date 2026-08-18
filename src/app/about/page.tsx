@@ -61,7 +61,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="rent-dark min-h-screen overflow-x-hidden selection:bg-nira-yellow selection:text-nira-dark relative py-20">
+    <div className="rent-dark min-h-screen overflow-hidden selection:bg-nira-yellow selection:text-nira-dark relative py-20">
       {/* Background Subtle Viewfinder Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
       <div className="absolute top-[10%] right-[-10%] w-[400px] h-[400px] bg-nira-yellow/5 rounded-full blur-[150px] pointer-events-none" />

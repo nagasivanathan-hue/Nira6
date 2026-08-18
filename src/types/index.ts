@@ -35,6 +35,129 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  configMetadata?: Record<string, unknown>;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Forge Your Ideas (FYI) — 3D Printing Types
+   ═══════════════════════════════════════════════════════════ */
+
+export interface ForgeProduct {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  price: number;
+  originalPrice?: number;
+  images: string[];
+  printTimeMinutes: number;
+  weightGrams: number;
+  dimensions: string;
+  defaultMaterial: string;
+  availableMaterials: string[];
+  availableColors: string[];
+  inStock: boolean;
+  featured: boolean;
+  rating: number;
+  reviewCount: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ForgePrinter {
+  id: string;
+  name: string;
+  model: string;
+  buildVolumeX: number;
+  buildVolumeY: number;
+  buildVolumeZ: number;
+  nozzleDiameter: number;
+  maxPrintSpeed: number;
+  hourlyCost: number;
+  status: 'IDLE' | 'PRINTING' | 'MAINTENANCE' | 'OFFLINE';
+  currentOrderNumber?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ForgeFilament {
+  id: string;
+  material: string;
+  color: string;
+  colorHex: string;
+  pricePerKg: number;
+  stockGrams: number;
+  lowStockThresholdGrams: number;
+  density: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ForgePriceBreakdown {
+  materialCost: number;
+  printingCost: number;
+  finishingCost: number;
+  packagingCost: number;
+  shippingCost: number;
+  subtotal: number;
+  discount: number;
+  total: number;
+}
+
+export interface ForgeCustomOrder {
+  id: string;
+  userId: string;
+  orderId?: string;
+  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  volumeCm3?: number;
+  surfaceAreaCm2?: number;
+  boundingBoxX?: number;
+  boundingBoxY?: number;
+  boundingBoxZ?: number;
+  material: string;
+  color: string;
+  layerHeight: number;
+  infill: number;
+  finishing: string;
+  quantity: number;
+  estimatedPrice: number;
+  priceBreakdown: ForgePriceBreakdown;
+  status: 'DRAFT' | 'PENDING_REVIEW' | 'QUEUED' | 'PRINTING' | 'POST_PROCESSING' | 'COMPLETED' | 'SHIPPED' | 'CANCELLED';
+  printerId?: string;
+  failureReason?: string;
+  reprintCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ForgeDesignRequest {
+  id: string;
+  userId: string;
+  title: string;
+  description: string;
+  referenceImages: string[];
+  dimensions?: string;
+  quantity: number;
+  targetMaterial?: string;
+  status: 'RECEIVED' | 'UNDER_REVIEW' | 'QUOTE_GENERATED' | 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'DECLINED';
+  quotedPrice?: number;
+  designerNotes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ForgeSavedConfig {
+  id: string;
+  userId: string;
+  name: string;
+  fileName: string;
+  fileUrl: string;
+  configJson: Record<string, unknown>;
+  estimatedPrice: number;
+  createdAt?: string;
 }
 
 export interface User {
@@ -44,7 +167,7 @@ export interface User {
   email: string;
   phone: string;
   avatar: string;
-  role: 'user' | 'creator' | 'admin';
+  role: 'user' | 'creator' | 'admin' | 'super_admin' | 'order_manager' | 'support_agent' | 'customer';
   walletBalance: number;
   verified: boolean;
   adminApprovedByOwner?: boolean;

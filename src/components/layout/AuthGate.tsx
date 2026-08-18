@@ -28,7 +28,18 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const isAuthPage = pathname?.startsWith('/auth/');
 
   if (!mounted) {
-    // Render a minimal loader that looks identical on server and client to avoid hydration mismatch
+    // For public pages (home, reels, about, auth), we want search engines and non-JS users
+    // to see the static HTML representation directly on SSR rather than a blank loader spinner.
+    if (isHomePage || isReelsPage || isAboutPage || isAuthPage) {
+      return (
+        <>
+          <Navbar />
+          <main className="min-h-screen pb-16 lg:pb-0">{children}</main>
+          <Footer />
+        </>
+      );
+    }
+    // For private pages, show the loading spinner during hydration
     return (
       <div className="min-h-screen bg-[#0c0c10] flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-nira-yellow/20 border-t-nira-yellow rounded-full animate-spin" />

@@ -57,7 +57,7 @@ export default function Navbar() {
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const [scrolled, setScrolled] = useState(false);
   const [localSearch, setLocalSearch] = useState(searchQuery);
-  const isDarkPage = pathname === '/' || pathname === '/creators/reels' || pathname?.startsWith('/rent');
+  const isDarkPage = pathname === '/' || pathname === '/creators/reels' || pathname?.startsWith('/rent') || pathname === '/about' || pathname?.startsWith('/about') || pathname?.startsWith('/forge');
 
   const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
   if (searchQuery !== prevSearchQuery) {
@@ -457,6 +457,7 @@ export default function Navbar() {
   return (
     <>
       <header
+        role="banner"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 translate-y-0 ${
           isDarkPage
             ? scrolled 
@@ -475,7 +476,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav role="navigation" aria-label="Main Navigation" className="hidden lg:flex items-center gap-1">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href);
                 return (
@@ -602,7 +603,7 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 15 }}
-                      className="absolute right-0 mt-3 w-[340px] sm:w-[420px] bg-white border border-nira-gray-dark rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[500px]"
+                      className="absolute right-0 mt-3 w-[340px] sm:w-[420px] max-w-[calc(100vw-2rem)] bg-white border border-nira-gray-dark rounded-2xl shadow-2xl overflow-hidden z-50 flex flex-col max-h-[500px]"
                     >
                       <div className="p-4 bg-nira-dark text-white flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
@@ -768,6 +769,8 @@ export default function Navbar() {
             onClick={() => dispatch(closeMobileMenu())}
           >
             <motion.nav
+              role="navigation"
+              aria-label="Mobile Navigation"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -852,7 +855,7 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* Spacer for fixed navbar */}
-      <div className="h-16 lg:h-20" />
+      {!isDarkPage && <div className="h-16 lg:h-20" />}
     </>
   );
 }
